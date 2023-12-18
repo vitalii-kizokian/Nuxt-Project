@@ -135,7 +135,7 @@
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, groupIdx, itemIdx, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" :class="{'past-due': checkPastDue(item[field.key])}" placeholder="No date" @input="updateDate($event, item, groupIdx, itemIdx, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                 </div>
@@ -202,6 +202,7 @@ import _ from 'lodash'
 import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
+import { pastDue } from "~/utils/helpers.js";
 
 export default {
 
@@ -492,6 +493,11 @@ export default {
     formatDate(dateObj, format) {
       return this.$formatDate(dateObj)
     },
+    checkPastDue(dateString){
+      let check = pastDue(dateString)
+      return check
+    },
+    
     delete_UpdateLocalData(payload,param) {
       if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
         this.$nuxt.$emit("refresh-table");

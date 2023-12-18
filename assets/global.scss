@@ -628,6 +628,16 @@ ul {
   }
 }*/
 
+.vdpComponent {
+  &.past-due {
+    color: $danger;
+    .vdpComponent__input { color: currentColor;}
+    .vdpComponent__calendar-icon,.icon {
+      svg { fill: $danger-sub3; }
+    }
+  }
+}
+
 // .bib-tooltip { max-width: fit-content; z-index: 100000 }
 
 @media screen and (max-width: 1600px) {
