@@ -408,8 +408,16 @@ export default {
       }
 
       if (this.form.dueDate && this.form.dueDate != null) {
-        if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+
+            let dueDate = new Date(this.form.dueDate);
+            let dueDateUTC = new Date(Date.UTC(dueDate.getUTCFullYear(), dueDate.getUTCMonth(), dueDate.getUTCDate()));
+            dueDateUTC.setUTCHours(0, 0, 0, 0);
+            
+            let startDateUTC = new Date(Date.UTC(newStartDate.getUTCFullYear(), newStartDate.getUTCMonth(), newStartDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (startDateUTC.getTime() > dueDateUTC.getTime()) {
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.form.startDate = oldValue
           this.sdate = this.$formatDate(oldValue)
           // return
@@ -474,9 +482,17 @@ export default {
       } 
 
       if (this.form.startDate && this.form.startDate != null) {
+
+            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+            let startDueDate = new Date(this.form.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
           // console.log(this.form.startDate )
-        if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.form.dueDate = oldValue
           this.ddate = this.$formatDate(oldValue)
           // return

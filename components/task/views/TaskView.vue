@@ -1408,9 +1408,9 @@ export default {
 .task-view-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 55px);
+  height: calc(100% - 45px);
   .calc-height {
-    height: calc(100% - 55px);
+    height: calc(100% - 45px);
   }
 }
 

@@ -18,7 +18,7 @@
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-025" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
       <!-- team.length == 0 && projectMembers.length<2 -->
-      <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
+      <small v-show="showMsg&&!message" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-danger" id="ptm-message"></p>
     </div>
   <!-- </div>  -->
