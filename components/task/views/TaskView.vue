@@ -10,7 +10,7 @@
       @search-projectTasks="searchTasks"
       @add-section="toggleNewsection"
     ></task-actions>
-    <template v-if="taskcount > 0 || groupby=='' ">
+    <template v-if="taskcount > 0 || groupby == 'default' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"  :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
@@ -34,6 +34,7 @@
         @task-dragend="taskDragEnd"
         sectionType="singleProject"
         @user-picker="showUserPicker"
+        :group="groupby"
       >
       </task-grid-section>
     </div>
@@ -195,7 +196,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
-      groupby:'',
+      groupby: 'default',
       dragTable: true,
       lazyComponent:false,
       sectionConfirmModal: false,
@@ -814,11 +815,12 @@ export default {
     
     async SingleProjectGroup($event) {
 
-      this.groupby=$event
+      // this.groupby=$event
       if($event != 'default') {
+        this.groupby=$event
         this.dragTable = false;
       } else {
-        this.groupby=''
+        this.groupby='default'
         this.dragTable = true;
       }
       this.$store.commit('section/setGroupBy',this.groupby)
@@ -1332,7 +1334,7 @@ export default {
       tasks.forEach((el, i) => {
         el.order = i;
       });
-      if(this.groupby!='') {
+      if(this.groupby!='default') {
         this.updateKey()
       }
       else {

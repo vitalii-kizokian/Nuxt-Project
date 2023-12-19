@@ -42,7 +42,8 @@
           </draggable>
         </div>
       </div>
-      <div class="task-grid-section " id="task-grid-section-blank-1">
+
+      <div class="task-grid-section " id="task-grid-section-blank-1" v-if="(group == 'default' && $route.path.includes('/projects/')) || (group == 'department' && $route.path.includes('/tasks')) || (group == 'department' && $route.path.includes('/mytasks'))">
         <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" v-if="sectionType == 'singleProject'">
           <div class="title pb-05" id="tgs-new-section">
             <div v-if="!sectionInput" class="pt-025 align-center position-relative">
@@ -105,6 +106,7 @@ export default {
     templateKey: { default: 0 },
     sectionType: { type: String },
     showNewsection: Boolean,
+    group: { type: String }
   },
 
   computed: {
