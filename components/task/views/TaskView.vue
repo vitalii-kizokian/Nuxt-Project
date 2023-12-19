@@ -1410,7 +1410,7 @@ export default {
   flex-direction: column;
   height: calc(100% - 55px);
   .calc-height {
-    height: calc(100% - 55px);
+    height: calc(100% - 50px);
   }
 }
 

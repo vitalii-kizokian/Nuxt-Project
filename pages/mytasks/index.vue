@@ -51,7 +51,7 @@
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
                 <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
-                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate"></task-grid>
                   </template>
                  <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
@@ -707,11 +707,13 @@ export default {
       }
         
     },
-    updateDuedate(value){
+    updateDuedate({id, field, label, value}){
+      // console.log(...arguments)
+      // return
       let newDate = new Date(value) || null
-      let data = { [this.datepickerArgs.field]: newDate }
+      // let data = { [field]: newDate }
 
-      if(this.activeTask.startDate){
+      /*if(this.activeTask.startDate){
         if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
           data = { [this.datepickerArgs.field]: newDate }
           // newDate = this.$formatDate(value)
@@ -725,12 +727,13 @@ export default {
         }
       } else {
         console.log('no startdate-> ',newDate )
-      }
+      }*/
+      console.log(newDate)
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        data,
+        data: { [field]: newDate},
         user: null,
-        text: `changed ${this.datepickerArgs.label} to ${this.$formatDate(value)}`
+        text: `changed ${label} to ${this.$formatDate(value)}`
       })
         .then(t => {
           this.updateKey()
