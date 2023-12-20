@@ -8,7 +8,7 @@
       <!-- <div class="d-flex gap-05 ml-1 shape-rounded py-025 px-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="ta-add-section-button" v-show="!group" v-on:click.stop="addSection">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div> -->
-      <bib-button v-show="!group" label="New Section" variant="primary-24" icon="add" class="" @click.native.stop="addSection"></bib-button>
+      <bib-button v-show="group == 'default'" label="New Section" variant="primary-24" icon="add" class="" @click.native.stop="addSection"></bib-button>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <template>

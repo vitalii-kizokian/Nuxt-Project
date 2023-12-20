@@ -5,7 +5,7 @@
 
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" :group="groupby" @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
 
-      <template v-if="taskcount > 0 || groupby==''">
+      <template v-if="taskcount > 0 || groupby == 'default'">
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
@@ -51,7 +51,7 @@
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
                 <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
-                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate"></task-grid>
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" :group="groupby" @change-duedate="updateDuedate"></task-grid>
                   </template>
                  <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
@@ -166,7 +166,7 @@ export default {
       alertMsg:"",
       contentWidth: "100%",
       tasksKey: 'tasks',
-      groupby: "",
+      groupby: "default",
       dragTable: true,
       deleteBtnHover: false,
       todoConfirmModal: false,
@@ -323,7 +323,7 @@ export default {
         if (this.localdata.length>0) {
           let gridData=[...this.localdata]
               if(param=="/mytasks"){  
-                  if(this.groupby=="") 
+                  if(this.groupby=="default") 
                       {
                             if(payload.todoId) {
                               let exist_item= gridData. find((item)=>item.id==payload.todoId)
@@ -388,11 +388,11 @@ export default {
         },
     //group by
     myTaskGroup($event) {
-      this.groupby=$event
       if($event != 'default') {
+        this.groupby=$event
         this.dragTable = false;
       } else {
-        this.groupby=''
+        this.groupby='default'
         this.dragTable = true;
       }
       this.$store.commit('todo/setGroupBy',this.groupby)
@@ -610,7 +610,7 @@ export default {
         }   
       }
 
-      if(this.groupby != '') 
+      if(this.groupby != 'default') 
       {
         this.$store.dispatch("task/updateTask", {
           id: payload.id,
@@ -969,7 +969,7 @@ export default {
         e.tOrder = i
       })
 
-      if(this.groupby != '') {
+      if(this.groupby != 'default') {
         this.updateKey();
       } else {
         let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
@@ -1006,7 +1006,7 @@ export default {
         el.uOrder = i
       })
 
-      if(this.groupby != '') {
+      if(this.groupby != 'default') {
         this.updateKey();
       } else {
 
