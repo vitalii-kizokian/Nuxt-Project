@@ -2,13 +2,13 @@
   <client-only>
     <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
       <!-- <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
-      <div class="task-top" :id="'tg-top-wrap'+ task.id">
+      <div class="task-top justify-between" :id="'tg-top-wrap'+ task.id">
         <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
           <span class="cursor-pointer" style="padding-top: 0.15rem;" @click.stop="markComplete(task)">
             <bib-icon icon="check-circle-solid" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
           </span>
           <span class="flex-grow-1" :id="'task-title'+task.id" >
-           <input type="text" class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)"  @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1"   @blur="restoreField">
+           <input type="text" class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)"  @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">
           </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
@@ -27,20 +27,23 @@
         <status-badge v-if="task.statusId" :status="task.status"></status-badge>
         <priority-badge v-if="task.priorityId" :priority="task.priority"></priority-badge>
       </div>
-      <div class="task-bottom " :id="'tg-bottom'+ task.id">
+      <div class="task-bottom align-center justify-between gap-025" :id="'tg-bottom'+ task.id">
         <span v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
           <user-info :userId="task.userId" class="events-none"></user-info>
         </span>
         <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
-        <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
-          <bib-icon icon="calendar" :variant="overdue" class="events-none"></bib-icon>
-          <format-date :datetime="task.dueDate" variant="gray5" class="events-none"></format-date>
+        <div class="ml-auto position-relative">
+          <bib-datetime-picker class="left-datetime-picker" v-model="formattedDuedate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" :min-date="task.startDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
         </div>
-        <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="showDatePicker(task)">
+        <!-- <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
+          <bib-icon icon="calendar-solid" :variant="checkPastDue(task.dueDate) ? 'danger-sub3' : 'gray4'" class="events-none"></bib-icon>
+          <format-date :datetime="task.dueDate" :variant="checkPastDue(task.dueDate) ? 'danger' : 'gray5'" class="events-none"></format-date>
+        </div> -->
+        <!-- <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
-        </div>
+        </div> -->
       </div>
       <!-- popup notification -->
       <bib-popup-notification-wrapper>
@@ -62,6 +65,10 @@ import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { pastDue } from "~/utils/helpers.js";
+
+var utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)
 
 export default {
   name: "TaskGrid",
@@ -80,6 +87,9 @@ export default {
       // confirmMsg: "",
       alertDialog: false,
       alertMsg:"",
+      format: "D MMM YYYY",
+      dueDate: null,
+      formattedDuedate: null,
     };
   },
   computed: {
@@ -96,12 +106,19 @@ export default {
     //   }
     // },
     overdue() {
-      return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub1' : 'gray4';
+      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
+      // console.log(dayjs.utc(this.dueDate).diff(dayjs.utc()))
+      return dayjs.utc(this.dueDate).diff(dayjs.utc()) <= 0 ? true : false
     },
     form() {
       return _.cloneDeep(this.task)
     },
     
+  },
+  mounted(){
+    this.dueDate = this.task.dueDate
+    this.formattedDuedate = dayjs.utc(this.duedate).format(this.format)
+    // this.checkPastDue()
   },
   updated() {
     let ht = this.$refs.titleInput.scrollHeight
@@ -126,9 +143,43 @@ export default {
       this.$nuxt.$emit("user-picker", { event, task })
       this.$emit("user-picker", { event, task })
     },
-    showDatePicker(task) {
+    /*showDatePicker(task) {
       this.$nuxt.$emit("date-picker", { event, task })
       this.$emit("date-picker", { event, task })
+    },*/
+
+    parseDate(dateString, format) {
+      // console.log(...arguments, "parseDate")
+      return new Date(dateString);
+    },
+    formatDate(dateObj, format) {
+      console.log(...arguments, "formatDate")
+      let fdt = dayjs(dateObj).format(format);
+      this.formattedDuedate = fdt
+      // return dayjs(dateObj).format(format);
+      return fdt
+    },
+    checkPastDue(){
+      let check = pastDue(this.dueDate)
+      return check
+    },
+
+    updateDate(d, item, field, label) {
+      // console.log(...arguments)
+      let stdt = dayjs.utc(item.startDate)
+      let dtdt = dayjs.utc(d)
+      console.log(stdt.isValid(), d, stdt.diff(dtdt))
+      return
+      if (stdt.isValid()) {
+        if (stdt.diff(dtdt) <= 0) {
+          this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
+        } else {
+          this.dueDate = null
+          this.formattedDuedate = null
+        }
+      } else {
+        this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
+      }
     },
 
     openSidebar(task, scroll) {
@@ -359,12 +410,9 @@ export default {
   }
 
   &.active {
-    /*background-color: $gray9;*/
-    /*border-color: $gray4;*/
     box-shadow: 0 0 0 2px $gray5 inset;
   }
   &:hover {
-    /*box-shadow: 0 2px 20px -1px rgba(80,90,100,.5);*/
     border-color: $primary-sub1;
   }
 
@@ -385,8 +433,6 @@ export default {
 
   .task-top,
   .task-bottom {
-    display: flex;
-    justify-content: space-between;
     gap: 0.25rem;
     padding: 8px;
   }
@@ -396,7 +442,6 @@ export default {
   }
 
   .task-bottom {
-    align-items: center;
     color: $gray5;
   }
 
@@ -407,6 +452,30 @@ export default {
   width: 1.5rem;
   height: 1.5rem;
   border: 1px dashed $gray4;
+}
+
+::v-deep {
+  .vdpComponent {
+    background: none transparent;
+    border: 0 none;
+    cursor: pointer;
+    &__input {
+      background: none transparent;
+      border: 0 none; 
+      margin: 0;
+      min-height: 2rem;
+      max-width: 9rem;
+    }
+    .vdpClearInput {
+      width: 1.5rem;
+    }
+  }
+  .left-datetime-picker {
+    & > div.vdpPositionLeft {
+      left: initial; right: -8px;
+    }
+
+  }
 }
 
 </style>

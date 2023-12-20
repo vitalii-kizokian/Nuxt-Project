@@ -89,9 +89,14 @@
                     <tag-comp :tags="item['TaskTags']"></tag-comp>
                   </template>
                 </template>
-                <template v-if="field.key.includes('Date')" class="date-cell">
+                <template v-if="field.key == 'startDate'" class="date-cell">
                   <!-- {{$formatDate(item[field.key])}} -->
                   <bib-datetime-picker class="bottom-datetime-picker" v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, index, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                  <skeleton-box v-else></skeleton-box>
+                </template>
+                <template v-if="field.key == 'dueDate'" class="date-cell">
+                  <!-- {{$formatDate(item[field.key])}} -->
+                  <bib-datetime-picker class="bottom-datetime-picker" v-if="lazyComponent" v-model="item[field.key]" :class="{'past-due': checkPastDue(item[field.key])}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, index, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   <skeleton-box v-else></skeleton-box>
                 </template>
               </div>
@@ -151,6 +156,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { pastDue } from "~/utils/helpers.js";
 import _ from 'lodash'
 import Split from 'split.js'
 // import ColumnResizer from 'column-resizer';
@@ -351,7 +357,6 @@ export default {
   },
 
   methods: {
-
     handleNewTask (payload,param) {
       if (this.localData.length>0) {
           this.localData.push(payload);
@@ -418,10 +423,15 @@ export default {
   //   }
   // },
     parseDate(dateString, format) {
-        return new Date(dateString);
+      return new Date(dateString);
     },
     formatDate(dateObj, format) {
         return dayjs(dateObj).format(format);
+    },
+
+    checkPastDue(dateString){
+      let check = pastDue(dateString)
+      return check
     },
 
     modifyDateFormat(){
@@ -837,15 +847,24 @@ export default {
       line-height: normal;
     }
   }
-  .vdpComponent__calendar-icon { z-index: 0 }
-  .vdpComponent__input {
-    margin: 0;
-    min-height: 2rem;
-    border-color: transparent;
-    background-color: transparent;
+  .vdpComponent {
+    /*&.past-due {
+      color: $danger;
+      .vdpComponent__input { color: currentColor;}
+      .vdpComponent__calendar-icon ,.icon {
+        svg { fill: $danger-sub3; }
+      }
+    }*/
 
-    &:hover {
+    &__input {
+      margin: 0;
+      min-height: 2rem;
       border-color: transparent;
+      background-color: transparent;
+
+      &:hover {
+        border-color: transparent;
+      }
     }
   }
   

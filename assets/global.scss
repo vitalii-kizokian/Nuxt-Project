@@ -388,8 +388,7 @@ ul {
 
 
 .task-grid-section {
-  /*background-color: white;*/
-  flex: 0 0 18.75rem;
+  flex: 0 0 340px;
   padding: 10px;
   user-select: none;
 
@@ -399,14 +398,6 @@ ul {
   &.non-draggable {
     .section-drag-handle { cursor: auto;}
   }
-
-  /*&:not(:first-child) {
-    border-left: 1px solid $gray4;
-  }
-
-  &:last-child {
-    border-right: 1px solid $gray4;
-  }*/
   .title {
     font-weight: 600;
   }
@@ -569,64 +560,14 @@ ul {
   }
 }
 
-/*.bib-datepicker,
-.vdp-datepicker {
-  white-space: normal;
-  &.align-right {
-    .vdp-datepicker__calendar {
-      right: 0;
+.vdpComponent {
+  &.past-due {
+    .vdpComponent__input { color: $danger; }
+    .vdpComponent__calendar-icon,.icon {
+      svg { fill: $danger-sub3; }
     }
   }
-
-  .vdp-datepicker__calendar {
-    width: 290px;
-    font-size: $base-size;
-
-    header span {
-      height: 36px;
-      line-height: 36px;
-    }
-
-    .cell:not(.blank):not(.disabled).day:hover,
-    .cell:not(.blank):not(.disabled).month:hover,
-    .cell:not(.blank):not(.disabled).year:hover {
-      border-color: transparent;
-      background-color: $secondary-sub2;
-    }
-
-    .cell {
-      height: 36px;
-      line-height: 36px;
-      border-left-width: 0;
-      border-right-width: 0;
-      border-bottom: 1px solid $light;
-
-      &.selected {
-        background-color: $secondary;
-        color: white;
-
-        &:hover {
-          background-color: $secondary-sub1;
-        }
-      }
-
-      &.day-header {
-        color: $gray5;
-        text-transform: uppercase;
-        border-top: 1px solid $light;
-        border-bottom-color: $gray6;
-      }
-    }
-
-    header .prev::after {
-      border-right: 9px solid $secondary;
-    }
-
-    header .next::after {
-      border-left: 8px solid $secondary;
-    }
-  }
-}*/
+}
 
 // .bib-tooltip { max-width: fit-content; z-index: 100000 }
 
