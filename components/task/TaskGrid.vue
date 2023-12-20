@@ -107,8 +107,8 @@ export default {
     // },
     overdue() {
       // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
-      // console.log(dayjs.utc(this.dueDate).diff(dayjs.utc()))
-      return dayjs.utc(this.dueDate).diff(dayjs.utc()) <= 0 ? true : false
+      // console.log(dayjs(this.dueDate).diff(dayjs()))
+      return dayjs(this.dueDate).diff(dayjs()) <= 0 ? true : false
     },
     form() {
       return _.cloneDeep(this.task)
@@ -117,8 +117,7 @@ export default {
   },
   mounted(){
     this.dueDate = this.task.dueDate
-    this.formattedDuedate = dayjs.utc(this.duedate).format(this.format)
-    // this.checkPastDue()
+    this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
   },
   updated() {
     let ht = this.$refs.titleInput.scrollHeight
@@ -153,32 +152,30 @@ export default {
       return new Date(dateString);
     },
     formatDate(dateObj, format) {
-      console.log(...arguments, "formatDate")
+      // console.log(...arguments, "formatDate")
       let fdt = dayjs(dateObj).format(format);
       this.formattedDuedate = fdt
       // return dayjs(dateObj).format(format);
       return fdt
     },
-    checkPastDue(){
-      let check = pastDue(this.dueDate)
-      return check
-    },
 
     updateDate(d, item, field, label) {
       // console.log(...arguments)
-      let stdt = dayjs.utc(item.startDate)
-      let dtdt = dayjs.utc(d)
-      console.log(stdt.isValid(), d, stdt.diff(dtdt))
-      return
+      let stdt = dayjs(item.startDate)
+      let dtdt = dayjs(d)
+      // console.log(stdt.isValid(), d, stdt.diff(dtdt))
+      this.dueDate = dtdt
       if (stdt.isValid()) {
         if (stdt.diff(dtdt) <= 0) {
           this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
+          this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: dtdt}) //only for tasks page
         } else {
           this.dueDate = null
           this.formattedDuedate = null
         }
       } else {
         this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
+        this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: dtdt}) //only for tasks page
       }
     },
 

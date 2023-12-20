@@ -66,14 +66,14 @@
       <div class="subtask-info position-relative py-05 px-105" id="sd-input-wrap">
         <div class="row mt-05 mb-05" id="sd-other-fields-row1">
           <div class="col-2 align-center" id="sd-other-fields-r1-c1"><label>Start Date</label></div>
-          <div class="col-5" id="sd-other-fields-r1-c2">
-            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+          <div class="col-3" id="sd-other-fields-r1-c2">
+            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" variant="gray4" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row2">
           <div class="col-2 align-center" id="sd-other-fields-r2-c1"><label>Due Date</label></div>
-          <div class="col-5" id="sd-other-fields-r2-c2">
-            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+          <div class="col-3" id="sd-other-fields-r2-c2">
+            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" variant="gray4" size="sm" placeholder="Due date" :class="{'past-due': overdue}" @input="duedateProcess"></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row3">
@@ -335,6 +335,11 @@ export default {
         } else {
             return { variant: "gray4", text: "Add to favorites", status: false }
         }
+    },
+    overdue() {
+      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
+      // console.log(dayjs(this.dueDate).diff(dayjs()))
+      return dayjs(this.ddate).diff(dayjs()) <= 0 ? true : false
     },
   },
   
