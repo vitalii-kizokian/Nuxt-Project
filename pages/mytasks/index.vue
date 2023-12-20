@@ -779,7 +779,7 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby ? section.tasks[0]?.todoId : section.id
+      proj.todoId = this.groupby=="default" ? section.tasks[0]?.todoId : section.id
 
 
       if(this.groupby == "priority"){

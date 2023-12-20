@@ -10,7 +10,7 @@
       @search-projectTasks="searchTasks"
       @add-section="toggleNewsection"
     ></task-actions>
-    <template v-if="taskcount > 0 || groupby == 'default' ">
+    <template v-if="taskcount > 0 || groupby=='' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"  :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
@@ -34,7 +34,6 @@
         @task-dragend="taskDragEnd"
         sectionType="singleProject"
         @user-picker="showUserPicker"
-        :group="groupby"
       >
       </task-grid-section>
     </div>
@@ -196,7 +195,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
-      groupby: 'default',
+      groupby:'',
       dragTable: true,
       lazyComponent:false,
       sectionConfirmModal: false,
@@ -815,9 +814,8 @@ export default {
     
     async SingleProjectGroup($event) {
 
-      // this.groupby=$event
+      this.groupby=$event
       if($event != 'default') {
-        this.groupby=$event
         this.dragTable = false;
       } else {
         this.groupby='default'
@@ -901,7 +899,7 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
 
-      proj.sectionId=this.groupby ? "_section"+this.$route.params.id : section.id
+      proj.sectionId=this.groupby=="default" ?  section.id:"_section"+this.$route.params.id
       
       // proj.todoId=this.groupby ? "_section"+this.$route.params.id : section.id
       if(this.groupby == "priority"){

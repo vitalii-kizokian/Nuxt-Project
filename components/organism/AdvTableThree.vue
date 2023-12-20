@@ -148,7 +148,7 @@
                     <div class="d-inline-flex align-center font-md cursor-pointer new-button border-primary-24 shape-rounded" v-on:click.stop="newRowClick(section.id)">
                       <bib-icon :icon="plusButton.icon" variant="" :scale="0.8" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                     </div>
-                  </div>
+                  </div>  
 		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
 
@@ -641,6 +641,18 @@ export default {
           });
           return { ...items, tasks: updatedTasks };
         });
+        this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+          if(this.$route.fullPath=="/tasks"){
+       this.localData=this.$groupBy( this.localData,this.taskGroupBy)
+       }   
+       if(this.$route.fullPath.includes("usertasks")){
+       this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
+       }   
+       if(this.$route.fullPath=="/projects"){
+       this.localData=this.$groupBy( this.localData,this.projectGroupBy)
+       }  
         this.modifyDateFormat(this.localData)
       }
     },
@@ -980,6 +992,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+        if(this.$route.fullPath=="usertasks"){
+       this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
+       }  
         this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
         this.localData= this.localData.map((items)=>{
@@ -993,6 +1011,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+        if(this.$route.fullPath=="usertasks"){
+       this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
+       }  
         this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done",item })
       }
     },
@@ -1008,6 +1032,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+        if(this.$route.fullPath=="usertasks"){
+       this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
+       }  
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item })
 
     },
