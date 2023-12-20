@@ -6,7 +6,7 @@
         <template v-for="t in team">
           <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
         </template>
-        <small v-show="showMsg" class="text-danger font-xs">Select at least 1 team member.</small>
+        <small v-show="showMsg&&!message" class="text-danger font-xs">Select at least 1 team member.</small>
         <p v-if="message" v-text="message" class="font-sm mt-025 text-danger"></p>
       </div>
      

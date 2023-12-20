@@ -281,10 +281,19 @@ export default {
       }
 
       if (this.activeProject.dueDate && this.activeProject.dueDate != null) {
-        if (newStartDate.getTime() > new Date(this.activeProject.dueDate).getTime()) {
+
+           let dueDate = new Date(this.activeProject.dueDate);
+            let dueDateUTC = new Date(Date.UTC(dueDate.getUTCFullYear(), dueDate.getUTCMonth(), dueDate.getUTCDate()));
+            dueDateUTC.setUTCHours(0, 0, 0, 0);
+            
+            let startDateUTC = new Date(Date.UTC(newStartDate.getUTCFullYear(), newStartDate.getUTCMonth(), newStartDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (startDateUTC.getTime() > dueDateUTC.getTime()) {
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          this.activeProject.startDate = oldValue
           this.sdate = this.$formatDate(oldValue)
-          // return
+          return
         } else {
           this.$store.dispatch("project/updateProject", {
             id: this.activeProject?.id,
@@ -322,8 +331,16 @@ export default {
       } 
 
       if (this.activeProject.startDate && this.activeProject.startDate != null) {
-          // console.log(this.activeProject.startDate )
-        if (newDueDate.getTime() < new Date(this.activeProject.startDate).getTime()) {
+
+            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+            let startDueDate = new Date(this.activeProject.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+          // console.log(this.form.startDate )
+        if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.activeProject.dueDate = oldValue
           this.ddate = this.$formatDate(oldValue)

@@ -272,7 +272,7 @@ export default {
       newValue: [],
       localNewrow: {},
       akey: 0,
-      itemsPerPage: 20,
+      itemsPerPage: 25,
       allDataDisplayed: false,
       previousIndex: { groupIdx: -1, curIdxInGroup: -1 },
       lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
