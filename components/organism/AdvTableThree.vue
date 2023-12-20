@@ -49,12 +49,12 @@
                       <span class="width-105 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" :ref="'collapseIcon'+section.id" ></bib-icon> 
                       </span>
-                      <span class="font-w-700 cursor-pointer " v-if="editSection" >
-                       {{ section.title }}
+                      <span class="font-w-700 cursor-pointer " v-if="editSection != 'default'" >
+                       {{ section.title.includes('_section') ? 'Untitled section' : section.title }}
                       </span>
                       <span class="font-w-700 cursor-pointer " v-else >
                         <input type="text" class="editable-input section-title"  :value="section.title.includes('_section') ? 'Untitled section'
-                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
+                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" :disabled="section.title.includes('_section')" />
                       </span>
                       <div v-if="sectionMenu" class="shape-circle width-105 height-105 bg-hover-light">
                         <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm">
@@ -218,7 +218,7 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
-    editSection:{type:String, default:""},
+    editSection:{type:String, default:"default"},
     tasksKey: {
       type: String,
       default() {
