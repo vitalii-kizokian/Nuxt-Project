@@ -9,14 +9,14 @@
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @create-row="createNewTask" :newRow="newRow"  @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="groupby == ''" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @create-row="createNewTask" :newRow="newRow"  @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="groupby == 'default'" :key="templateKey" :editSection="groupby" :filter="filterViews" ></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
 
         </div>
 
         <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" :style="{ 'width': contentWidth }">
-          <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
+          <draggable v-model="localdata" :disabled="groupby != 'default'" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
             <div v-if="newSection" class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
                 <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
@@ -49,11 +49,11 @@
                 </div>
               </div>
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
-                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                <draggable :list="todo.tasks" :disabled="groupby != 'default'" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
-                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" :group="groupby"></task-grid>
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate" :group="groupby"></task-grid>
                   </template>
-                 <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+                 <task-grid-blank :sectionType="sectionType" :section="todo" :initialData="initialData" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
               </div>
             </div>
@@ -125,6 +125,7 @@ export default {
     return {
       taskFields: USER_TASKS,
       localdata: [],
+      initialData: [],
       loading: false,
       gridType: 'list',
       viewName: null,
@@ -225,6 +226,7 @@ export default {
       localTodos.forEach(function(todo) {
         todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
+      
       this.localdata = localTodos
     },
 
@@ -288,7 +290,7 @@ export default {
         }
 
       }, 300);
-      this.$store.commit('todo/setGroupBy',"")
+      this.$store.commit('todo/setGroupBy',"default")
   },
 
   beforeDestroy(){ 
@@ -296,7 +298,7 @@ export default {
     this.$nuxt.$off("refresh-table");
     this.$nuxt.$off("update-key");
     this.$nuxt.$off("gridNewTask", this.handleNewTask);
-
+    this.initialData = []
   },
 
   async asyncData({$axios, app,store,context}) {
@@ -313,7 +315,7 @@ export default {
 
     // console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
-    return { localdata: response.data.data }
+    return { localdata: response.data.data, initialData: response.data.data }
     
   },
 
@@ -388,12 +390,12 @@ export default {
         },
     //group by
     myTaskGroup($event) {
-      if($event != 'default') {
-        this.groupby=$event
-        this.dragTable = false;
-      } else {
-        this.groupby='default'
+      if($event == 'default') {
+        this.groupby = 'default'
         this.dragTable = true;
+      } else {
+        this.groupby = $event
+        this.dragTable = false;
       }
       this.$store.commit('todo/setGroupBy',this.groupby)
       // this.$store.commit('todo/groupMyTasks',{sName:this.groupby,team:this.teamMembers })
@@ -778,8 +780,14 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby ? section.tasks[0]?.todoId : section.id
 
+      if(this.groupby=='default') {
+        let foundTodo = this.initialData.find((el) => el.title == section.title)
+        proj.todoId = foundTodo.id
+      } else {
+        let recentlyTodo = this.initialData.find((el) => el.title == "Recently Assigned")
+        proj.todoId = recentlyTodo.id
+      }
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -889,6 +897,7 @@ export default {
         el.uOrder = index+1
         return el
       })
+
       tempTodos.unshift({title: $event, userId: JSON.parse(localStorage.getItem("user")).sub, uOrder: 0 })
 
       const todo = await this.$store.dispatch("todo/createTodo", {
@@ -896,11 +905,11 @@ export default {
         title: $event,
         data: tempTodos,
       })
-
       if (todo.statusCode == 200) {
-
         this.newSection = false
-        this.$store.dispatch("todo/fetchTodos", { filter:this.filterViews })
+        this.$store.dispatch("todo/fetchTodos", { filter:this.filterViews }).then(res => {
+          this.initialData = res.data
+        } )
       } else {
         console.warn(todo)
       }

@@ -93,7 +93,7 @@ export default {
       localData: [],
       popupMessages: [],
       groupVisible: false,
-      groupBy: '',
+      groupBy: 'default',
       lazyComponent: false,
       projectDeleteConfirm: false,
       projectToDelete: {},
@@ -117,7 +117,7 @@ export default {
       this.updateKey();
     }
     // this.loading = true;
-    this.$store.commit('project/setGroupBy',"")
+    this.$store.commit('project/setGroupBy',"default")
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -242,8 +242,8 @@ export default {
       this.lazyComponent=false
       if ($event ==="default" ) {
         this.groupVisible = false;
-        this.groupBy = '';
-        this.$store.commit('project/setGroupBy','')
+        this.groupBy = 'default';
+        this.$store.commit('project/setGroupBy','default')
         this.updateKey()
         // this.$store.commit('project/flatProjects');
         setTimeout(() => {
@@ -622,7 +622,7 @@ export default {
         .then(t => {
           // console.log("update",t)
           if(t.statusCode == 200){
-            if(this.groupBy == '' || this.groupBy == 'default'){
+            if(this.groupBy == 'default'){
               // this.updateKey()
             }
           }

@@ -18,7 +18,7 @@
       <template v-if="taskcount > 0">
         <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
           <div v-if="groupVisible" class="h-100">
-            <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
+            <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>   
           </div>
           <div v-else class="h-100">
             <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
@@ -243,42 +243,32 @@ export default {
           }
         }
       }
+
       if(this.teamMembers.length>0){
         this.teamMembers.find((u) => {
           if (u.id == this.$route.params.id) {
             this.selectedUser = u;
           }
         });
-    
-        // let data=_.cloneDeep(this.all_tasks)
-        //   data=data.filter((item)=>{
-        //     if(item.userId==this.$route.params.id){
-        //       return item
-        //     }
-        //   })
-        // this.$store.dispatch("user/getUserTasks", {
-        //   userId: this.$route.params.id,
-        //   filter: 'all',
-        //   })
-        //   .then(res=> {
-        //   this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
-        //   this.$store.commit('user/setInitialUserTasks', {initial:res});
-        //   })
 
         this.localData = this.userTasks
 
-        if(this.groupBy!==''||this.groupBy=="default"){
-          this.groupVisible=true
+        if(this.groupBy=="default"){
+          console.log("We are in IF and default")
+          this.groupVisible=false
+          this.lazyComponent=true
         }
         else {
-          this.groupVisible=false
+          console.log("We are in IF and not default")
+
+          this.groupVisible=true
           setTimeout(() => {
-            this.lazyComponent=true
+            this.lazyComponent=false
           }, 30);
         }
 
-  } 
-  else {
+      } else {
+        console.log("WE are in Else")
       let teamMembers= [];
 
       this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
@@ -356,7 +346,7 @@ export default {
         this.groupVisible = false;
         // this.groupBy = '';
         // this.$store.commit('user/flatTasks');
-        this.$store.commit('user/setGroupBy','')
+        this.$store.commit('user/setGroupBy','default')
         this.updateKey()
         this.localData = this.userTasks
         setTimeout(() => {

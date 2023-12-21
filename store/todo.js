@@ -5,7 +5,7 @@ export const state = () => ({
   todos: [],
   initialData:[],
   gridType:"list",
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0
 
 });
