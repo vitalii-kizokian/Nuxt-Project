@@ -30,7 +30,7 @@
             <td id="sbs-td-2" width="180">
               <div class="d-inline-flex align-center gap-025 position-relative" >
                 <!-- <bib-icon icon="calendar" variant="gray2"></bib-icon> -->
-                <bib-datetime-picker v-model="sub.dueDate" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
+                <bib-datetime-picker v-model="sub.dueDate" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." :class="{'past-due': checkPastDue(sub.dueDate)}" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
@@ -94,6 +94,7 @@ import {  STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { pastDue } from "~/utils/helpers.js";
 
 export default {
   name: "SidebarSubtask",
@@ -154,7 +155,8 @@ export default {
         }
       })
       return subTs;
-    }
+    },
+    
   },
   watch: {
     currentTask(newVal) {
@@ -196,6 +198,10 @@ export default {
     formatDate(dateObj, format) {
       // console.log("dateObj",dateObj)
       return this.$formatDate(dateObj)
+    },
+    checkPastDue(dateString){
+      let check = pastDue(dateString)
+      return check
     },
     removeSelection() {
       let i;

@@ -42,7 +42,7 @@
 
     <no-data v-else></no-data>
 
-    <!-- user-picker for list and board view -->
+    <!-- user-picker for board view -->
     <user-picker
       :show="userPickerOpen"
       :coordinates="popupCoords"
@@ -50,15 +50,8 @@
       @close="userPickerOpen = false"
     ></user-picker>
 
-    <!-- date-picker for list and board view -->
-    <inline-datepicker
-      :show="datePickerOpen"
-      :datetime="activeTask[datepickerArgs.field]"
-      :coordinates="popupCoords"
-      @date-updated="updateDate"
-      @close="datePickerOpen = false"
-    ></inline-datepicker>
-
+    <!-- date-picker for board view -->
+    <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false" ></inline-datepicker> -->
 
     <loading :loading="loading"></loading>
     <!-- popup notification -->
@@ -268,10 +261,15 @@ export default {
       // emitted from <task-grid>
       this.showUserPicker(payload);
     });
-    this.$nuxt.$on("date-picker", (payload) => {
+    /*this.$nuxt.$on("date-picker", (payload) => {
       // emitted from <task-grid>
       this.showDatePicker(payload);
-    });
+    });*/
+    this.$nuxt.$on("change-duedate", payload => {
+      // emitted from <task-grid>
+      // console.log(payload)
+      this.changeDate(payload)
+    })
     this.$nuxt.$on("refresh-table", () => {
         this.updateKey();
     });
@@ -1217,7 +1215,7 @@ export default {
     },
 
 
-     updateDate(value) {
+     /*updateDate(value) {
       if(this.datepickerArgs.field==="dueDate") {
           if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10)) {
                 this.changeDate(value)
@@ -1230,23 +1228,21 @@ export default {
             } else {
               this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             }
-          
         }
-      
-    },
-    changeDate(value){
-        let newDate = dayjs(value).format("D MMM YYYY");
-          this.$store
-            .dispatch("task/updateTask", {
-              id: this.activeTask.id,
-              data: { [this.datepickerArgs.field]: value },
-              user: null,
-              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-            })
-            .then((t) => {
-                this.updateKey();
-            })
-            .catch((e) => console.warn(e));
+    },*/
+    changeDate({id, field, label, value}){
+      // let newDate = dayjs(value).format("D MMM YYYY");
+      this.$store
+        .dispatch("task/updateTask", {
+          id,
+          data: { [field]: value },
+          user: null,
+          text: `changed ${label} to ${this.$formatDate(value)}`,
+        })
+        .then((t) => {
+            this.updateKey();
+        })
+        .catch((e) => console.warn(e));
     },
 
     deleteTask(task) {
@@ -1414,7 +1410,7 @@ export default {
   flex-direction: column;
   height: calc(100% - 45px);
   .calc-height {
-    height: calc(100% - 45px);
+    height: calc(100% - 50px);
   }
 }
 

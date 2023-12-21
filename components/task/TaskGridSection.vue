@@ -1,5 +1,5 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;" ref="gridTable">
+  <div id="tgs-scroll" class=" h-100 position-relative bg-light" style="min-height: 30rem;" ref="gridTable">
     <draggable :list="localdata" class="d-flex " :move="moveSection" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" :class="{'non-draggable': section.title == 'Unassigned'}" style="padding-bottom: 0px !important;">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
@@ -33,7 +33,7 @@
             </bib-popup>
           </div>
         </div>
-        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id" style="height: calc(100vh - 265px) !important;overflow: auto" @scroll="handleScroll($event,section.id)" >
+        <div class="task-section__body overflow-y-auto" :id="'tgs-task-section-body-'+section.id" style="height: calc(100vh - 265px) !important; " @scroll="handleScroll($event,section.id)" >
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
