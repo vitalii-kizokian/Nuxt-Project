@@ -899,7 +899,10 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
 
-      proj.sectionId=this.groupby=="default" ?  section.id:"_section"+this.$route.params.id
+      if(this.groupby=="default") {
+        proj.sectionId= section.id ? section.id : "_section"+this.$route.params.id
+      } 
+
       
       // proj.todoId=this.groupby ? "_section"+this.$route.params.id : section.id
       if(this.groupby == "priority"){
@@ -928,12 +931,12 @@ export default {
       this.$store.dispatch("task/createTask", {
           ...proj,
           projectId: Number(this.$route.params.id),
-          sectionId: this.groupby ? "_section"+this.$route.params.id : section.id,
+          sectionId: this.groupby=="default" ? section.id : "_section"+this.$route.params.id,
           mode: "project",
           text: `created task ${proj.title}`,
         })
         .then((t) => {
-          console.log("project",t.data)
+          // console.log("project",t.data)
           this.resetNewRow();
           this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
           // this.updateKey();

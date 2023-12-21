@@ -1249,6 +1249,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
       if (isFav) {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             this.updateKey()
             this.loading = false
           })
@@ -1259,6 +1260,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             this.updateKey()
             this.loading = false
           })

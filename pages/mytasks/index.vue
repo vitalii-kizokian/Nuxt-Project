@@ -762,7 +762,6 @@ export default {
       }
     },
     createNewTask(proj, section) {
-      // console.log(section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -779,7 +778,9 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby=="default" ? section.tasks[0]?.todoId : section.id
+      if(this.groupby=="default") {
+        proj.todoId =section.tasks&&section.tasks[0]?section.tasks[0]?.todoId: section.id
+      }
 
 
       if(this.groupby == "priority"){
