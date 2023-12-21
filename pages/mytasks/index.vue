@@ -125,6 +125,7 @@ export default {
     return {
       taskFields: USER_TASKS,
       localdata: [],
+      initialData: [],
       loading: false,
       gridType: 'list',
       viewName: null,
@@ -225,6 +226,7 @@ export default {
       localTodos.forEach(function(todo) {
         todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
+      
       this.localdata = localTodos
     },
 
@@ -288,7 +290,7 @@ export default {
         }
 
       }, 300);
-      this.$store.commit('todo/setGroupBy',"")
+      this.$store.commit('todo/setGroupBy',"default")
   },
 
   beforeDestroy(){ 
@@ -313,7 +315,7 @@ export default {
 
     // console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
-    return { localdata: response.data.data }
+    return { localdata: response.data.data, initialData: response.data.data }
     
   },
 
@@ -778,8 +780,14 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby ? section.tasks[0]?.todoId : section.id
 
+      if(this.groupby=='default') {
+        let foundTodo = this.initialData.find((el) => el.title == section.title)
+        proj.todoId = foundTodo.id
+      } else {
+        let recentlyTodo = this.initialData.find((el) => el.title == "Recently Assigned")
+        proj.todoId = recentlyTodo.id
+      }
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority

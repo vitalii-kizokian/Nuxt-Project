@@ -9,7 +9,7 @@ export const state = () => ({
   initialData:[],
   gridType:"list",
   collapseStatus:"true",
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0
 
 });
@@ -189,7 +189,7 @@ export const mutations = {
    if(payload.filter=="incomplete")
    {
      arr=arr.filter((item)=>item.statusId!==5)
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
@@ -197,19 +197,19 @@ export const mutations = {
    if(payload.filter=="complete")
    {
      arr=arr.filter((item)=>item.statusId==5)
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
    if(payload.filter=="all")
    {
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
 
   state.projects=arr
-  if (state.groupByValue == "") {
+  if (state.groupByValue == "default") {
     state.taskCount=arr.length
   } else {
     state.taskCount= arr.reduce((acc, td) => acc + td.tasks?.length, 0)
@@ -923,7 +923,7 @@ export const actions = {
       ctx.commit("setSingleProject", {
         currentProject: res.data,
       });
-      if (payload.groupBy != undefined && payload.groupBy != "") {
+      if (payload.groupBy != undefined && payload.groupBy != "default") {
         ctx.commit("groupProjects", { key: payload.groupBy});
       }
     }

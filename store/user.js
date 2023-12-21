@@ -8,7 +8,7 @@ export const state = () => ({
   initialData:[],
   userInfo:[],
   isAdmin:false,
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0,
   usersList: [],
 });
@@ -164,7 +164,7 @@ export const mutations = {
     if(payload.filter=="incomplete")
     {
       arr=arr.filter((item)=>item.statusId!==5)
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
@@ -172,19 +172,19 @@ export const mutations = {
     if(payload.filter=="complete")
     {
       arr=arr.filter((item)=>item.statusId==5)
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
     if(payload.filter=="all")
     {
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
     state.userTasks=arr
 
-    if(payload.key=="") {
+    if(payload.key=="default") {
       state.taskCount= arr?arr.length:0
       
     }
@@ -219,7 +219,7 @@ export const mutations = {
         if(payload.filter=="incomplete")
         {
           arr=arr.filter((item)=>item.statusId!==5)
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }
@@ -227,13 +227,13 @@ export const mutations = {
         if(payload.filter=="complete")
         {
           arr=arr.filter((item)=>item.statusId==5)
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }
         if(payload.filter=="all")
         {
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }

@@ -54,7 +54,7 @@
                       </span>
                       <span class="font-w-700 cursor-pointer " v-else >
                         <input type="text" class="editable-input section-title"  :value="section.title.includes('_section') ? 'Untitled section'
-                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" :disabled="section.title.includes('_section')" />
+                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" :disabled="section.title.includes('_section') || !section.isDeletable" />
                       </span>
                       <div v-if="sectionMenu" class="shape-circle width-105 height-105 bg-hover-light">
                         <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm">
@@ -529,7 +529,7 @@ export default {
     if (this.localData.length>0) {
     
         if(param=="/mytasks"){
-            if(this.myTaskGroupBy=="") 
+            if(this.myTaskGroupBy=="default") 
                 {
                       if(payload.todoId) {
                         let exist_item= this.localData.find((item)=>item.id==payload.todoId)
@@ -573,7 +573,7 @@ export default {
        this.$store.commit("project/setAddTaskCount")
        }   
        if(param.includes("/projects/")){
-        if(this.singleProjectGroupBy=="") 
+        if(this.singleProjectGroupBy=="default") 
                 {
 
                   if(this.localData.length>=0){

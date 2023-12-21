@@ -99,7 +99,7 @@ export default {
       proj.userId = this.loggedUser.Id
 
       if(this.sectionType == 'myTask'){
-        if(this.myTaskGroupBy==''){
+        if(this.myTaskGroupBy=='default'){
           proj.todoId = section.id
         }
         else {

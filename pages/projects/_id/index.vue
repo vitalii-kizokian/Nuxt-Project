@@ -310,7 +310,7 @@ export default {
 
       this.$store.dispatch("project/setSingleProject", {currentProject: p.data})
       this.$store.commit("task/setExpandVisible",true)
-      this.$store.commit('section/setGroupBy',"")
+      this.$store.commit('section/setGroupBy',"default")
       
       if(!this.project?.id){
         this.$router.push('/notfound')
