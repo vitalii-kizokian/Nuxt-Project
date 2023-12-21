@@ -709,7 +709,6 @@ export default {
     },
     updateDuedate({id, field, label, value}){
       // console.log(...arguments)
-      // return
       let newDate = new Date(value) || null
       // let data = { [field]: newDate }
 
@@ -728,10 +727,10 @@ export default {
       } else {
         console.log('no startdate-> ',newDate )
       }*/
-      console.log(newDate)
+      // console.log(newDate)
       this.$store.dispatch("task/updateTask", {
-        id: this.activeTask.id,
-        data: { [field]: newDate},
+        id,
+        data: { [field]: value},
         user: null,
         text: `changed ${label} to ${this.$formatDate(value)}`
       })
