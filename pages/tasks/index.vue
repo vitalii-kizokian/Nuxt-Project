@@ -34,6 +34,7 @@
               @section-dragend="sectionDragEnd"
               @task-dragend="taskDragEnd"
               sectionType="department"
+              :group="group"
             >
             </task-grid-section>
           </div>

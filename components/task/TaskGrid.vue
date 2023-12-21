@@ -7,8 +7,10 @@
           <span class="cursor-pointer" style="padding-top: 0.15rem;" @click.stop="markComplete(task)">
             <bib-icon icon="check-circle-solid" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
           </span>
-          <span class="flex-grow-1" :id="'task-title'+task.id" >
-           <input type="text" class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)"  @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">
+          <span class="flex-grow-1 position-relative" :id="'task-title'+task.id" >
+           <!-- <input type="text" class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)"  @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField"> -->
+           <div class="editable-input-grid">{{form.title}}</div>
+           <!-- <textarea class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField"></textarea> -->
           </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
@@ -119,10 +121,10 @@ export default {
     this.dueDate = this.task.dueDate
     this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
   },
-  updated() {
+  /*updated() {
     let ht = this.$refs.titleInput.scrollHeight
     this.$refs.titleInput.style.height = ht + 2 + 'px'
-  },
+  },*/
   methods: {
 
     openContextMenu() {
@@ -426,6 +428,11 @@ export default {
     resize: initial;
     padding-block: 0.1rem;
     min-height: 1.8rem;
+
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      display: -webkit-box;
   }
 
   .task-top,

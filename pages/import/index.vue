@@ -115,6 +115,7 @@ export default {
             importmodal: false,
             importfinish: false,
             missingMembers: [],
+            availableMembers: [],
             steps: [
                 {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                 {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
@@ -132,7 +133,7 @@ export default {
     computed: {
 
         ...mapGetters({
-            appMembers: "user/getAppMembers",
+            appMembers: "user/getTeamMembers",
         }),
 
     },
@@ -192,8 +193,21 @@ export default {
             })
 
             if (users.data.statusCode == 200) {
-              let appMemberEmails = this.appMembers.map(member => member.email); 
-              this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
+                let availMembers = []
+              this.appMembers.map(member => {
+                    if(users.data.data.includes(member.email)) {
+                        this.availableMembers.push(member)
+                        availMembers.push(member.email)
+                    } 
+                }); 
+                users.data.data.map((mem) => {
+                    if(!availMembers.includes(mem)) {
+                        this.missingMembers.push(mem)
+                    }
+                })
+            //   this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
+            //   this.availableMembers = users.data.data.filter(email => appMemberEmails.includes(email))
+              console.log( this.availableMembers, this.missingMembers, users.data.data)
 
               this.steps[0].progress = "done"
               this.steps[0].variant = "primary-24"
@@ -228,6 +242,7 @@ export default {
 
             let formdata = new FormData();
             formdata.append('file', file[0])
+            formdata.append('users', JSON.stringify(this.availableMembers))
 
             let res = await this.$axios.post("/import/project", formdata, {
                 headers: {

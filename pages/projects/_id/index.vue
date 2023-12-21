@@ -408,6 +408,7 @@ export default {
       this.$store.dispatch("project/deleteProject", this.project).then(p => {
         if (p.statusCode == 200) {
           this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" })
+          this.$store.dispatch('project/fetchFavProjects')
           this.$router.push('/projects')
         } else {
           this.popupMessages.push({ text: p.message, variant: "primary-24" });

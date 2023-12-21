@@ -242,7 +242,7 @@ import { mapGetters } from "vuex";
                       return acc;
                     }, {})
                   );
-        console.log("111",this.sortUser)
+        // console.log("111",this.sortUser)
         this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     });
        

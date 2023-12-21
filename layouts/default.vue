@@ -386,6 +386,7 @@ export default {
       //   this.navItems2[3].selected = true;
       // }
 
+
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
 
