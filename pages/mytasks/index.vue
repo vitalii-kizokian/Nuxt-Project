@@ -51,7 +51,11 @@
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
                 <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
+<<<<<<< HEAD
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" :group="groupby" @change-duedate="updateDuedate"></task-grid>
+=======
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate" :group="groupby"></task-grid>
+>>>>>>> 824b1abb334f5082137158acb0e1d2e7a61a8301
                   </template>
                  <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
@@ -125,6 +129,7 @@ export default {
     return {
       taskFields: USER_TASKS,
       localdata: [],
+      initialData: [],
       loading: false,
       gridType: 'list',
       viewName: null,
@@ -225,6 +230,7 @@ export default {
       localTodos.forEach(function(todo) {
         todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
+      
       this.localdata = localTodos
     },
 
@@ -288,7 +294,7 @@ export default {
         }
 
       }, 300);
-      this.$store.commit('todo/setGroupBy',"")
+      this.$store.commit('todo/setGroupBy',"default")
   },
 
   beforeDestroy(){ 
@@ -313,7 +319,7 @@ export default {
 
     // console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
-    return { localdata: response.data.data }
+    return { localdata: response.data.data, initialData: response.data.data }
     
   },
 
@@ -777,10 +783,17 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      if(this.groupby=="default") {
-        proj.todoId =section.tasks&&section.tasks[0]?section.tasks[0]?.todoId: section.id
-      }
+      // if(this.groupby=="default") {
+      //   proj.todoId =section.tasks&&section.tasks[0]?section.tasks[0]?.todoId: section.id
+      // }
 
+      if(this.groupby=='default') {
+        let foundTodo = this.initialData.find((el) => el.title == section.title)
+        proj.todoId = foundTodo.id
+      } else {
+        let recentlyTodo = this.initialData.find((el) => el.title == "Recently Assigned")
+        proj.todoId = recentlyTodo.id
+      }
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority

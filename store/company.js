@@ -7,7 +7,7 @@ export const state = () => ({
   sortOrder: "asc",
   initialAllTasks:[],
   tags: [],
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0
 
 });

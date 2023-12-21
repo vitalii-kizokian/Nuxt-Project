@@ -48,6 +48,10 @@
                             <h4>Missing member(s) from import</h4>
                             <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
                         </div>
+                        <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class="of-scroll-y mt-1" style="max-height: 400px">
+                            <h4>Available member(s) To import</h4>
+                            <p v-for="(am, index) in availableMembers"> {{index+1}}. {{am.email}}</p>
+                        </div>
                     </template>
 
                     <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
@@ -164,6 +168,7 @@ export default {
         closeModal(){
             this.importmodal = false
             this.missingMembers = []
+            this.availableMembers = []
             this.importfinish = false
             this.importError = false
             this.steps = [
@@ -205,9 +210,6 @@ export default {
                         this.missingMembers.push(mem)
                     }
                 })
-            //   this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
-            //   this.availableMembers = users.data.data.filter(email => appMemberEmails.includes(email))
-              console.log( this.availableMembers, this.missingMembers, users.data.data)
 
               this.steps[0].progress = "done"
               this.steps[0].variant = "primary-24"

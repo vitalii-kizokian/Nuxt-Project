@@ -4,7 +4,7 @@ export const state = () => ({
   sections: [],
   projectSections: [],
   initialSections:[],
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0
 
 });
