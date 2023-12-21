@@ -537,7 +537,9 @@ export default {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "primary-24" })
-            this.updateKey()
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
@@ -548,7 +550,9 @@ export default {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "primary-24" })
-            this.updateKey()
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
