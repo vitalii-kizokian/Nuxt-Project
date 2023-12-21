@@ -386,9 +386,6 @@ export default {
       //   this.navItems2[3].selected = true;
       // }
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTcwMjU2MTI4OTQ4MiwiZXhwIjoxNzEwMzM3Mjg5NDgyLCJqdGkiOiI5NGFjYjAxNS1iNTBhLTRkNTgtYmY0MC1hZTliM2Q2ZDMzYmMifQ.pOeazHFNUpUMhJuDFK9UPRLRblzT-ngIKIXvrT12JFM";
-
-      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
