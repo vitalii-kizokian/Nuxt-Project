@@ -178,7 +178,6 @@ export default {
       deleteBtnHover: false,
       projectDesc: null,
       projectDeleteConfirm: false,
-      user: null,
       skeleton: true,
     }
   },
@@ -208,12 +207,12 @@ export default {
         } 
       } 
     },
-    $route: {
+    /*$route: {
       handler(to, from){
         console.log(to.params)
       },
       immediate: true
-    }
+    }*/
   },
 
   computed: {
@@ -273,7 +272,6 @@ export default {
   async asyncData({$axios, app, params, store}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
-    const user = store.getters['user/getUser']
     try {
 
       const proj = await $axios.$get(`/project/${params.id}`, {
@@ -284,10 +282,10 @@ export default {
 
       store.dispatch('project/setProject', proj)
       
-      return { project: proj.data, projectTitle: proj.data?.title, user: user }
+      return { project: proj.data, projectTitle: proj.data?.title }
       
     } catch(err) {
-      return { project: null, projectTitle: null, user: null }
+      return { project: null, projectTitle: null }
     }
 
   },
@@ -295,10 +293,10 @@ export default {
   async mounted() {
     if (process.client) {
 
-      // console.log(this.project.companyId, this.user.subb)
+      // console.log(this.project.companyId, this.user2.BusinessId)
       if (this.project) {
 
-        if (this.project?.companyId != this.user.subb) {
+        if (this.project?.companyId != this.user2.BusinessId) {
           this.$router.push('/notfound')
           return
         } else {
@@ -310,9 +308,9 @@ export default {
           let ut = await this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id, userId: this.project?.userId ? this.project?.userId : null })
 
           let ptm = null
-          ptm = ut.find(u => u.id == this.user.sub)
+          ptm = ut.find(u => u.id == this.user2.Id)
 
-          if (ptm || this.user.subr == 'ADMIN') {
+          if (ptm || this.user2.Role == 'ADMIN') {
             // console.info('user has access!')
             this.skeleton = false
           } else {
@@ -329,14 +327,16 @@ export default {
           this.$store.commit('section/setGroupBy', "default")
 
           // this.canDeleteProject()
-          if (this.project?.userId == this.user.sub || this.user.subr == 'ADMIN' ) {
+          if (this.project?.userId == this.user2.Id || this.user2.Role == 'ADMIN' ) {
             this.cdp = true
             return true;
           } else {
             this.cdp = false
             return false
           }
-            
+          
+          this.skeleton = false
+          
           // this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
           setTimeout(() => {
             if(localStorage.getItem('singlegrid')!=null){

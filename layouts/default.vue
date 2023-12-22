@@ -386,15 +386,6 @@ export default {
       //   this.navItems2[3].selected = true;
       // }
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTY0MDk1MjkwMTYsImV4cCI6MTcwNDE4NTUyOTAxNiwianRpIjoiNzZhZGIwMWEtMmVlMy00YTAzLWJhZGMtMjU5NGQ0YThmODE2In0.7yryx4JhYce42qtAdTQlbl9dglpcalfWYQdYVsMIJs8"
-
-      // bbbtest (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FZTWRuamsyIiwic3ViZSI6ImJiYnRlc3RAbWFpbGluYXRvci5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6InFMa3pQZHlQMGpXYlFyb3YiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJJbmRpYSIsImVudiI6ImRldiIsImlhdCI6MTcwMTk0ODg0MjczMywiZXhwIjoxNzA5NzI0ODQyNzMzLCJqdGkiOiJjOWJlNWQ4MC1kYjAzLTQ3YzEtYjcxYy0wZTIzNzYwNWU3Y2QifQ.WkxX5YGODEbnkvOzHRjveKUSC0SGljF4kKCnQnS_Rik"
-
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3TkpBUGRSNlJaemRHeU9YIiwic3ViZSI6ImNjY3Rlc3RAbWFpbGluYXRvci5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6InFMa3pQZHlQMGpXYlFyb3YiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkluZGlhIiwiZW52IjoiZGV2IiwiaWF0IjoxNzAxOTMwNDM4MTA4LCJleHAiOjE3MDk3MDY0MzgxMDgsImp0aSI6ImZmZGU2MDU4LTRlNTUtNDQ5NS04ZjZjLWE5ZjM4MmQyMjllMSJ9.xyctSfy_ZzXc54EsCjUG8gJXf3PEtszKp3M_h6OG4PE"
-
-      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
-
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
 
@@ -419,7 +410,7 @@ export default {
         }
 
         localStorage.setItem("user", JSON.stringify(user));
-        this.$store.dispatch("user/setUser", user);
+        // this.$store.dispatch("user/setUser", user);
 
         this.$axios
           .get(`${process.env.USER_API_ENDPOINT}/${user.sub}`, {

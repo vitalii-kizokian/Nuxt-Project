@@ -38,16 +38,6 @@ export const actions = {
         
         let token = app.$cookies.get('b_ssojwt')
         commit('setToken', token);
-        // extract user
-        var base64Url = token.split(".")[1];
-        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-         
-        const buffer = Buffer.from(base64, 'base64');
-        const jsonPayload = buffer.toString('utf-8'); 
-         
-        const payloadObject = JSON.parse(jsonPayload);
-
-        store.dispatch("user/setUser", payloadObject);
 
         if (app.$cookies.get("isLightTheme")) {
             commit("setIsLightTheme", app.$cookies.get("isLightTheme"));
