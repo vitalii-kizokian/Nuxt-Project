@@ -131,6 +131,22 @@ export default {
   },
   ssr: true,
   target: "static",
+  auth: {
+    plugins: ["~/plugins/authentication"],
+    redirect: {
+      login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL,
+      callback: false,
+      home: false,
+    },
+    strategies: {
+      local: {
+        autoFetchUser: false,
+        tokenName: "Authorization",
+        required: true,
+        tokenType: "Bearer",
+      },
+    },
+  },
   /*auth: {
     plugins: ["~/plugins/authentication"],
     redirect: {
