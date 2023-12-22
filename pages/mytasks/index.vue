@@ -51,11 +51,7 @@
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
                 <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
-<<<<<<< HEAD
-                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" :group="groupby" @change-duedate="updateDuedate"></task-grid>
-=======
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate" :group="groupby"></task-grid>
->>>>>>> 824b1abb334f5082137158acb0e1d2e7a61a8301
                   </template>
                  <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
