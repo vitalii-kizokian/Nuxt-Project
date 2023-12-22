@@ -57,7 +57,7 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
-      groupBy:MY_TASK_GROUP,
+      groupBy: MY_TASK_GROUP,
       sorting: USER_TASK_SORT,
       searchText: ""
     };

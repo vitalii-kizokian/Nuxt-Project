@@ -35,6 +35,7 @@ export default {
   props: {
     section: { type: Object },
     sectionType: { type: String },
+    initialData: Array,
   },
   computed: {
     ...mapGetters({
@@ -99,15 +100,22 @@ export default {
       proj.userId = this.loggedUser.Id
 
       if(this.sectionType == 'myTask'){
-        if(this.myTaskGroupBy=='default'){
+        if(this.myTaskGroupBy == 'default') {
+          let foundTodo = this.initialData.find((el) => el.title == section.title)
+          proj.todoId = foundTodo.id
+        } else {
+          let recentlyTodo = this.initialData.find((el) => el.title == "Recently Assigned")
+          proj.todoId = recentlyTodo.id
+        }
+        /*if(this.myTaskGroupBy == 'default'){
           proj.todoId = section.id
         }
         else {
           proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:null
-        }
+        }*/
         
       } 
-      if(this.sectionType=="department") {
+      if(this.sectionType == "department") {
         proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:null
         proj.sectionId=section.tasks[0]?.sectionId
       }
@@ -187,7 +195,6 @@ export default {
       if(this.sectionType=="singleProject"){
         this.createNewTask(this.section, this.singleProjectGroupBy)
       }
-
 
     }, 1200),
   },
