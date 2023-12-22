@@ -46,7 +46,6 @@ export const actions = {
         const jsonPayload = buffer.toString('utf-8'); 
          
         const payloadObject = JSON.parse(jsonPayload);
-        // console.log(payloadObject)
 
         store.dispatch("user/setUser", payloadObject);
 
