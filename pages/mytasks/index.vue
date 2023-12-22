@@ -632,7 +632,7 @@ export default {
           text: historyText
         })
           .then(t => {
-            this.updateKey()
+            // this.updateKey()
           })
           .catch(e => console.warn(e))
       }

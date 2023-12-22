@@ -641,8 +641,9 @@ export default {
           });
           return { ...items, tasks: updatedTasks };
         });
-
-        this.changeGroupByFunc()
+          if(this.singleProjectGroupBy!="default"|| this.myTaskGroupBy!="default") {
+            this.changeGroupByFunc()
+          }
   
         this.modifyDateFormat(this.localData)
       }
@@ -665,7 +666,6 @@ export default {
        return;
        } 
        if(this.$route.fullPath.includes("/projects/")&&this.singleProjectGroupBy!="default"){
-
        this.localData=this.$groupBy( this.localData,this.singleProjectGroupBy)
     
        return;
@@ -1012,7 +1012,9 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
         this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
         this.localData= this.localData.map((items)=>{
@@ -1026,7 +1028,9 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
 
         this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done",item })
       }
@@ -1043,7 +1047,9 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
           this.changeGroupByFunc()
+        }
  
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item })
 
@@ -1060,10 +1066,13 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
       this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed Priority to ${priority.label}`, item })
     },
     updateDifficulty(difficulty, item) {
+
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
@@ -1075,10 +1084,13 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
       this.$emit("update-field", { id: item.id, field: "difficultyId", value: difficulty.value, label: "Difficulty", historyText: `changed Difficulty to ${difficulty.label}`, item })
     },
     updateDept(dept, item){
+
       // console.log(dept, item)
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
@@ -1091,10 +1103,13 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed Department to ${dept.label}`, item })
     },
     updateAssignee(user, item) {
+
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
@@ -1106,13 +1121,13 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `changed Assignee to ${user.label}`, item })
     },
     updateDate(d, item, sectionIdx, itemIdx, field, label) {
       // console.log(...arguments)
-      // let d = new Date(date)
-      // this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('D MMM YYYY')}`, item: item})
       let jd = new Date(d);
 
       if (field == "startDate" ) {
@@ -1130,10 +1145,8 @@ export default {
             DueDateUTC.setUTCHours(0, 0, 0, 0);
 
         if (item.dueDate &&selectedDateUTC.getTime() > DueDateUTC.getTime() ) {
-          // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
-          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
@@ -1151,7 +1164,9 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
 
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
           return;
@@ -1166,10 +1181,8 @@ export default {
             startDateUTC.setUTCHours(0, 0, 0, 0);
 
         if (item.startDate && selectedDateUTC.getTime() < startDateUTC.getTime() ) {
-          // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )
@@ -1184,7 +1197,9 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.changeGroupByFunc()
+        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+          this.changeGroupByFunc()
+        }
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
         }
       }
