@@ -1,16 +1,17 @@
 <template>
   <client-only>
-    <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
+    <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)" v-click-outside="() => editTitle = false">
       <!-- <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
       <div class="task-top justify-between" :id="'tg-top-wrap'+ task.id">
-        <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
+        <div class="d-flex flex-grow-1" :id="'task-card-inside-wrap'+task.id">
           <span class="cursor-pointer" style="padding-top: 0.15rem;" @click.stop="markComplete(task)">
             <bib-icon icon="check-circle-solid" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
           </span>
           <span class="flex-grow-1 position-relative" :id="'task-title'+task.id" >
            <!-- <input type="text" class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)"  @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField"> -->
-           <div class="editable-input-grid">{{form.title}}</div>
-           <!-- <textarea class="editable-input-grid" ref="titleInput" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField"></textarea> -->
+           <div class="editable-input-div py-01 px-025" v-show="!editTitle" @click.stop="makeEditable">{{form.title}}</div>
+           <!-- <input type="hidden" v-model="form.title"> -->
+           <textarea class="editable-input-grid" v-show="editTitle" ref="titleInput" @focus="textAreaAdjust" @keyup="textAreaAdjust" v-model="form.title" v-on:click.stop="$emit('open-sidebar', task)" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" @blur="restoreField"></textarea>
           </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
@@ -92,6 +93,7 @@ export default {
       format: "D MMM YYYY",
       dueDate: null,
       formattedDuedate: null,
+      editTitle: false,
     };
   },
   computed: {
@@ -115,6 +117,7 @@ export default {
     form() {
       return _.cloneDeep(this.task)
     },
+
     
   },
   mounted(){
@@ -126,7 +129,19 @@ export default {
     this.$refs.titleInput.style.height = ht + 2 + 'px'
   },*/
   methods: {
-
+    textAreaAdjust(event) {
+      // console.log(event.target)
+      let element = event.target
+      element.style.height = "1px";
+      element.style.height = (8 + element.scrollHeight) + "px";
+    },
+    makeEditable(){
+      this.editTitle = true;
+      this.$emit('open-sidebar', this.task)
+      process.nextTick(() => {
+        this.$refs["titleInput"].focus()
+      });
+    },
     openContextMenu() {
       let isFav = this.favTasks.some((f) => f.taskId == this.task.id)
       if (isFav) {
@@ -190,6 +205,7 @@ export default {
         event.target.value = this.form.title
         event.target.classList.remove("error")
       }
+      this.editTitle = false
     },
 
     debounceUpdate: _.debounce(function(label, field, value, $event) {
@@ -409,7 +425,7 @@ export default {
   }
 
   &.active {
-    box-shadow: 0 0 0 2px $gray5 inset;
+    box-shadow: 0 0 0 2px $primary-sub1 inset;
   }
   &:hover {
     border-color: $primary-sub1;
@@ -428,11 +444,16 @@ export default {
     resize: initial;
     padding-block: 0.1rem;
     min-height: 1.8rem;
+    height: auto;
+    overflow: auto;
+  }
+  .editable-input-div {
+    font-size: $base-size;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
 
-      overflow: hidden;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
-      display: -webkit-box;
   }
 
   .task-top,
