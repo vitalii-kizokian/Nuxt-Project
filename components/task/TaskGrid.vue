@@ -3,7 +3,7 @@
     <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)" v-click-outside="() => editTitle = false">
       <!-- <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
       <div class="task-top justify-between" :id="'tg-top-wrap'+ task.id">
-        <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
+        <div class="d-flex flex-grow-1" :id="'task-card-inside-wrap'+task.id">
           <span class="cursor-pointer" style="padding-top: 0.15rem;" @click.stop="markComplete(task)">
             <bib-icon icon="check-circle-solid" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
           </span>
