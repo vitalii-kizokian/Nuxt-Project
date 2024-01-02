@@ -82,6 +82,20 @@
       </template>
     </bib-modal-wrapper>
 
+    <!-- delete confirm -->
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="taskDeleteConfirm = false">
+        <template slot="content">
+          <p>Are you sure?</p>
+          <loading :loading="loading"></loading>
+        </template>
+        <template slot="footer">
+            <div v-show="!loading" class="justify-between gap-1">
+              <bib-button label="Cancel" variant="secondary" pill @click="taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click="deleteTask"></bib-button>
+            </div>
+        </template>
+      </bib-modal-wrapper>
+
     <!-- section rename modal -->
     <!-- <bib-modal-wrapper
       v-if="renameModal"
@@ -195,6 +209,7 @@ export default {
       sectionConfirmModal: false,
       sectionToDelete: {},
       retainTasks: null,
+      taskDeleteConfirm: false
     };
   },
   computed: {
@@ -307,7 +322,9 @@ export default {
           this.setFavorite(item);
           break;
         case "delete-task":
-          this.deleteTask(item);
+          // this.deleteTask(item);
+          this.taskDeleteConfirm = true
+          this.taskToDelete = item
           break;
         case "copy-task":
           this.copyTaskLink(item);
@@ -1246,12 +1263,12 @@ export default {
     },
 
     deleteTask(task) {
-      if (task) {
+      if (this.taskToDelete) {
         this.$store
-          .dispatch("task/deleteTask", task)
+          .dispatch("task/deleteTask", this.taskToDelete)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
+              this.$nuxt.$emit("delete_update_table",this.taskToDelete,this.$route.fullPath)
               // this.updateKey(t.message);
               // this.taskToDelete = {};
             } else {
@@ -1261,6 +1278,10 @@ export default {
           })
           .catch((e) => {
             console.warn(e);
+          })
+          .then(() => {
+            this.taskToDelete = {}
+            this.taskDeleteConfirm = false
           });
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" });
