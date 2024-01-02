@@ -168,7 +168,7 @@ export default ({ store, app, context }, inject) => {
               acc[department].push(task);
               return acc;
             }, {});
-            console.log("groupByDepartment",groupByDepartment)
+            // console.log("groupByDepartment",groupByDepartment)
             let groupIndex = 0;
             for (const key in groupByDepartment) {
               _tasks.push({

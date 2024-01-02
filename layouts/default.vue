@@ -68,7 +68,7 @@
           >
             <template v-slot:content>
               <bib-app-navigation
-                :items="favProjects"
+                :items="favProjectsNav"
                 @click="goToProject"
               ></bib-app-navigation>
             </template>
@@ -198,7 +198,7 @@ export default {
         /*{
           label: "Home",
           icon: "home-solid",
-          key: "dashboard-route",
+          key: "dashboard",
           selected: false,
         },*/
         {
@@ -224,13 +224,13 @@ export default {
         {
           label: "Tasks",
           icon: "check-all",
-          key: "task-route",
+          key: "tasks",
           selected: false,
         },
         {
           label: "Projects",
           icon: "briefcase-solid",
-          key: "project-route",
+          key: "projects",
           selected: false,
         },
       ],
@@ -271,10 +271,50 @@ export default {
       sortCompleteTasks:[],
       sortAllTasks:[],
       teamMembers:[],
+      favProjectsNav: [],
       unassignedTasks: null,
       isLight: true,
     };
   },
+
+  computed: {
+    ...mapGetters({
+      favProjects: "project/getFavProjects",
+      appMembers: "user/getAppMembers",
+      user2: "user/getUser2",
+      expandVisible:"task/getExpandVisible",
+      sidebar: "task/getSidebarVisible",
+    }),
+    isLightTheme() {
+      return this.$store.state.isLightTheme;
+    },
+  },
+
+  watch: {
+    appMembers(newVal){
+      this.teamMembers = newVal
+      process.nextTick(() => {
+        if (this.$route.path.includes("/usertasks")) {
+          this.teamMembers.map(u => {
+            u.id == this.$route.params.id ? u.selected = true : u.selected = false
+          })
+        }
+      });
+    },
+    favProjects(newVal){
+      this.favProjectsNav = newVal
+      process.nextTick(()=>{
+        if (this.$route.path.includes("/projects/")) {
+          this.highlightFavProj()
+        }
+      });
+    },
+    $route (to, from){
+      // console.log(to.path)
+      this.highlightRoute(to.path)
+    }
+  },
+
   created() {
     
     this.isLight = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
@@ -349,42 +389,8 @@ export default {
   },
   mounted() {
     if (process.client) {
-      
-      if (this.$router.history.current.fullPath == "/inbox") {
-        this.navItems1[0].selected = true;
-      }
 
-      if (this.$router.history.current.fullPath == "/mytasks") {
-        this.navItems1[1].selected = true;
-      }
-
-      if (this.$router.history.current.fullPath == "/favorites") {
-        this.navItems1[2].selected = true;
-      }
-
-    if(!this.isAdmin) {
-      if (this.$router.history.current.fullPath == "/tasks") {
-        this.navItems2[0].selected = true;
-      }
-
-      if (this.$router.history.current.fullPath == "/projects") {
-        setTimeout(() => {
-          this.navItems2[1].selected = true;
-        }, 500);
-      }
-    } else {
-      if (this.$router.history.current.fullPath == "/projects") {
-        this.navItems2[0].selected = true;
-      }
-    }
-
-      // if (this.$router.history.current.fullPath == '/goals') {
-      //   this.navItems2[2].selected = true;
-      // }
-
-      // if (this.$router.history.current.fullPath == '/dreams') {
-      //   this.navItems2[3].selected = true;
-      // }
+      this.highlightRoute(this.$router.history.current.fullPath)
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
@@ -475,30 +481,40 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters({
-      favProjects: "project/getFavProjects",
-      appMembers: "user/getAppMembers",
-      user2: "user/getUser2",
-      expandVisible:"task/getExpandVisible",
-      sidebar: "task/getSidebarVisible",
-    }),
-    isLightTheme() {
-      return this.$store.state.isLightTheme;
-    },
-  },
-  watch: {
-    appMembers(newVal){
-      this.teamMembers=newVal
-    },
- },
   methods: {
 
-    isRouteActive(id) {
-      if (this.$route.path.includes(id)) {
-        return true;
-      } else {
-        return false;
+    highlightRoute(path) {
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+        if (path.includes("/"+this.navItems1[i].key)) {
+          this.navItems1[i].selected = true;
+        } else {
+          this.navItems1[i].selected = false;
+        }
+      }
+
+      for (let i = 0; i < this.navItems2.length; i++) {
+        if (path.includes("/"+this.navItems2[i].key)) {
+          this.navItems2[i].selected = true;
+        } else {
+          this.navItems2[i].selected = false;
+        }
+      }
+
+      if (path.includes("/projects/")) {
+        this.highlightFavProj()
+      }
+
+      this.navKey++;
+    },
+
+    highlightFavProj(){
+      for (let i = 0; i < this.favProjectsNav.length; i++) {
+        if (this.$route.params.id == this.favProjectsNav[i].id) {
+          this.favProjectsNav[i].selected = true;
+        } else {
+          this.favProjectsNav[i].selected = false;
+        }
       }
     },
 
@@ -510,73 +526,22 @@ export default {
     },
 
     goToRoute(event, item) {
-      this.appMembers.map((u) => (u.selected = false));
-      this.navKey++;
-
-      for (let i = 0; i < this.navItems1.length; i++) {
-        if (this.navItems1[i].key == item.key) {
-          this.navItems1[i].selected = true;
-        } else {
-          this.navItems1[i].selected = false;
-        }
-      }
-
-      for (let i = 0; i < this.navItems2.length; i++) {
-        if (this.navItems2[i].key == item.key) {
-          this.navItems2[i].selected = true;
-        } else {
-          this.navItems2[i].selected = false;
-        }
-      }
-
-      if (item.key == "dashboard-route") this.$router.push("/dashboard");
-      if (item.key == "project-route") this.$router.push("/projects");
-      if (item.key == "favorites") this.$router.push("/favorites");
-      if (item.key == "task-route") this.$router.push("/tasks");
-      if (item.key == "mytasks") this.$router.push("/mytasks");
-      if (item.key == "inbox") this.$router.push("/inbox");
+      this.teamMembers.map((u) => (u.selected = false));
+      this.$router.push("/"+item.key)
+      
     },
 
     goToProject($event, item) {
       this.$router.push("/projects/" + item.id);
-
-      for (let i = 0; i < this.navItems1.length; i++) {
-        this.navItems1[i].selected = false;
-      }
-
-      for (let i = 0; i < this.navItems2.length; i++) {
-        this.navItems2[i].selected = false;
-      }
-
-      if(!this.isAdmin) {
-        this.navItems2[0].selected = true;
-      } else {
-        this.navItems2[1].selected = true;
-      }
-
     },
 
     goToUsertask($event, item) {
-      // this.teammate.find((u) => u.email == item.email);
 
-      this.appMembers.map((u) => {
-        if (u.email == item.email) {
-          u.selected = true;
-        } else {
-          u.selected = false;
-        }
-      });
-
-      for (let i = 0; i < this.navItems1.length; i++) {
-        this.navItems1[i].selected = false;
-      }
-
-      for (let i = 0; i < this.navItems2.length; i++) {
-        this.navItems2[i].selected = false;
-      }
+      this.teamMembers.map(u => {
+        u.id == item.id ? u.selected = true : u.selected = false
+      })
 
       this.navKey++;
-      // localStorage.setItem('user-page-query', JSON.stringify({id: item.id}) )
       let id = item.id;
       this.$router.push({ path: `/usertasks/${id}` });
     },
