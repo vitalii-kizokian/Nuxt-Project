@@ -9,7 +9,8 @@
     </div>
     <div v-show="show" class="picker-content p-025" id="select-two-content">
       <p id="select-two-heading" class="font-sm text-left p-025 border-bottom-light">{{title}}</p>
-      <div class="picker-list-wrap " style="max-height: 16rem; overflow-y: auto; overflow-x: clip; " id="select-two-list-wrap">
+      <!-- <div class="picker-list-wrap " style="max-height: 16rem; overflow-y: auto; overflow-x: clip; " id="select-two-list-wrap"> -->
+      <div class="picker-list-wrap " id="select-two-list-wrap">
         <input v-show="search" type="text" v-model="filterKey" ref="selectFilterInput" class="picker-input ">
         <ul class="m-0 p-0 text-left" id="select-two-list">
           <li v-for="(opt, index) in filtered" :id="'dept-select-list-'+index" :key="opt.index" class="p-025 pr-05 align-center gap-05 font-md cursor-pointer bg-hover-light text-hover-dark" :class="{'bg-light': opt.value == localData}" @click.stop="selected(opt)">
