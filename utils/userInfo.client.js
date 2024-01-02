@@ -6,7 +6,7 @@ export default ({ store }, inject) => {
       if (u) {
         return {...u, Name: `${u.FirstName} ${u.LastName}`}
       }
-      return { ...u, Name: ''}
+      return { ...u, Name: 'Deleted User'}
     } else {
       return { Name: "no user found" }
     }
