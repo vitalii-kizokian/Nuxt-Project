@@ -632,7 +632,7 @@ export default {
           text: historyText
         })
           .then(t => {
-            this.updateKey()
+            // this.updateKey()
           })
           .catch(e => console.warn(e))
       }
@@ -763,7 +763,6 @@ export default {
       }
     },
     createNewTask(proj, section) {
-      // console.log(section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -780,6 +779,9 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
+      // if(this.groupby=="default") {
+      //   proj.todoId =section.tasks&&section.tasks[0]?section.tasks[0]?.todoId: section.id
+      // }
 
       if(this.groupby=='default') {
         let foundTodo = this.initialData.find((el) => el.title == section.title)

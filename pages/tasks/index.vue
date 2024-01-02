@@ -418,8 +418,8 @@ export default {
         user = null;
       }
  
-      if (payload.item.project && payload.item.project?.length > 0) {
-        projectId = payload.item.project[0].project.id || payload.item.project[0].project.id;
+      if (payload.item.project &&payload.item.project[0]&& payload.item.project?.length > 0) {
+        projectId = payload.item.project?.[0].project?.id || payload.item.project?.[0].project?.id;
       } else {
         projectId = null;
       }

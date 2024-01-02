@@ -813,9 +813,8 @@ export default {
     
     async SingleProjectGroup($event) {
 
-      // this.groupby=$event
+      this.groupby=$event
       if($event != 'default') {
-        this.groupby=$event
         this.dragTable = false;
       } else {
         this.groupby='default'
@@ -902,6 +901,7 @@ export default {
       if(this.groupby=="default") {
         proj.sectionId= section.id ? section.id : "_section"+this.$route.params.id
       } 
+
       
       // proj.todoId=this.groupby ? "_section"+this.$route.params.id : section.id
       if(this.groupby == "priority"){

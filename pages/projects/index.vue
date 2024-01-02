@@ -536,7 +536,10 @@ export default {
       if (isFav) {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
-            this.updateKey()
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
@@ -546,7 +549,10 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
-            this.updateKey()
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
@@ -558,7 +564,6 @@ export default {
     
     
     updateProject(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       let user
 
@@ -620,7 +625,7 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          // console.log("update",t)
+          console.log("update",t)
           if(t.statusCode == 200){
             if(this.groupBy == 'default'){
               // this.updateKey()
