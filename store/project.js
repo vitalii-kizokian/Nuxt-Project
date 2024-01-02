@@ -905,21 +905,13 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    if (res.statusCode == 200) {
-      
+    
+    if (res.statusCode == 200) {  
       ctx.commit("setSingleProject", {
         currentProject: res.data,
       });
-// <<<<<<< HEAD
-      // if (payload.groupBy != undefined && payload.groupBy != "") {
-      //   ctx.commit("groupProjects", { key: payload.groupBy});
-      // }
-// =======
-//       if (payload.groupBy != undefined && payload.groupBy != "default") {
-//         ctx.commit("groupProjects", { key: payload.groupBy});
-//       }
-// >>>>>>> 824b1abb334f5082137158acb0e1d2e7a61a8301
     }
+
     return res
   },
 
