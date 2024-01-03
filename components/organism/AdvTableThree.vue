@@ -641,9 +641,14 @@ export default {
           });
           return { ...items, tasks: updatedTasks };
         });
-          if(this.singleProjectGroupBy!="default"|| this.myTaskGroupBy!="default") {
-            this.changeGroupByFunc()
-          }
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
+          this.changeGroupByFunc()
+        }
   
         this.modifyDateFormat(this.localData)
       }
@@ -1012,9 +1017,15 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
+       
         this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
         this.localData= this.localData.map((items)=>{
@@ -1028,7 +1039,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
 
@@ -1047,7 +1063,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
  
@@ -1066,7 +1087,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
       this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed Priority to ${priority.label}`, item })
@@ -1084,7 +1110,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
       this.$emit("update-field", { id: item.id, field: "difficultyId", value: difficulty.value, label: "Difficulty", historyText: `changed Difficulty to ${difficulty.label}`, item })
@@ -1103,7 +1134,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed Department to ${dept.label}`, item })
@@ -1121,7 +1157,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `changed Assignee to ${user.label}`, item })
@@ -1164,7 +1205,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
 
@@ -1197,7 +1243,12 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
