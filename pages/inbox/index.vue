@@ -3,6 +3,9 @@
     <div id="inbox-wrapper" class="inbox-wrapper  h-100">
       <main v-if="combinedInbox" class="position-relative">
         <page-title title="Inbox" ></page-title>
+        <div class="task-actions border-bottom-light py-025 px-025">
+          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="toggleSidebar"></bib-button>
+        </div>
         <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
         <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
           <!-- <template v-if="activeTab == 'inbox'"> -->
@@ -61,6 +64,9 @@
       </aside>
       <div v-else class="flex-grow-1 ">
         <page-title title="Inbox" ></page-title>
+        <div class="task-actions border-bottom-light py-025 px-025">
+          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="toggleSidebar"></bib-button>
+        </div>
         <no-data class="mt-3"></no-data>
       </div>
     </div>
@@ -113,7 +119,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      inboxState: 'inbox/getInbox'
+      inboxState: 'inbox/getInbox',
+      user: "user/getUser",
     }),
     combinedInbox() {
 
@@ -344,6 +351,10 @@ export default {
         .catch(e => {
           console.warn(e)
         })
+    },
+
+    toggleSidebar() {
+      this.$nuxt.$emit("open-sidebar", {userId: this.user.sub});
     },
 
     /*refreshTask(task) {

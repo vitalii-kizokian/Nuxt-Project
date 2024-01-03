@@ -304,9 +304,7 @@ export default {
     favProjects(newVal){
       this.favProjectsNav = newVal
       process.nextTick(()=>{
-        if (this.$route.path.includes("/projects/")) {
-          this.highlightFavProj()
-        }
+        this.highlightFavProj()
       });
     },
     $route (to, from){
@@ -501,9 +499,7 @@ export default {
         }
       }
 
-      if (path.includes("/projects/")) {
-        this.highlightFavProj()
-      }
+      this.highlightFavProj()
 
       this.navKey++;
     },

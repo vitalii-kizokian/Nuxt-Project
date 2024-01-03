@@ -15,7 +15,7 @@
           </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
-          <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark" @click="openContextMenu()">
+          <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark" @click.native.stop="openContextMenu()">
             <template v-slot:menu>
               <div class="list box-shadow" :id="'task-list'+task.id">
                 <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " @click.stop="contextItemClick(item)">
@@ -55,6 +55,20 @@
           </bib-popup-notification>
         </template>
       </bib-popup-notification-wrapper>
+
+      <!-- delete confirm -->
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="() => taskDeleteConfirm = false">
+        <template slot="content">
+          <p>Are you sure?</p>
+          <loading :loading="loading"></loading>
+        </template>
+        <template slot="footer">
+            <div v-show="!loading" class="justify-between gap-1">
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click.native.stop="deleteTask"></bib-button>
+            </div>
+        </template>
+      </bib-modal-wrapper>
       <!-- confirm delete task -->
       <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
       <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
@@ -94,6 +108,7 @@ export default {
       dueDate: null,
       formattedDuedate: null,
       editTitle: false,
+      taskDeleteConfirm: false
     };
   },
   computed: {
@@ -315,8 +330,8 @@ export default {
     //   }
     // },
     deleteTask(task) {
-      if (task) {
-        this.$store.dispatch("task/deleteTask", task)
+      if (this.taskToDelete) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
         .then(t => {
           if (t.statusCode == 200) {
             this.popupMessages.push({ text: t.message, variant: "primary-24" })
@@ -328,6 +343,10 @@ export default {
         })
         .catch(e => {
           console.warn(e)
+        })
+        .then(() => {
+          this.taskToDelete = {}
+          this.taskDeleteConfirm = false
         })
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
@@ -365,7 +384,9 @@ export default {
       
           break;
         case 'delete-task':
-          this.deleteTask(this.task)
+          // this.deleteTask(this.task)
+          this.taskDeleteConfirm = true
+          this.taskToDelete = this.task
           break;
         case 'copy-task':
           this.copyTaskLink(this.task)

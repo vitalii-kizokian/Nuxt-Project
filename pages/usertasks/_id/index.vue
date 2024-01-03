@@ -51,6 +51,20 @@
           </div>
         </div>
       </div> -->
+
+      <!-- delete confirm -->
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="() => taskDeleteConfirm = false">
+        <template slot="content">
+          <p>Are you sure?</p>
+          <loading :loading="loading"></loading>
+        </template>
+        <template slot="footer">
+            <div v-show="!loading" class="justify-between gap-1">
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click.native.stop="deleteTask"></bib-button>
+            </div>
+        </template>
+      </bib-modal-wrapper>
         
       <alert-dialog
         v-show="alertDialog"
@@ -128,8 +142,8 @@ export default {
       filterData:'all',
       taskToDelete: {},
       sortName: 'priority',
-      lazyComponent:false
-
+      lazyComponent:false,
+      taskDeleteConfirm: false
     };
   },
   computed: {
@@ -408,7 +422,9 @@ export default {
           this.taskSetFavorite(item);
           break;
         case "delete-task":
-          this.deleteTask(item);
+          // this.deleteTask(item);
+          this.taskDeleteConfirm = true
+          this.taskToDelete = item
           break;
         case 'copy-task':
           this.copyTaskLink(item);
@@ -607,16 +623,16 @@ export default {
     },
 
     deleteTask(task) {
-      if (task) {
+      if (this.taskToDelete) {
         this.loading = true;
         // console.log(this.taskToDelete);
         this.$store
-          .dispatch("task/deleteTask", task)
+          .dispatch("task/deleteTask", this.taskToDelete)
           .then((t) => {
             console.log(t)
             if (t.statusCode == 200) {
               // this.updateKey();
-              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
+              this.$nuxt.$emit("delete_update_table",this.taskToDelete,this.$route.fullPath)
               this.popupMessages.push({ text: "Task deleted successfully", variant: "primary-24" });
             } else {
               this.popupMessages.push({ text: t.message, variant: "primary-24" });
@@ -627,6 +643,10 @@ export default {
           .catch((e) => {
             console.warn(e);
             this.loading = false;
+          })
+          .then(() => {
+            this.taskToDelete = {}
+            this.taskDeleteConfirm = false
           });
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" });

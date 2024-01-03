@@ -96,6 +96,20 @@
 
           <!-- <loading :loading="loading"></loading> -->
 
+        <!-- delete confirm -->
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="() => taskDeleteConfirm = false">
+        <template slot="content">
+          <p>Are you sure?</p>
+          <loading :loading="loading"></loading>
+        </template>
+        <template slot="footer">
+            <div v-show="!loading" class="justify-between gap-1">
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click.native.stop="deleteTask"></bib-button>
+            </div>
+        </template>
+      </bib-modal-wrapper>
+
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="5000">
@@ -189,7 +203,8 @@ export default {
         budget: "",
         text: "",
       },
-      sectionType:"myTask"
+      sectionType:"myTask",
+      taskDeleteConfirm: false
     }
   },
 
@@ -475,7 +490,9 @@ export default {
           this.taskSetFavorite(item)
           break;
         case 'delete-task':
-          this.deleteTask(item)
+          // this.deleteTask(item)
+          this.taskDeleteConfirm = true
+          this.taskToDelete = item
           break;
         case 'copy-task':
           this.copyTaskLink(item);
@@ -743,13 +760,13 @@ export default {
     },
 
     deleteTask(task) {
-      if (task) {
-        this.$store.dispatch("task/deleteTask", task)
+      if (this.taskToDelete) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
         .then(t => {
           if (t.statusCode == 200) {
             // this.updateKey(t.message)
             this.popupMessages.push({ text: t.message, variant: "primary-24" })
-            this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
+            this.$nuxt.$emit("delete_update_table",this.taskToDelete,this.$route.fullPath)
           } else {
             this.popupMessages.push({ text: t.message, variant: "primary-24" })
             console.warn(t.message);
@@ -757,6 +774,10 @@ export default {
         })
         .catch(e => {
           console.warn(e)
+        })
+        .then(() => {
+          this.taskToDelete = {}
+          this.taskDeleteConfirm = false
         })
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
