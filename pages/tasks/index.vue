@@ -21,7 +21,7 @@
           
           </div>
         
-          <div v-if="gridType == 'grid'" class="h-100">
+          <div v-if="gridType == 'grid'" class="h-100 ">
             <task-grid-section
               :sections="localData"
               :activeTask="activeTask"
