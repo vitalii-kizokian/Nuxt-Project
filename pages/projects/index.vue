@@ -93,7 +93,7 @@ export default {
       localData: [],
       popupMessages: [],
       groupVisible: false,
-      groupBy: '',
+      groupBy: 'default',
       lazyComponent: false,
       projectDeleteConfirm: false,
       projectToDelete: {},
@@ -117,7 +117,7 @@ export default {
       this.updateKey();
     }
     // this.loading = true;
-    this.$store.commit('project/setGroupBy',"")
+    this.$store.commit('project/setGroupBy',"default")
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -242,8 +242,8 @@ export default {
       this.lazyComponent=false
       if ($event ==="default" ) {
         this.groupVisible = false;
-        this.groupBy = '';
-        this.$store.commit('project/setGroupBy','')
+        this.groupBy = 'default';
+        this.$store.commit('project/setGroupBy','default')
         this.updateKey()
         // this.$store.commit('project/flatProjects');
         setTimeout(() => {
@@ -536,7 +536,10 @@ export default {
       if (isFav) {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
-            this.updateKey()
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
@@ -546,7 +549,10 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
-            this.updateKey()
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$store.dispatch('project/fetchFavProjects')
+
+            // this.updateKey()
             this.loading = false
           })
           .catch(e => {
@@ -558,7 +564,6 @@ export default {
     
     
     updateProject(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       let user
 
@@ -620,9 +625,9 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          // console.log("update",t)
+          console.log("update",t)
           if(t.statusCode == 200){
-            if(this.groupBy == '' || this.groupBy == 'default'){
+            if(this.groupBy == 'default'){
               // this.updateKey()
             }
           }

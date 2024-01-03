@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
   if (removedIndex === null && addedIndex === null) return arr
@@ -28,4 +30,13 @@ export function stripHTMLandTrim(data, trim = 30) {
   let hText = data.replace( /(<([^>]+)>)/ig, '');
         hText = _.truncate(hText, {'length': trim})
   return hText
+}
+
+export function pastDue (dateString) {
+  let diff = dayjs().diff(dateString, 'd')
+  if (diff >= 1) {
+    return true
+  } else {
+    return false
+  }
 }

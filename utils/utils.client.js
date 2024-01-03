@@ -78,7 +78,7 @@ export default ({ store, app, context }, inject) => {
         })  
         if (group == "priority") {  
           const groupByPriority = arr.reduce((acc, task) => {
-            const priority = task.priority && task.priority.text || 'Unassigned';
+            const priority = task.priority?.text != null ? task.priority.text.toLowerCase() : 'Unassigned';
             if (!acc[priority]) {
               acc[priority] = [];
             }
@@ -114,7 +114,7 @@ export default ({ store, app, context }, inject) => {
           const groupByDifficulty = arr.reduce((acc, task) => {
             let difficulty = '';
 
-            switch (task.difficultyId) {
+            switch (Number(task.difficultyId)) {
               case 3:
                 difficulty = 'Hard';
                 break;
@@ -135,6 +135,7 @@ export default ({ store, app, context }, inject) => {
             acc[difficulty].push(task);
             return acc;
           }, {});
+
           let groupIndex = 0;
           for (const key in groupByDifficulty) {
             _tasks.push({
@@ -167,6 +168,7 @@ export default ({ store, app, context }, inject) => {
               acc[department].push(task);
               return acc;
             }, {});
+            // console.log("groupByDepartment",groupByDepartment)
             let groupIndex = 0;
             for (const key in groupByDepartment) {
               _tasks.push({

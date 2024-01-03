@@ -48,6 +48,10 @@
                             <h4>Missing member(s) from import</h4>
                             <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
                         </div>
+                        <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class="of-scroll-y mt-1" style="max-height: 400px">
+                            <h4>Available member(s) To import</h4>
+                            <p v-for="(am, index) in availableMembers"> {{index+1}}. {{am.email}}</p>
+                        </div>
                     </template>
 
                     <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
@@ -115,6 +119,7 @@ export default {
             importmodal: false,
             importfinish: false,
             missingMembers: [],
+            availableMembers: [],
             steps: [
                 {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                 {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
@@ -132,7 +137,7 @@ export default {
     computed: {
 
         ...mapGetters({
-            appMembers: "user/getAppMembers",
+            appMembers: "user/getTeamMembers",
         }),
 
     },
@@ -163,6 +168,7 @@ export default {
         closeModal(){
             this.importmodal = false
             this.missingMembers = []
+            this.availableMembers = []
             this.importfinish = false
             this.importError = false
             this.steps = [
@@ -192,8 +198,18 @@ export default {
             })
 
             if (users.data.statusCode == 200) {
-              let appMemberEmails = this.appMembers.map(member => member.email); 
-              this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
+                let availMembers = []
+              this.appMembers.map(member => {
+                    if(users.data.data.includes(member.email)) {
+                        this.availableMembers.push(member)
+                        availMembers.push(member.email)
+                    } 
+                }); 
+                users.data.data.map((mem) => {
+                    if(!availMembers.includes(mem)) {
+                        this.missingMembers.push(mem)
+                    }
+                })
 
               this.steps[0].progress = "done"
               this.steps[0].variant = "primary-24"
@@ -228,6 +244,7 @@ export default {
 
             let formdata = new FormData();
             formdata.append('file', file[0])
+            formdata.append('users', JSON.stringify(this.availableMembers))
 
             let res = await this.$axios.post("/import/project", formdata, {
                 headers: {

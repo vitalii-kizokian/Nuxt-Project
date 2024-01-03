@@ -9,7 +9,7 @@ export const state = () => ({
   initialData:[],
   gridType:"list",
   collapseStatus:"true",
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0
 
 });
@@ -44,7 +44,7 @@ export const getters = {
   getFavProjects(state) {
     let fav = []
     state.favProjects.map(f => {
-      fav.push({ label: f.projects.title, icon: "briefcase-solid", id: f.projects.id })
+      fav.push({ label: f.projects.title, icon: "briefcase-solid", id: f.projects.id, selected: false })
     })
     return fav
   },
@@ -115,19 +115,6 @@ export const mutations = {
   // To set a single project
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
-    // let projectData = state.projects
-    //   if(projectData[0]?.tasks && currentProject){
-    //     let sectionID, taskID;
-    //     state.projects.forEach((section, section_idx) => {
-    //         section.tasks.forEach((task, task_idx) => {
-    //         if (task.id === currentProject.id) {
-    //           sectionID = section_idx;
-    //           taskID = task_idx;
-    //         }
-    //       });   
-    //     });
-    //     state.projects[sectionID].tasks[taskID] = currentProject;
-    //   }
   },
 
   // To create project
@@ -189,7 +176,7 @@ export const mutations = {
    if(payload.filter=="incomplete")
    {
      arr=arr.filter((item)=>item.statusId!==5)
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
@@ -197,19 +184,19 @@ export const mutations = {
    if(payload.filter=="complete")
    {
      arr=arr.filter((item)=>item.statusId==5)
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
    if(payload.filter=="all")
    {
-     if(payload.groupBy!=""){
+     if(payload.groupBy!="default"){
        arr=this.$groupBy(arr,payload.groupBy)
      }  
    }
 
   state.projects=arr
-  if (state.groupByValue == "") {
+  if (state.groupByValue == "default") {
     state.taskCount=arr.length
   } else {
     state.taskCount= arr.reduce((acc, td) => acc + td.tasks?.length, 0)
@@ -923,9 +910,15 @@ export const actions = {
       ctx.commit("setSingleProject", {
         currentProject: res.data,
       });
-      if (payload.groupBy != undefined && payload.groupBy != "") {
-        ctx.commit("groupProjects", { key: payload.groupBy});
-      }
+// <<<<<<< HEAD
+      // if (payload.groupBy != undefined && payload.groupBy != "") {
+      //   ctx.commit("groupProjects", { key: payload.groupBy});
+      // }
+// =======
+//       if (payload.groupBy != undefined && payload.groupBy != "default") {
+//         ctx.commit("groupProjects", { key: payload.groupBy});
+//       }
+// >>>>>>> 824b1abb334f5082137158acb0e1d2e7a61a8301
     }
     return res
   },

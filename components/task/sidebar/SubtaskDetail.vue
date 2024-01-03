@@ -66,14 +66,14 @@
       <div class="subtask-info position-relative py-05 px-105" id="sd-input-wrap">
         <div class="row mt-05 mb-05" id="sd-other-fields-row1">
           <div class="col-2 align-center" id="sd-other-fields-r1-c1"><label>Start Date</label></div>
-          <div class="col-5" id="sd-other-fields-r1-c2">
-            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+          <div class="col-3" id="sd-other-fields-r1-c2">
+            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" variant="gray4" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row2">
           <div class="col-2 align-center" id="sd-other-fields-r2-c1"><label>Due Date</label></div>
-          <div class="col-5" id="sd-other-fields-r2-c2">
-            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+          <div class="col-3" id="sd-other-fields-r2-c2">
+            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" variant="gray4" size="sm" placeholder="Due date" :class="{'past-due': overdue}" @input="duedateProcess"></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row3">
@@ -336,6 +336,11 @@ export default {
             return { variant: "gray4", text: "Add to favorites", status: false }
         }
     },
+    overdue() {
+      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
+      // console.log(dayjs(this.dueDate).diff(dayjs()))
+      return dayjs(this.ddate).diff(dayjs()) <= 0 ? true : false
+    },
   },
   
   watch: {
@@ -408,8 +413,16 @@ export default {
       }
 
       if (this.form.dueDate && this.form.dueDate != null) {
-        if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+
+            let dueDate = new Date(this.form.dueDate);
+            let dueDateUTC = new Date(Date.UTC(dueDate.getUTCFullYear(), dueDate.getUTCMonth(), dueDate.getUTCDate()));
+            dueDateUTC.setUTCHours(0, 0, 0, 0);
+            
+            let startDateUTC = new Date(Date.UTC(newStartDate.getUTCFullYear(), newStartDate.getUTCMonth(), newStartDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (startDateUTC.getTime() > dueDateUTC.getTime()) {
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.form.startDate = oldValue
           this.sdate = this.$formatDate(oldValue)
           // return
@@ -474,9 +487,17 @@ export default {
       } 
 
       if (this.form.startDate && this.form.startDate != null) {
+
+            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+            let startDueDate = new Date(this.form.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
           // console.log(this.form.startDate )
-        if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.form.dueDate = oldValue
           this.ddate = this.$formatDate(oldValue)
           // return

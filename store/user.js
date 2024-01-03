@@ -8,7 +8,7 @@ export const state = () => ({
   initialData:[],
   userInfo:[],
   isAdmin:false,
-  groupByValue:"",
+  groupByValue:"default",
   taskCount:0,
   usersList: [],
 });
@@ -95,76 +95,14 @@ export const mutations = {
   setUserForTask(state,payload) {
     state.userInfo=payload
   },
-  // updateFetchUserTasks(state,payload) {
-  //   let userTasks=state.userTasks
-  //   let selectedTask=payload.data
-  //   if(payload.createORupdate=="create"){
-  //     if (!state.initialData.some(item => item.id === selectedTask.id)) {
-  //       state.initialData.push(selectedTask);
-  //     }
-  //     let arr=[]
-  //     arr=state.initialData
-  //     if(payload.filter=="incomplete")
-  //     {
-  //       arr=arr.filter((item)=>item.statusId!==5)
-  //       if(payload.key!=""){
-  //         arr=this.$groupBy(arr,payload.key)
-  //       }  
-  //     }
   
-  //     if(payload.filter=="complete")
-  //     {
-  //       arr=arr.filter((item)=>item.statusId==5)
-  //       if(payload.key!=""){
-  //         arr=this.$groupBy(arr,payload.key)
-  //       }  
-  //     }
-  //     if(payload.filter=="all")
-  //     {
-  //       if(payload.key!=""){
-  //         arr=this.$groupBy(arr,payload.key)
-  //       }  
-  //     }
-  //     state.userTasks=arr
-     
-  //   }
-  //   else{
-  //     state.initialData = state.initialData.map((item) => {
-  //       if (item.id === selectedTask.id) {
-  //         return selectedTask;
-  //       }
-  //       return item;
-  //     });
-  //     if(userTasks[0]?.tasks){
-  //       let sectionID, taskID;
-  //       state.userTasks.forEach((section, section_idx) => {
-  //           section.tasks.forEach((task, task_idx) => {
-  //           if (task.id === selectedTask.id) {
-  //             sectionID = section_idx;
-  //             taskID = task_idx;
-  //           }
-  //         });   
-  //       });
-  //       state.userTasks[sectionID].tasks[taskID] = selectedTask;
-  //     }
-  //     else {
-  //       state.userTasks = state.userTasks.map((item) => {
-  //         if (item.id === selectedTask.id) {
-  //           return selectedTask;
-  //         }
-  //         return item;
-  //       });
-  //     }
-  //   } 
-  
-  // },
   setFetchUserTasks(state,payload) {
       let arr=[]
       arr=payload.data
     if(payload.filter=="incomplete")
     {
       arr=arr.filter((item)=>item.statusId!==5)
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
@@ -172,19 +110,19 @@ export const mutations = {
     if(payload.filter=="complete")
     {
       arr=arr.filter((item)=>item.statusId==5)
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
     if(payload.filter=="all")
     {
-      if(payload.key!=""){
+      if(payload.key!="default"){
         arr=this.$groupBy(arr,payload.key)
       }  
     }
     state.userTasks=arr
 
-    if(payload.key=="") {
+    if(payload.key=="default") {
       state.taskCount= arr?arr.length:0
       
     }
@@ -219,7 +157,7 @@ export const mutations = {
         if(payload.filter=="incomplete")
         {
           arr=arr.filter((item)=>item.statusId!==5)
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }
@@ -227,13 +165,13 @@ export const mutations = {
         if(payload.filter=="complete")
         {
           arr=arr.filter((item)=>item.statusId==5)
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }
         if(payload.filter=="all")
         {
-          if(payload.groupBy!=""){
+          if(payload.groupBy!="default"){
             arr=this.$groupBy(arr,payload.groupBy)
           }  
         }
@@ -865,49 +803,7 @@ export const mutations = {
       }
     });
     state.initialData = payload.initial
-    // let arr = payload.filterValue
-    // if(arr[0]?.tasks)
-    // {
-    //   arr.map((ele)=>{
-    //     let newArr=[]
-    //     ele.tasks.forEach((item) => {
-    //       if (item.priorityId) {
-    //         newArr.unshift(item)
-    //       } else {
-    //         newArr.push(item)
-    //       }
-    //     });
-    //         newArr.sort((a,b)=>{
-    //         if (a.priorityId && b.priorityId) {
-    //           return a.priority.id - b.priority.id;
-    //         }
-    //       });
-        
-    //     ele.tasks=newArr
-    //     return ele
-    //   })
-   
-    //   state.userTasks=arr
-    // }
-    // else 
-    // {
-    //       let newArr = []
-
-    //       for (let i = 0; i < arr.length; i++) {
-    //         if (arr[i].priorityId) {
-    //           newArr.unshift(arr[i])
-    //         } else {
-    //           newArr.push(arr[i])
-    //         }
-    //       }
-  
-    //           newArr.sort((a, b) => {
-    //           if (a.priorityId && b.priorityId) {
-    //             return a.priority.id - b.priority.id;
-    //           }
-    //         });
-    //       state.userTasks=newArr;
-    //  }
+    
   },
   setUsersList(state, payload){
     state.usersList = payload.map(u => {

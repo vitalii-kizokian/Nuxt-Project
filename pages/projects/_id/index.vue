@@ -2,12 +2,14 @@
   <client-only>
     <div id="page" class="project-id-wrapper ">
       <nav id="project-id-nav" class="d-flex align-center gap-025 py-05 px-025 "> 
-        <button type="button" @click="$router.push('/projects')" class="d-flex cursor-pointer bg-white border-white px-025" style="padding-block: 0.2rem;">
-          <bib-icon icon="arrowhead-left" :scale="1.6" variant="gray5"></bib-icon>
-        </button>
-        <!-- <bib-avatar></bib-avatar> -->
-        <span id="project-id-project-title" class="font-w-600 " style="font-size: 1.125rem;">{{projectTitle}}</span>
-        <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1rem;">({{taskcount}})</span>
+        <skeleton-box v-if="skeleton" style="width: 12rem;"></skeleton-box>
+        <template v-else>
+          <button type="button" @click="$router.push('/projects')" class="d-flex cursor-pointer bg-white border-white px-025" style="padding-block: 0.2rem;">
+            <bib-icon icon="arrowhead-left" :scale="1.6" variant="gray5"></bib-icon>
+          </button>
+          <span id="project-id-project-title" class="font-w-600 " style="font-size: 1.125rem;">{{projectTitle}}</span>
+          <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1rem;">({{taskcount}})</span>
+        </template>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
           <team-avatar-list :team="team"></team-avatar-list>
 
@@ -172,11 +174,11 @@ export default {
       alertDialog: false,
       alertMsg:"",
       cdp: false,
-      project: {},
-      userProj: {},
+      project: null,
       deleteBtnHover: false,
       projectDesc: null,
       projectDeleteConfirm: false,
+      skeleton: true,
     }
   },
   watch: {
@@ -204,7 +206,13 @@ export default {
           }).catch(e => console.warn(e))
         } 
       } 
-    }
+    },
+    /*$route: {
+      handler(to, from){
+        console.log(to.params)
+      },
+      immediate: true
+    }*/
   },
 
   computed: {
@@ -244,6 +252,7 @@ export default {
 
   },
   created() {
+    
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
       this.$store.commit('project/gridType',{gridType:this.gridType})
@@ -264,113 +273,93 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     try {
-      // let all_projects = store.getters['project/getAllProjects']
-      const all_projects = await $axios.$get(`/project/company/all`, {
+
+      const proj = await $axios.$get(`/project/${params.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Filter': 'all'
         }
       });
-      // console.log(all_projects, filter)
 
-      let proj = all_projects.data?.find((p) => p.id == params.id )
-      // console.log("asyncData", proj)
       store.dispatch('project/setProject', proj)
-      const sections = await $axios.$get(`/section/project/${params.id}`, {
-        headers: { 'Authorization': `Bearer ${token}`,'Filter':filter }
-      });
-      store.dispatch("section/setProjectSections",{data:sections.data})
-      return { project: proj, projectTitle: proj?.title, userProj: proj }
+      
+      return { project: proj.data, projectTitle: proj.data?.title }
       
     } catch(err) {
-      // console.log("There was an issue in project API", err);
-      return { project: {}, userProj: {} }
+      return { project: null, projectTitle: null }
     }
 
   },
 
   async mounted() {
     if (process.client) {
-      // console.log(this.project, this.projectSections)
-      if(this.projectSections.length <= 0) {
-        this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
-        const res = await this.$axios.get(`project/${this.$route.params.id}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
-        })
 
-        this.$store.dispatch('project/setProject', res.data.data)
-        this.projectTitle = res.data?.data?.title;
-        this.project = res.data.data         
-      }
+      // console.log(this.project.companyId, this.user2.BusinessId)
+      if (this.project) {
 
-      const p = await this.$store.dispatch("project/fetchSingleProject", this.$route.params.id )
-      // console.log(p.data)
-      this.project = p.data
-      this.projectTitle = p.data?.title
-
-      this.$store.dispatch("project/setSingleProject", {currentProject: p.data})
-      this.$store.commit("task/setExpandVisible",true)
-      this.$store.commit('section/setGroupBy',"")
-      
-      if(!this.project?.id){
-        this.$router.push('/notfound')
-        return
-        // p = JSON.parse(JSON.stringify(this.project))
-      } 
-      
-      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      // console.log(p.data, this.project)
-      // return
-      if(this.project?.isDeleted != true) {
-        let ut = await this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project?.userId ? this.project?.userId : null })
-        let ptm = ut.find(u => u.id == this.user2.Id)
-        // console.log(ut, this.project, JSON.parse(localStorage.getItem('user')).subr)
-
-        if (ptm || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-          // console.info('user has access!')
-        } else {
-          this.$router.push('/error/403')
+        if (this.project?.companyId != this.user2.BusinessId) {
+          this.$router.push('/notfound')
           return
-        }
-        /*if((this.project?.id && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
-          console.info('user has access!')
         } else {
-          this.$router.push('/error/403')
-        }*/
+          if (this.project?.isDeleted) {
+            this.$router.push('/notfound')
+            return
+          }
 
-        // this.canDeleteProject()
-        if (this.project?.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
-          this.cdp = true
-          return true;
-        } else {
-          this.cdp = false
-          return false
+          let ut = await this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id, userId: this.project?.userId ? this.project?.userId : null })
+
+          let ptm = null
+          ptm = ut.find(u => u.id == this.user2.Id)
+
+          if (ptm || this.user2.Role == 'ADMIN') {
+            // console.info('user has access!')
+            this.skeleton = false
+          } else {
+            this.$router.push('/error/403')
+            return
+          }
+
+          this.$store.dispatch("section/fetchProjectSections",{projectId: this.project.id})
+
+          this.$store.dispatch("project/setSingleProject", {currentProject: this.project})
+          this.projectTitle = this.project?.title;
+
+          this.$store.commit("task/setExpandVisible", true)
+          this.$store.commit('section/setGroupBy', "default")
+
+          // this.canDeleteProject()
+          if (this.project?.userId == this.user2.Id || this.user2.Role == 'ADMIN' ) {
+            this.cdp = true
+            return true;
+          } else {
+            this.cdp = false
+            return false
+          }
+          
+          this.skeleton = false
+          
+          // this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
+          setTimeout(() => {
+            if(localStorage.getItem('singlegrid')!=null){
+              if(localStorage.getItem('singlegrid')=='grid'){
+                this.gridType='grid'
+              }
+              if(localStorage.getItem('singlegrid')=='list')
+              this.gridType='list'
+            }
+            else {
+              this.gridType=this.grid
+            }
+          }, 200);
         }
-        
       } else {
         this.$router.push('/notfound')
       }
-
-      // this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
-      setTimeout(() => {
-        if(localStorage.getItem('singlegrid')!=null){
-          if(localStorage.getItem('singlegrid')=='grid'){
-            this.gridType='grid'
-          }
-          if(localStorage.getItem('singlegrid')=='list')
-        this.gridType='list'
-        }
-        else {
-          this.gridType=this.grid
-        }
-      }, 200);
     }
   },
 
   beforeDestroy(){
     // console.info("before destroy hook");
     this.project = {}
-    this.userProj = {}
     this.$store.dispatch('project/setSingleProject', {})
   },
 
@@ -408,6 +397,7 @@ export default {
       this.$store.dispatch("project/deleteProject", this.project).then(p => {
         if (p.statusCode == 200) {
           this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" })
+          this.$store.dispatch('project/fetchFavProjects')
           this.$router.push('/projects')
         } else {
           this.popupMessages.push({ text: p.message, variant: "primary-24" });

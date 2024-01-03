@@ -12,11 +12,10 @@
         @change-grid-type="($event) => (gridType = $event)"
         @search-tasks="searchTasks"
       ></company-tasks-actions>
-      <div id="task-table-wrapper" class="task-table-wrapper position-relative overflow-y-auto" :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
+      <div id="task-table-wrapper" class="task-table-wrapper position-relative " :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
 
         <template v-if="taskcount > 0">
           <div v-if="gridType === 'list'" class="h-100">
-            <!-- <template v-if="!showPlaceholder"> -->
               
             <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
           
@@ -35,6 +34,7 @@
               @section-dragend="sectionDragEnd"
               @task-dragend="taskDragEnd"
               sectionType="department"
+              :group="group"
             >
             </task-grid-section>
           </div>
@@ -47,13 +47,7 @@
         ></user-picker>
 
         <!-- date-picker for board view -->
-        <inline-datepicker
-          :show="datePickerOpen"
-          :datetime="activeTask[datepickerArgs.field]"
-          :coordinates="popupCoords"
-          @date-updated="updateDate"
-          @close="datePickerOpen = false"
-        ></inline-datepicker>
+        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false" ></inline-datepicker> -->
 
         <loading :loading="loading"></loading>
         <!-- popup notification -->
@@ -229,14 +223,19 @@ export default {
         // emitted from <task-grid>
         this.showUserPicker(payload);
       });
-      this.$nuxt.$on("date-picker", (payload) => {
+      /*this.$nuxt.$on("date-picker", (payload) => {
         // emitted from <task-grid>
         this.showDatePicker(payload);
+      });*/
+      /*this.$nuxt.$on("change-duedate", payload => {
+        // emitted from <task-grid>
+        // console.log(payload)
+        this.changeDate(payload)
+      })*/
+      this.$nuxt.$on("refresh-table", () => {
+        // console.log("task_created_on-refresh")
+        this.updateKey();
       });
-        this.$nuxt.$on("refresh-table", () => {
-          // console.log("task_created_on-refresh")
-          this.updateKey();
-        });
   
       this.$nuxt.$on('updateTaskCount', (payload) => {
         if (payload.action === 'increase') {
@@ -305,7 +304,7 @@ export default {
       };
       this.activeTask = payload.task;
     },
-    showDatePicker(payload) {
+    /*showDatePicker(payload) {
       // payload consists of event, task, label, field
       this.closeAllPickers();
       this.datePickerOpen = true;
@@ -316,7 +315,7 @@ export default {
       this.activeTask = payload.task;
       this.datepickerArgs.field = payload.field || "dueDate";
       this.datepickerArgs.label = payload.label || "Due date";
-    },
+    },*/
     
     closeAllPickers() {
       this.taskContextMenu = false;
@@ -419,8 +418,8 @@ export default {
         user = null;
       }
  
-      if (payload.item.project && payload.item.project?.length > 0) {
-        projectId = payload.item.project[0].project.id || payload.item.project[0].project.id;
+      if (payload.item.project &&payload.item.project[0]&& payload.item.project?.length > 0) {
+        projectId = payload.item.project?.[0].project?.id || payload.item.project?.[0].project?.id;
       } else {
         projectId = null;
       }
@@ -506,44 +505,36 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-    updateDate(value) {
-      if(this.datepickerArgs.field==="dueDate")
-        {
+    /*updateDate(value) {
+      if(this.datepickerArgs.field==="dueDate") {
           if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10))
             {
-                this.changeDate(value)
+              this.changeDate(value)
+            } else {
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             }
-            else{
+        } else {
+          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10)){
+                this.changeDate(value)
+            } else {
               this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             }
         }
-        else
-        {
-          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10))
-            {
-                this.changeDate(value)
-            }
-            else {
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
-          
-        }
-      
-    },
+    },*/
 
-    changeDate(value){
-        let newDate = dayjs(value).format("D MMM YYYY");
-          this.$store
-            .dispatch("task/updateTask", {
-              id: this.activeTask.id,
-              data: { [this.datepickerArgs.field]: value },
-              user: null,
-              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-            })
-            .then((t) => {
-                this.updateKey();
-            })
-            .catch((e) => console.warn(e));
+    changeDate({id, field, label, value}){
+      // let newDate = dayjs(value).format("D MMM YYYY");
+      this.$store
+        .dispatch("task/updateTask", {
+          id,
+          data: { [field]: value },
+          user: null,
+          text: `changed ${label} to ${this.$formatDate(value)}`,
+        })
+        .then((t) => {
+            this.updateKey();
+        })
+        .catch((e) => console.warn(e));
     },
 
     taskSetFavorite(task) {
