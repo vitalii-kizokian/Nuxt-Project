@@ -10,9 +10,10 @@
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
     <div v-if="show" class="picker-content" id="dept-select-content">
-      <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
+      <!-- <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap"> -->
+      <div class="" id="dept-select-dept-label-wrap">
         <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">
-          <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer align-center gap-025" @click.stop="selected(dpt)">
+          <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer align-center gap-025 bg-hover-light text-hover-dark" @click.stop="selected(dpt)">
             <bib-icon icon="node-solid" variant="gray4"></bib-icon>
             {{dpt.label}}
           </li>
