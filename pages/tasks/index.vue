@@ -30,7 +30,7 @@
               v-on:create-task="toggleSidebar($event)"
               v-on:set-favorite="taskSetFavorite"
               v-on:mark-complete="taskMarkComplete"
-              v-on:delete-task="deleteTask"
+              v-on:delete-task="gridDeleteTask"
               @section-dragend="sectionDragEnd"
               @task-dragend="taskDragEnd"
               sectionType="department"
@@ -52,15 +52,15 @@
         <loading :loading="loading"></loading>
 
         <!-- delete confirm -->
-      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="taskDeleteConfirm = false">
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="() => taskDeleteConfirm = false">
         <template slot="content">
           <p>Are you sure?</p>
           <loading :loading="loading"></loading>
         </template>
         <template slot="footer">
             <div v-show="!loading" class="justify-between gap-1">
-              <bib-button label="Cancel" variant="secondary" pill @click="taskDeleteConfirm = false"></bib-button>
-              <bib-button label="Delete" variant="primary-24" pill @click="deleteTask"></bib-button>
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click.native.stop="deleteTask"></bib-button>
             </div>
         </template>
       </bib-modal-wrapper>
@@ -597,6 +597,11 @@ export default {
         .catch((e) => {
           console.warn(e);
         });
+    },
+
+    gridDeleteTask(item) {
+       this.taskDeleteConfirm = true
+       this.taskToDelete = item
     },
 
     deleteTask(task) {
