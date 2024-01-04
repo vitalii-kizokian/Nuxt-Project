@@ -203,6 +203,7 @@ import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 import { pastDue } from "~/utils/helpers.js";
+import { combineTransactionSteps } from '@tiptap/core'
 
 export default {
 
@@ -1055,7 +1056,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
+              const status_label=status.label=="--"?"":status.label
+               return { ...task, statusId: status.value, status:{id:status.value,text:status_label}};
             }
             else {
                 return task
@@ -1079,7 +1081,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, priorityId: priority.value, priority:{id:priority.value,text:priority.label}};
+              const priority_label=priority.label=="--"?"":priority.label
+               return { ...task, priorityId: priority.value, priority:{id:priority.value,text:priority_label}};
             }
             else {
                 return task
@@ -1126,7 +1129,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, departmentId: dept.value, department:{id:dept.value,title:dept.label}};
+              const dept_label=dept.label=="Choose department"?"":dept.label
+              return { ...task, departmentId: dept.value, department:{id:dept.value,title:dept_label}};
             }
             else {
                 return task
@@ -1194,26 +1198,29 @@ export default {
         }
       } else {
         if(!item.startDate) {
-          this.localData = this.localData.map((items) => {
-            const updateTasks = items.tasks.map((task) => {
-              if(task.id==item.id){
-                return { ...task, dueDate:dayjs(d).format(this.format)};
-              } else {
-                return task
-              } 
+          this.localData= this.localData.map((items)=>{
+              const updateTasks=items.tasks.map((task)=>{
+                if(task.id==item.id){
+                  return { ...task, dueDate:d?dayjs(d).format(this.format):null};
+                }
+                else {
+                    return task
+                } 
+              })
+              return { ...items, tasks: updateTasks };
             })
-            return { ...items, tasks: updateTasks };
-          })
-          if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
-            if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+            this.modifyDateFormat(this.localData)
+            if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+              if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+                  this.changeGroupByFunc()
+                }
+            }
+            else {
               this.changeGroupByFunc()
             }
-          } else {
-            this.changeGroupByFunc()
-          }
 
-          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
-          return;
+            this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+            return;
         }
         
         let selectDueDate = new Date(d);
@@ -1233,13 +1240,15 @@ export default {
           this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-              return { ...task, dueDate:dayjs(d).format(this.format)};
+              return { ...task, dueDate:d?dayjs(d).format(this.format):null};
             } else {
               return task
             } 
           })
           return { ...items, tasks: updateTasks };
         })
+        this.modifyDateFormat(this.localData)
+
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
             this.changeGroupByFunc()

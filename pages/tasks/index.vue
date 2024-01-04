@@ -356,7 +356,7 @@ export default {
 
     updateKey(value) {
       if (value) {
-        //this.popupMessages.push({ text: value, variant: "success" });
+        this.popupMessages.push({ text: value, variant: "primary-24" })
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store
@@ -555,27 +555,27 @@ export default {
     },
 
     taskSetFavorite(task) {
-      this.loading = true;
+      // this.loading = true;
       if(this.$CheckFavTask(task.id)){
         this.$store
           .dispatch("task/removeFromFavorite", { id: task.id })
           .then((msg) => {
-            this.updateKey("Removed from favorites");
-            this.loading = false;
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            // this.loading = false;
           })
           .catch((e) => {
-            this.loading = false;
+            // this.loading = false;
             console.warn("fav-task->", e);
           });
       } else {
         this.$store
           .dispatch("task/addToFavorite", { id: task.id })
           .then((msg) => {
-            this.updateKey("Added to favorites");
-            this.loading = false;
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            // this.loading = false;
           })
           .catch((e) => {
-            this.loading = false;
+            // this.loading = false;
             console.warn("fav-task->", e);
           });
       }
@@ -591,7 +591,7 @@ export default {
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
           this.$store.dispatch("task/setSingleTask", d).then(() => {
-            this.updateKey("success");
+            this.updateKey();
           });
         })
         .catch((e) => {

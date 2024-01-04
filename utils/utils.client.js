@@ -78,7 +78,7 @@ export default ({ store, app, context }, inject) => {
         })  
         if (group == "priority") {  
           const groupByPriority = arr.reduce((acc, task) => {
-            const priority = task.priority?.text != null ? task.priority.text.toLowerCase() : 'Unassigned';
+            const priority = task.priority&&task.priority.text ? task.priority.text.toLowerCase() : 'Unassigned';
             if (!acc[priority]) {
               acc[priority] = [];
             }
@@ -296,7 +296,7 @@ export default ({ store, app, context }, inject) => {
             return a.statusId - b.statusId;
           })  
           const groupStatus = arr.reduce((acc, task) => {
-            const status =task.status?.text ?? "Unassigned";
+            const status = task.status&&task.status.text ? task.status.text : 'Unassigned';
             if (!acc[status]) {
               acc[status] = [];
             }
