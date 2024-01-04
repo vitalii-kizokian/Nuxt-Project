@@ -568,7 +568,7 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey("Removed favorite")
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             this.loading = false
           })
           .catch(e => {
@@ -578,7 +578,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey("Added to favorite")
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             this.loading = false
           })
           .catch(e => {

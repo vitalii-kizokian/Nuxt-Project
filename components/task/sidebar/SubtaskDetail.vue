@@ -7,7 +7,7 @@
         <div class="" id="sd-mark-button-wrapper">
            <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
-        <!-- <span v-show="showTaskTitle" id="sd-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span> -->
+        
         <div class="d-flex gap-05 align-center" id="sd-icons-wrapper">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -38,7 +38,15 @@
           <div class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" id="sd-page-last-icon" title="Close" @click="closeSidebarDetail"><bib-icon icon="page-last" class="m-auto"></bib-icon></div>
         </div>
       </div>
-    
+      <!-- go to parent  -->
+      <div class=" px-105 " id="std-fields-wrap">
+        <div>
+          <span v-show="project?.title" id="sd-goToParent" class="cursor-pointer subtask-info " @click="gotoProject">{{project?.title}}</span>
+        </div>
+        <div class="d-flex align-center">
+          <span  id="sd-goToParent" class="cursor-pointer subtask-parent-task " @click="gotoParent">{{form?.task?.title}}</span><bib-icon icon="arrowhead-right"  variant="gray"></bib-icon>
+        </div>
+      </div>
       <!-- title input -->
       <div class="border-bottom-gray3 position-relative px-105 py-05 mb-1" id="std-fields-wrap">
         <!-- <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"> -->
@@ -213,6 +221,8 @@ export default {
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
       alltags: "company/getCompanyTags",
+      currentTask: "task/getSelectedTask",
+      project: "project/getSingleProject",
     }),
 
     orgUsers() {
@@ -678,17 +688,22 @@ export default {
       }
     },
     closeSidebarDetail() {
-      this.$emit('close-sidebar-detail')
+      this.$nuxt.$emit('close-sidebar')
+      // this.$emit('close-sidebar-detail')
       this.$store.dispatch("subtask/setSelectedSubtask", "")
     },
-
-    /*gotoParent(){
-      if (this.titleClick == "task") {
-        window.open('/tasks/'+this.form.task?.id)
-      } else {
-        this.closeSidebarDetail()
-      }
-    },*/
+    gotoProject(){
+      this.$router.push("/projects/" + this.project.id);
+    },
+    gotoParent(){
+      this.$emit('close-sidebar-detail')
+      this.$store.dispatch("subtask/setSelectedSubtask", "")
+      // if (this.titleClick == "task") {
+      //   window.open('/tasks/'+this.form.task?.id)
+      // } else {
+      //   this.closeSidebarDetail()
+      // }
+    },
 
     debounceUpdateField: _.debounce(function(data) {
       if (this.form?.id) {
@@ -845,6 +860,14 @@ export default {
 }
 .subtask-info {
   font-size: $font-size-sm;
+}
+.subtask-parent-task {
+  font-size: 0.9rem;
+}
+#sd-goToParent:hover {
+  text-decoration: underline;
+  text-decoration-color:blue;
+  color:blue 
 }
 .editable-input { border-color: var(--bib-light)}
 .multiline {

@@ -1055,7 +1055,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
+              const status_label=status.label=="--"?"":status.label
+               return { ...task, statusId: status.value, status:{id:status.value,text:status_label}};
             }
             else {
                 return task
@@ -1079,7 +1080,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, priorityId: priority.value, priority:{id:priority.value,text:priority.label}};
+              const priority_label=priority.label=="--"?"":priority.label
+               return { ...task, priorityId: priority.value, priority:{id:priority.value,text:priority_label}};
             }
             else {
                 return task
@@ -1126,7 +1128,8 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, departmentId: dept.value, department:{id:dept.value,title:dept.label}};
+              const dept_label=dept.label=="Choose department"?"":dept.label
+              return { ...task, departmentId: dept.value, department:{id:dept.value,title:dept_label}};
             }
             else {
                 return task
