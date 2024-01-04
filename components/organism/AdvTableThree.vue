@@ -203,6 +203,7 @@ import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 import { pastDue } from "~/utils/helpers.js";
+import { combineTransactionSteps } from '@tiptap/core'
 
 export default {
 
@@ -1197,28 +1198,29 @@ export default {
         }
       } else {
         if(!item.startDate) {
-          this.localData= this.localData.map((items)=>{
-          const updateTasks=items.tasks.map((task)=>{
-            if(task.id==item.id){
-               return { ...task, dueDate:dayjs(d).format(this.format)};
+              this.localData= this.localData.map((items)=>{
+              const updateTasks=items.tasks.map((task)=>{
+                if(task.id==item.id){
+                  return { ...task, dueDate:d?dayjs(d).format(this.format):null};
+                }
+                else {
+                    return task
+                } 
+              })
+              return { ...items, tasks: updateTasks };
+            })
+            this.modifyDateFormat(this.localData)
+            if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+              if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+                  this.changeGroupByFunc()
+                }
             }
             else {
-                return task
-            } 
-          })
-          return { ...items, tasks: updateTasks };
-        })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
-          if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
-        }
-        else {
-          this.changeGroupByFunc()
-        }
 
-          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
-          return;
+              this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+              return;
         }
         
             let selectDueDate = new Date(d);
@@ -1238,7 +1240,7 @@ export default {
           this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, dueDate:dayjs(d).format(this.format)};
+               return { ...task, dueDate:d?dayjs(d).format(this.format):null};
             }
             else {
                 return task
@@ -1246,6 +1248,8 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        this.modifyDateFormat(this.localData)
+
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
