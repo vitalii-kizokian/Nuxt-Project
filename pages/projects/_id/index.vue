@@ -296,11 +296,15 @@ export default {
       if (this.project) {
 
         if (this.project?.companyId != this.user2.BusinessId) {
-          this.$router.push('/notfound')
+          // this.$router.push('/notfound')
+          sessionStorage.setItem('noAccess', true)
+          this.$router.push("/mytasks")
           return
         } else {
           if (this.project?.isDeleted) {
-            this.$router.push('/notfound')
+            // this.$router.push('/notfound')
+            sessionStorage.setItem('noAccess', true)
+            this.$router.push("/mytasks")
             return
           }
 
@@ -313,7 +317,9 @@ export default {
             // console.info('user has access!')
             this.skeleton = false
           } else {
-            this.$router.push('/error/403')
+            // this.$router.push('/error/403')
+            sessionStorage.setItem('noAccess', true)
+            this.$router.push("/mytasks")
             return
           }
 
@@ -351,7 +357,9 @@ export default {
           }, 200);
         }
       } else {
-        this.$router.push('/notfound')
+        // this.$router.push('/notfound')
+        sessionStorage.setItem('noAccess', true)
+        this.$router.push("/mytasks")
       }
     }
   },

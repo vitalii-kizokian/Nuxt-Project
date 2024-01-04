@@ -282,6 +282,13 @@ export default {
     /*this.$store.dispatch("todo/fetchTodos", {filter: "all"}).then(res => {
       this.localdata = res.data
     }).catch(e => console.warn(e))*/
+    if(sessionStorage.getItem('noAccess')) {
+      this.popupMessages.push({ text: "Project/Task is unavailable", variant: "primary-24" });
+      setTimeout(() => {
+        sessionStorage.clear()
+      },2000)
+    }
+
     if (this.todos.length<=0) {
       this.updateKey();
     }
@@ -313,6 +320,7 @@ export default {
     this.$nuxt.$off("refresh-table");
     this.$nuxt.$off("update-key");
     this.$nuxt.$off("gridNewTask", this.handleNewTask);
+    sessionStorage.clear();
     this.initialData = []
   },
 
