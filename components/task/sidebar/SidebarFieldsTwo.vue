@@ -3,13 +3,13 @@
     <div class="task-info position-relative py-05 px-105 " id="sbf-task-input-wrap">
       <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
-        <div class="col-3">
+        <div class="col-4">
           <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" variant="gray4" placeholder="Start date"  @input="startdateProcess" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
-        <div class="col-3">
+        <div class="col-4">
           <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" variant="gray4" placeholder="Due date" :class="{'past-due': overdue}" @input="duedateProcess"></bib-datetime-picker>
         </div>
       </div>

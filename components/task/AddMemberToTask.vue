@@ -1,6 +1,6 @@
 <template>
   <div id="create-team-modal-wrapper">
-    <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" :title="'Assign people to task - '+localtask.title" id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
+    <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" :title="'Add people to task - '+localtask.title" id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
       <template v-slot:content>
         <div v-if="showTaskTeamModal" style="min-height: 12rem;">
           <task-team :task="localtask"></task-team>

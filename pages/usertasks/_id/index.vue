@@ -508,7 +508,8 @@ export default {
         this.$store
           .dispatch("task/removeFromFavorite", { id: task.id })
           .then((msg) => {
-            this.updateKey();
+        this.popupMessages.push({ text: msg, variant: "primary-24" })
+            // this.updateKey();
             this.loading = false;
           })
           .catch((e) => {
@@ -519,7 +520,8 @@ export default {
         this.$store
           .dispatch("task/addToFavorite", { id: task.id })
           .then((msg) => {
-            this.updateKey();
+        this.popupMessages.push({ text: msg, variant: "primary-24" })
+            // this.updateKey();
             this.loading = false;
           })
           .catch((e) => {

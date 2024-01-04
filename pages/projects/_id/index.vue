@@ -279,7 +279,6 @@ export default {
           'Authorization': `Bearer ${token}`,
         }
       });
-
       store.dispatch('project/setProject', proj)
       
       return { project: proj.data, projectTitle: proj.data?.title }
@@ -297,11 +296,15 @@ export default {
       if (this.project) {
 
         if (this.project?.companyId != this.user2.BusinessId) {
-          this.$router.push('/notfound')
+          // this.$router.push('/notfound')
+          sessionStorage.setItem('noAccess', true)
+          this.$router.push("/mytasks")
           return
         } else {
           if (this.project?.isDeleted) {
-            this.$router.push('/notfound')
+            // this.$router.push('/notfound')
+            sessionStorage.setItem('noAccess', true)
+            this.$router.push("/mytasks")
             return
           }
 
@@ -314,13 +317,15 @@ export default {
             // console.info('user has access!')
             this.skeleton = false
           } else {
-            this.$router.push('/error/403')
+            // this.$router.push('/error/403')
+            sessionStorage.setItem('noAccess', true)
+            this.$router.push("/mytasks")
             return
           }
 
           this.$store.dispatch("section/fetchProjectSections",{projectId: this.project.id})
 
-          this.$store.dispatch("project/setSingleProject", {currentProject: this.project})
+          this.$store.dispatch("project/setSingleProject", this.project)
           this.projectTitle = this.project?.title;
 
           this.$store.commit("task/setExpandVisible", true)
@@ -352,7 +357,9 @@ export default {
           }, 200);
         }
       } else {
-        this.$router.push('/notfound')
+        // this.$router.push('/notfound')
+        sessionStorage.setItem('noAccess', true)
+        this.$router.push("/mytasks")
       }
     }
   },

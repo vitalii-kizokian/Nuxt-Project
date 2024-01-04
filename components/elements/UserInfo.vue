@@ -2,11 +2,11 @@
   <span :id="'user-info-wrapper-'+ random" class="user-info-wrapper d-flex gap-025 align-center">
     <template v-if="userName">
       <bib-avatar :src="pic" :size="avatarSize"></bib-avatar>
-      <span :id="'user-info-'+ random" class="user-name " :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>
+      <span :id="'user-info-'+ random" class="user-name " :style="{maxWidth: maxWidth}" :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>
     </template>
     <template v-else-if="userInfo">
       <bib-avatar :src="userInfo.avatar" :size="avatarSize"></bib-avatar>
-      <span :id="'user-info-'+ random" class="user-name " :class="[ 'text-'+color, 'font-w-'+weight ]">{{userInfo.label}}</span>
+      <span :id="'user-info-'+ random" class="user-name " :style="{maxWidth: maxWidth}" :class="[ 'text-'+color, 'font-w-'+weight ]">{{userInfo.label}}</span>
     </template>
   </span>
 </template>
@@ -24,7 +24,8 @@ export default {
     avatarSize: { type: String, default: '1.5rem' },
     color: { type: String, default: 'text-dark' },
     weight: { type: String, default: '400' },
-    members: { type: Array, default: function() { return [] } } 
+    members: { type: Array, default: function() { return [] } },
+    maxWidth: { type: String, default: "8rem"},
   },
   data() {
     return {
@@ -72,7 +73,6 @@ export default {
 <style lang="css" scoped>
 .user-name {
   min-width: 6rem;
-  max-width: 10rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

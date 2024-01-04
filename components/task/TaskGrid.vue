@@ -31,13 +31,13 @@
         <priority-badge v-if="task.priorityId" :priority="task.priority"></priority-badge>
       </div>
       <div class="task-bottom align-center justify-between gap-025" :id="'tg-bottom'+ task.id">
-        <span v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
-          <user-info :userId="task.userId" class="events-none"></user-info>
-        </span>
-        <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
+        <div v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
+          <user-info :userId="task.userId" maxWidth="7rem" class="events-none"></user-info>
+        </div>
+        <div v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
-        </span>
-        <div class="ml-auto position-relative">
+        </div>
+        <div class="date-input position-relative flex-shrink-0 flex-grow-0">
           <bib-datetime-picker class="left-datetime-picker" v-model="formattedDuedate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" :min-date="task.startDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
         </div>
         <!-- <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
@@ -125,9 +125,10 @@ export default {
     //   }
     // },
     overdue() {
-      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
       // console.log(dayjs(this.dueDate).diff(dayjs()))
-      return dayjs(this.dueDate).diff(dayjs()) <= 0 ? true : false
+      // return dayjs(this.dueDate).diff(dayjs()) <= 0 ? true : false
+      let check = pastDue(this.dueDate)
+      return check
     },
     form() {
       return _.cloneDeep(this.task)
@@ -137,7 +138,8 @@ export default {
   },
   mounted(){
     this.dueDate = this.task.dueDate
-    this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
+    // this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
+    this.formattedDuedate = this.task.dueDate ? dayjs(this.task.dueDate).format(this.format) : null
   },
   /*updated() {
     let ht = this.$refs.titleInput.scrollHeight
@@ -282,7 +284,8 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            this.$emit("update-key", msg)
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$emit("update-key")
           })
           .catch(e => {
             console.log(e)
@@ -290,7 +293,8 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            this.$emit("update-key", msg)
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
+            this.$emit("update-key")
           })
           .catch(e => {
             console.log(e)
@@ -480,7 +484,7 @@ export default {
   .task-top,
   .task-bottom {
     gap: 0.25rem;
-    padding: 8px;
+    padding: 0.25rem 0.5rem;
   }
 
   .task-mid {
@@ -490,6 +494,7 @@ export default {
   .task-bottom {
     color: $gray5;
   }
+  .date-input { flex-basis: 9rem; }
 
 }
 
