@@ -53,15 +53,15 @@
       </div> -->
 
       <!-- delete confirm -->
-      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="taskDeleteConfirm = false">
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete project" @close="() => taskDeleteConfirm = false">
         <template slot="content">
           <p>Are you sure?</p>
           <loading :loading="loading"></loading>
         </template>
         <template slot="footer">
             <div v-show="!loading" class="justify-between gap-1">
-              <bib-button label="Cancel" variant="secondary" pill @click="taskDeleteConfirm = false"></bib-button>
-              <bib-button label="Delete" variant="primary-24" pill @click="deleteTask"></bib-button>
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Delete" variant="primary-24" pill @click.native.stop="deleteTask"></bib-button>
             </div>
         </template>
       </bib-modal-wrapper>
