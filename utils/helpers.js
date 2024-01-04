@@ -34,9 +34,5 @@ export function stripHTMLandTrim(data, trim = 30) {
 
 export function pastDue (dateString) {
   let diff = dayjs().diff(dateString, 'd')
-  if (diff >= 1) {
-    return true
-  } else {
-    return false
-  }
+  return (diff >= 1) ? true : false
 }

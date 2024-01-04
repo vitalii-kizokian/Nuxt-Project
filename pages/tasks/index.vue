@@ -12,16 +12,16 @@
         @change-grid-type="($event) => (gridType = $event)"
         @search-tasks="searchTasks"
       ></company-tasks-actions>
-      <div id="task-table-wrapper" class="task-table-wrapper position-relative " :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
+      <div id="task-table-wrapper" class="task-table-wrapper position-relative " :class="{ 'bg-light': gridType != 'list' }" >
 
         <template v-if="taskcount > 0">
-          <div v-if="gridType === 'list'" class="h-100">
+          <div v-if="gridType === 'list'" class="h-100 overflow-auto" :style="{ 'width': contentWidth }">
               
             <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
           
           </div>
         
-          <div v-if="gridType == 'grid'" class="h-100 ">
+          <div v-if="gridType == 'grid'" class="h-100 " :style="{ 'width': contentWidth }">
             <task-grid-section
               :sections="localData"
               :activeTask="activeTask"
