@@ -57,14 +57,14 @@
       </bib-popup-notification-wrapper>
 
       <!-- delete confirm -->
-      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete task" @close="() => taskDeleteConfirm = false">
+      <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete task" @close="closeConfirm($event)">
         <template slot="content">
           <p>Task will be deleted permanently and wont be recoverable</p>
           <loading :loading="loading"></loading>
         </template>
         <template slot="footer">
             <div v-show="!loading" class="justify-between gap-1">
-              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="() => taskDeleteConfirm = false"></bib-button>
+              <bib-button label="Cancel" variant="secondary" pill @click.native.stop="closeConfirm"></bib-button>
               <bib-button label="Delete" variant="danger" pill @click.native.stop="deleteTask"></bib-button>
             </div>
         </template>
@@ -380,6 +380,10 @@ export default {
       //   return fata ? 'orange' : 'gray5'
       // }
     },
+    closeConfirm($event){
+      console.log($event)
+      this.taskDeleteConfirm = false
+    },
     contextItemClick(item) {
       switch (item.event) {
         case 'done-task':
@@ -417,7 +421,6 @@ export default {
     },
 
     copyTaskLink(task) {
-      
         let url = window.location.host + `/tasks/${task.id}`;
         
         if (navigator.clipboard) { 
