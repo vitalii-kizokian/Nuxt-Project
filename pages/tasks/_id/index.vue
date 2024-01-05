@@ -98,7 +98,7 @@
     </div>
 
     <!-- no access modal -->
-    <bib-modal-wrapper v-if="noAccess" title="No access" @close="redirect">
+    <!-- <bib-modal-wrapper v-if="noAccess" title="No access" @close="redirect">
       <template slot="content">
         <div>
           <p class="mb-05 font-w-500">You have no access to this page.</p>
@@ -110,7 +110,7 @@
           <bib-button label="Ok" variant="primary-24" pill @click="redirect"></bib-button>
         </div>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
 
     <!-- <alert-dialog v-show="noAccess" message="You are not a member of the task or project." @close="redirect"></alert-dialog> -->
 
@@ -302,18 +302,20 @@ export default {
     // get current task
     this.loading = true
     this.$axios.$get(`task/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        headers: { 'Authorization': `Bearer ${this.$store.getters['getToken']}` }
     }).then((res) => {
         if (res) {
             if (!res.data || res.data.isDeleted) {
-                this.$router.push("/notfound")
+                // this.$router.push("/notfound")
+                sessionStorage.setItem('noAccess', true)
+                this.$router.push("/mytasks")
             } 
             else {
                 this.$store.dispatch('task/setSingleTask', res.data);
 
                 this.$axios.get(`/task/${this.$route.params.id}/members`, {
                     headers: {
-                      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                      Authorization: `Bearer ${this.$store.getters['getToken']}`,
                     },
                   }).then (async (tm)=>{
                     let teams = tm.data.data.members;
@@ -323,28 +325,30 @@ export default {
                       if(tm.data.data.project[0]) {
                         let mems = await this.$axios.get(`/project/${tm.data.data.project[0].projectId}/members`, {
                           headers: {
-                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                            Authorization: `Bearer ${this.$store.getters['getToken']}`,
                           }
                         });
                         projectMembers = mems.data.data.members;
                       }
 
-                      let checkMemberInTasks = teams.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+                      let checkMemberInTasks = teams.find((tm) => tm.userId == this.user.Id);
                       let checkMemberInProjects
                       // console.log(projectMembers)
                       if (projectMembers) {
-                        checkMemberInProjects = projectMembers.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+                        checkMemberInProjects = projectMembers.find((tm) => tm.userId == this.user.Id);
                       } else {
                         checkMemberInProjects = null
                       }
 
-                      if(((checkMemberInTasks || checkMemberInProjects) && JSON.parse(localStorage.getItem("user")).subr == 'USER') || JSON.parse(localStorage.getItem("user")).subr == 'ADMIN') {
+                      if(((checkMemberInTasks || checkMemberInProjects) && this.user.Role == 'USER') || this.user.Role == 'ADMIN') {
                         // alert("You are good")
                         this.loading = false
                         this.noAccess = false
                       } else {
                         this.loading = true
-                        this.noAccess = true
+                        // this.noAccess = true
+                        sessionStorage.setItem('noAccess', true)
+                        this.$router.push("/mytasks")
                         return
                         // alert("You are not a Member of this Task or Project")
                       }
@@ -363,15 +367,17 @@ export default {
                   })
               }
         } else {
-            this.$router.push("/notfound")
+            // this.$router.push("/notfound")
+            sessionStorage.setItem('noAccess', true)
+            this.$router.push("/mytasks")
         }
     }).catch(err => {
         console.log("There was an issue in project API", err);
     })
 // get all members
-        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${this.user.BusinessId}/users`, {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+        "Authorization": `Bearer ${this.$store.getters['getToken']}`
       }
     }).then((res) => {
       this.$store.commit('user/setTeamMembers',res)
@@ -771,7 +777,7 @@ export default {
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          'Authorization': `Bearer ${this.$store.getters['getToken']}`
         }
       })
       
@@ -801,7 +807,7 @@ export default {
       if (this.form.id) {
         const tags = await this.$axios.get("/tag/task/"+this.form.id, {
           headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Authorization": "Bearer " + this.$store.getters['getToken'],
           }
         })
         // console.log(tags.data)
@@ -816,7 +822,7 @@ export default {
         // console.log('existing tag->', tag.id, tag.content)
         this.$axios.post("/tag/assign-to-task",  { tagId: tag.id, taskId: this.form.id }, {
           headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Authorization": "Bearer " + this.$store.getters['getToken'],
           }
         })
         .then(res => {
@@ -840,7 +846,7 @@ export default {
               this.$store.dispatch("company/fetchCompanyTags")
               this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
                 headers: {
-                  "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                  "Authorization": "Bearer " + this.$store.getters['getToken'],
                 }
               }).then((res) => {
                 // console.log(res)
@@ -860,7 +866,7 @@ export default {
       // console.log(tag)
       this.$axios.delete("/tag/remove-from-task", {
         headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Authorization": "Bearer " + this.$store.getters['getToken'],
           "tagid": tag.id,
           "taskid": this.form.id,
         }

@@ -106,13 +106,13 @@
       <!-- project delete confirm -->
       <bib-modal-wrapper v-if="projectDeleteConfirm" title="Delete project" @close="projectDeleteConfirm = false">
         <template slot="content">
-          <p>Are you sure?</p>
+          <p>All the tasks in the project will be deleted permanently and wont be recoverable</p>
           <loading :loading="loading"></loading>
         </template>
         <template slot="footer">
             <div v-show="!loading" class="justify-between gap-1">
               <bib-button label="Cancel" variant="secondary" pill @click="projectDeleteConfirm = false"></bib-button>
-              <bib-button label="Delete" variant="primary-24" pill @click="deleteProject"></bib-button>
+              <bib-button label="Delete" variant="danger" pill @click="deleteProject"></bib-button>
             </div>
         </template>
       </bib-modal-wrapper>
