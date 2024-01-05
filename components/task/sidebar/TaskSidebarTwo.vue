@@ -112,12 +112,12 @@
 
     <bib-modal-wrapper v-if="taskConfirmModal" title="Delete subtask(s)" @close="taskConfirmModal = false">
       <template slot="content">
-        <p>Delete subtasks as well.</p>
+        <p>All the subtasks in the task will be deleted permanently and wont be recoverable</p>
       </template>
       <template slot="footer">
-          <div class="justify-end gap-1">
-            <bib-button label="Retain" variant="secondary--outline" pill @click="deleteTask(true)"></bib-button>
-            <bib-button label="Delete" variant="primary-24" pill @click="deleteTask(false)"></bib-button>
+          <div class="justify-between">
+            <bib-button label="Retain Subtasks" variant="secondary--outline" pill @click="deleteTask(true)"></bib-button>
+            <bib-button label="Delete" variant="danger" pill @click="deleteTask(false)"></bib-button>
           </div>
       </template>
     </bib-modal-wrapper>
