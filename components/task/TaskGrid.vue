@@ -137,7 +137,7 @@ export default {
     
   },
   mounted(){
-    this.dueDate = this.task.dueDate
+    this.dueDate = new Date(this.task.dueDate).toISOString()
     // this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
     this.formattedDuedate = this.task.dueDate ? dayjs(this.task.dueDate).format(this.format) : null
   },
@@ -187,27 +187,29 @@ export default {
     },
     formatDate(dateObj, format) {
       // console.log(...arguments, "formatDate")
-      let fdt = dayjs(dateObj).format(format);
-      this.formattedDuedate = fdt
-      // return dayjs(dateObj).format(format);
-      return fdt
+      // let fdt = dayjs(dateObj).format(format);
+      // this.formattedDuedate = fdt
+      // return fdt
+      return this.$formatDate(dateObj);
     },
 
     updateDate(d, item, field, label) {
       // console.log(...arguments)
-      let stdt = dayjs(item.startDate)
-      let dtdt = dayjs(d)
-      // console.log(stdt.isValid(), d, stdt.diff(dtdt))
-      this.dueDate = dtdt
+      let stdt = dayjs.utc(item.startDate)
+      let dtdt = dayjs.utc(d)
+      this.dueDate = new Date(d).toISOString()
+      console.log(stdt.isValid(), d, this.dueDate, this.formattedDuedate, stdt.diff(dtdt))
+      return
       if (stdt.isValid()) {
         if (stdt.diff(dtdt) <= 0) {
           this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
           this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: dtdt}) //only for tasks page
         } else {
           this.dueDate = null
-          this.formattedDuedate = null
+          // this.formattedDuedate = null
         }
       } else {
+        console.log('no startDate')
         this.$emit("change-duedate", {id: item.id, field, label, value: dtdt})
         this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: dtdt}) //only for tasks page
       }

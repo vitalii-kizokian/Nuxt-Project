@@ -194,7 +194,7 @@ export default {
     },
     gridType() {
       this.$store.commit('task/gridType',{gridType:this.gridType})
-      localStorage.setItem('grid', this.gridType)
+      // localStorage.setItem('grid', this.gridType)
       this.updateKey()
       // this.key++;
     },
@@ -242,11 +242,11 @@ export default {
         // emitted from <task-grid>
         this.showDatePicker(payload);
       });*/
-      /*this.$nuxt.$on("change-duedate", payload => {
+      this.$nuxt.$on("change-duedate", payload => {
         // emitted from <task-grid>
         // console.log(payload)
         this.changeDate(payload)
-      })*/
+      })
       this.$nuxt.$on("refresh-table", () => {
         // console.log("task_created_on-refresh")
         this.updateKey();
@@ -286,24 +286,18 @@ export default {
       this.$store.commit('task/setGroupBy',"department")
       // this.updateKey()
         setTimeout(() => {
-        //   if(this.grid){
-        //     this.gridType=this.grid
-        //   }
-        // else {
-          if(localStorage.getItem('grid')!=null){
-            if(localStorage.getItem('grid')=='grid'){
-              this.gridType='grid'
-            }
-            if(localStorage.getItem('grid')=='list')
-          this.gridType='list'
-          }
-          else {
+          /*if(localStorage.getItem('grid')){
+            this.gridType = localStorage.getItem('grid')
+          } else {
             this.gridType=this.grid
-          }
-        // }
+          }*/
+
+          /*this.gridType = this.grid || "list"
+          this.lazyComponent = true*/
+        }, 200);
         
-          this.lazyComponent=true
-        }, 300);
+        this.gridType = this.grid || "list"
+        this.lazyComponent = true
     }
   
   },

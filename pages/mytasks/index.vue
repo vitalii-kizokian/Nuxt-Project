@@ -737,23 +737,7 @@ export default {
     updateDuedate({id, field, label, value}){
       // console.log(...arguments)
       let newDate = new Date(value) || null
-      // let data = { [field]: newDate }
 
-      /*if(this.activeTask.startDate){
-        if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
-          data = { [this.datepickerArgs.field]: newDate }
-          // newDate = this.$formatDate(value)
-          // console.log('valid date', newDate, this.activeTask.startDate)
-        } else {
-          // console.log('Invalid date', newDate, this.activeTask.startDate)
-          data = { [this.datepickerArgs.field]: null }
-          this.popupMessages.push({ text: `Due date must be after ${this.$formatDate(this.activeTask.startDate)}`, variant: "danger" });
-          // this.updateKey()
-          return false
-        }
-      } else {
-        console.log('no startdate-> ',newDate )
-      }*/
       // console.log(newDate)
       this.$store.dispatch("task/updateTask", {
         id,

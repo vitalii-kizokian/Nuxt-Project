@@ -157,9 +157,8 @@ export default {
       return sec;
     },
     overdue() {
-      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
-      // console.log(dayjs(this.dueDate).diff(dayjs()))
-      return dayjs(this.ddate).diff(dayjs()) <= 0 ? true : false
+      let diff = dayjs().diff(this.ddate, 'd')
+      return (diff >= 1) ? true : false
     },
   },
   watch: {
@@ -345,12 +344,12 @@ export default {
 
       if (this.form.startDate && this.form.startDate != null) {
 
-            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
-            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+        let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+        selectedDateUTC.setUTCHours(0, 0, 0, 0);
 
-            let startDueDate = new Date(this.form.startDate);
-            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
-            startDateUTC.setUTCHours(0, 0, 0, 0);
+        let startDueDate = new Date(this.form.startDate);
+        let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+        startDateUTC.setUTCHours(0, 0, 0, 0);
 
           // console.log(this.form.startDate )
         if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
