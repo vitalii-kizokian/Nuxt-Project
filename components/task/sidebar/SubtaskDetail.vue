@@ -585,6 +585,8 @@ export default {
         })
           .then(msg => {
             console.log(msg.data.message)
+            this.popupMessages.push({ text: "Removed From Favorites", variant: "primary-24" })
+
             this.$store.dispatch("subtask/fetchFavorites")
         })
           .catch(e => console.log(e))
@@ -595,6 +597,8 @@ export default {
             } 
         })
           .then(msg => {
+            this.popupMessages.push({ text:"Added To Favorites", variant: "primary-24" })
+
             console.log(msg.data.message)
             this.$store.dispatch("subtask/fetchFavorites")
 

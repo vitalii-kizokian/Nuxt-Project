@@ -771,6 +771,7 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
           .then(msg =>{
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             if(this.$route.path=="/favorites"){
              this.$nuxt.$emit("update-key",msg)
             }
@@ -781,6 +782,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
           .then(msg => {
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             if(this.$route.path=="/favorites"){
              this.$nuxt.$emit("update-key",msg)
             }
