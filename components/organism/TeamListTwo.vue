@@ -4,10 +4,10 @@
       <template v-slot:trigger>
         <div id="avatar-wrap" class="position-relative avatar-wrap">
           <bib-avatar :src="team.avatar" size="2rem" class="border-gray2"></bib-avatar>
-          <span id="delete-btn" class="position-absolute bg-danger shape-circle delete-btn" @click="deleteMember(team)"></span>
+          <span v-if="!team.isOwner" id="delete-btn" class="position-absolute bg-danger shape-circle delete-btn" @click="deleteMember(team)"></span>
         </div>
       </template>
-      {{team.label}}
+      {{team.name}}
     </tippy>
     <tippy v-if="teammates.extra.length && !showall" arrow  >
       <template v-slot:trigger>
@@ -20,10 +20,10 @@
         <template v-slot:trigger>
           <div id="avatar-wrap2" class="position-relative avatar-wrap">
             <bib-avatar :src="te.avatar" size="2rem" class="border-gray2"></bib-avatar>
-            <span id="delete-btn2" class="position-absolute bg-danger shape-circle delete-btn" @click="deleteMember(te)"></span>
+            <span v-if="!te.isOwner" id="delete-btn2" class="position-absolute bg-danger shape-circle delete-btn" @click="deleteMember(te)"></span>
           </div>
         </template>
-        {{te.label}}
+        {{te.name}}
       </tippy>
       <span v-show="showall" class="extra" id="team-avatar-list-extra" @click="showAll">show less </span>
     </template>
@@ -58,11 +58,11 @@ export default {
       this.teamMembers.filter(u => {
         this.team.forEach((t, index) => {
           if (t.id == u.id) {
-            tm.all.push(u)
+            tm.all.push(t)
             if (index < this.count) {
-              tm.main.push(u)
+              tm.main.push(t)
             } else {
-              tm.extra.push(u)
+              tm.extra.push(t)
             }
           }
         })
