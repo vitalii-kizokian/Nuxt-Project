@@ -282,8 +282,9 @@ export default {
     });*/
     this.$nuxt.$on("change-duedate", payload => {
       // emitted from <task-grid>
-      // console.log(payload)
-      this.changeDate(payload)
+      if (this.$route.path.includes("/projects/")) {
+        this.changeDate(payload)
+      }
     })
     this.$nuxt.$on("refresh-table", () => {
         this.updateKey();

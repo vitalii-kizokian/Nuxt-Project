@@ -110,8 +110,8 @@ export default {
       popupMessages: [],
       validationDate: false,
       format: "DD MMM YYYY",
-      sdate: "",
-      ddate: "",
+      sdate: null,
+      ddate: null,
       value: {
         files: []
       },
@@ -182,13 +182,13 @@ export default {
         }
       } else {
         this.form = {
-          id: "",
+          id: null,
           title: "",
-          startDate: "",
-          dueDate: "",
-          userId: "",
+          startDate: null,
+          dueDate: null,
+          userId: null,
           sectionId: "_section" + this.project?.id,
-          projectId: this.project?.id || "",
+          projectId: this.project?.id || null,
           departmentId: this.departmentId || null,
           statusId: null,
           priorityId: null,

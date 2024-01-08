@@ -51,7 +51,7 @@
               <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
                 <draggable :list="todo.tasks" :disabled="groupby != 'default'" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
-                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" @change-duedate="updateDuedate" :group="groupby"></task-grid>
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @user-picker="showUserPicker" ></task-grid>
                   </template>
                  <task-grid-blank :sectionType="sectionType" :section="todo" :initialData="initialData" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
@@ -69,7 +69,7 @@
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
         <!-- date-picker for board view -->
-        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker>
+        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker> -->
         <!-- status picker for board view -->
         <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
         <!-- priority picker for board view -->
@@ -266,6 +266,10 @@ export default {
 
   created() {
     if (process.client) {
+      this.$nuxt.$on("change-duedate", payload => {
+        // emitted from <task-grid>
+        this.updateDuedate(payload)
+      }) 
       this.$nuxt.$on("gridNewTask", this.handleNewTask);
       this.$nuxt.$on("update-key", (payload) => {
         this.updateKey()
@@ -737,9 +741,7 @@ export default {
     },
     updateDuedate({id, field, label, value}){
       // console.log(...arguments)
-      let newDate = new Date(value) || null
 
-      // console.log(newDate)
       this.$store.dispatch("task/updateTask", {
         id,
         data: { [field]: value},
