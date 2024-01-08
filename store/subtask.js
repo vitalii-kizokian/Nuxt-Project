@@ -219,7 +219,11 @@ export const actions = {
         } else {
           el.isOwner = false
         }
-        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email };
+
+        let userTeam = ctx.rootState.user.teamMembers;
+        let av = userTeam.find((u) => el.user.id == u.Id )
+
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email, avatar: av.Photo };
       });
       ctx.commit("setSubtaskMembers", data)
     }
