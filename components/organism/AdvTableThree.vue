@@ -60,7 +60,7 @@
                         <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm">
                           <template v-slot:menu>
                             <div :id="'tgs-list'+section.id" class="list border-light box-shadow popup-position-right" >
-                              <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="newRowClick(section.id)">
+                              <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click="newRowClick(section.id)">
                                 <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                                   <bib-icon icon="add"></bib-icon>
                                   <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>

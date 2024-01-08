@@ -631,8 +631,10 @@ export default {
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
-          this.reloadComments+=1
-          this.reloadTeam+=1
+          this.reloadComments += 1
+          this.$store.dispatch('task/fetchTeamMember', { ...u }).then(() => {
+            this.reloadTeam += 1;
+          })
         })
         .catch(e => {
           console.log(e)
@@ -647,7 +649,7 @@ export default {
 
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "primary-24"})
-            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
           } else {
             console.warn(res)
           }
@@ -662,7 +664,7 @@ export default {
       // if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
           .then((res) => {
-            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
           })
           .catch(e => console.warn(e))
       // }
@@ -771,6 +773,7 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
           .then(msg =>{
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             if(this.$route.path=="/favorites"){
              this.$nuxt.$emit("update-key",msg)
             }
@@ -781,6 +784,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
           .then(msg => {
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
             if(this.$route.path=="/favorites"){
              this.$nuxt.$emit("update-key",msg)
             }
