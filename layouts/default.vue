@@ -138,7 +138,7 @@ export default {
       appItems: 
       [
         {
-          img: "layers-solid",
+          img: "layers",
           color: "primary",
           active: false,
           text: "Templates",
