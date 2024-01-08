@@ -867,7 +867,7 @@ export default {
 }
 .subtask-parent-task {
   font-size: 0.9rem;
-  width: 500px;
+  max-width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
