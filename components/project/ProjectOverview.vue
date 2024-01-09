@@ -48,7 +48,7 @@
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
             <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
-            <bib-datetime-picker v-model="ddate" :formatDate="formatDate" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+            <bib-datetime-picker v-model="ddate" :formatDate="formatDate" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess" :class="{'past-due': checkPastDue(ddate)}"></bib-datetime-picker>
 
           </div>
           <div id="proj-overview-row3-col2" class="col-6">
@@ -104,6 +104,7 @@
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { STATUS, PRIORITY } from '~/config/constants.js'
+import { pastDue } from "~/utils/helpers.js";
 
 export default {
   name: "ProjectOverview",
@@ -257,6 +258,10 @@ export default {
       fetchSingleProject: "project/fetchSingleProject",
       fetchProjectSections: "section/fetchProjectSections",
     }),
+    checkPastDue(dateString){
+      let check = pastDue(dateString)
+      return check
+    },
     parseDate(dateString, format) {
       return new Date(dateString);
     },
