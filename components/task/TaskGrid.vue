@@ -200,41 +200,12 @@ export default {
     },
 
     updateDate(d, item, field, label) {
-      // console.log(...arguments)
-      /*let stdt = dayjs(item.startDate)
-      let dtdt = dayjs(d)*/
-
-      // this.dueDate = new Date(d)
-
-      // console.log(stdt.isValid(), d, newDueDate, selectedDateUTC, this.formattedDuedate, stdt.diff(dtdt))
-      /*console.table({
-        "valid startDate": stdt.isValid(),
-        "calendar date": d,
-        "JS date": this.dueDate,
-        "ISO string": new Date(d).toISOString(),
-        "UTC string": new Date(d).toUTCString(),
-        "diff": stdt.diff(dtdt),
-      })*/
-
-      /*if (stdt.isValid()) {
-        if (stdt.diff(dtdt) <= 0) {
-          this.$emit("change-duedate", {id: item.id, field, label, value: this.dueDate})
-          this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: this.dueDate}) //only for tasks page
-        } else {
-          this.dueDate = null
-          // this.formattedDuedate = null
-        }
-      } else {
-        console.log('no startDate')
-        this.$emit("change-duedate", {id: item.id, field, label, value: this.dueDate})
-        this.$nuxt.$emit("change-duedate", {id: item.id, field, label, value: this.dueDate}) //only for tasks page
-      }*/
 
       let oldValue = item.dueDate
       let newDueDate = dayjs(d).isValid() ? new Date(d) : null;
       // this.form.dueDate = d;
 
-      console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
+      // console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
       // console.log(d, newDueDate, oldValue)
 
       if (d == null) {
@@ -431,7 +402,7 @@ export default {
       // }
     },
     closeConfirm($event){
-      console.log(...arguments)
+      // console.log(...arguments)
       this.taskDeleteConfirm = false
     },
     contextItemClick(item) {

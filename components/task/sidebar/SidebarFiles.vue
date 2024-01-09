@@ -10,8 +10,7 @@
       </div> -->
       <bib-button label="Files" variant="primary--outline" icon="add" class="" @click="uploadModal = true"></bib-button>
 
-
-      <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
+      <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFileTrigger(file)" @preview-file="showPreviewModal(file)" ></file-comp>
     </div>
     <!-- <div id="sbf-task-file-comp" class="files py-05">
       <template>
@@ -22,6 +21,20 @@
       :message="alertMsg"
       @close="alertDialog = false"
     ></alert-dialog> -->
+
+    <!-- delete confirm -->
+    <bib-modal-wrapper v-if="fileDeleteConfirm" title="Delete file" @close="closeConfirm($event)">
+      <template slot="content">
+        <p>File will be deleted permanently and won't be recoverable</p>
+        <loading :loading="loading"></loading>
+      </template>
+      <template slot="footer">
+          <div v-show="!loading" class="justify-between gap-1">
+            <bib-button label="Cancel" variant="secondary" pill @click.native.stop="closeConfirm"></bib-button>
+            <bib-button label="Delete" variant="danger" pill @click.native.stop="deleteFile"></bib-button>
+          </div>
+      </template>
+    </bib-modal-wrapper>
 
     <!-- File Upload modal -->
     <bib-modal-wrapper
@@ -111,6 +124,9 @@ export default {
       // alertMsg: "",
       popupMessages: [],
       inputFiles: [],
+      fileDeleteConfirm: false,
+      fileToDelete: null,
+      loading: false,
     };
   },
   props: {
@@ -122,6 +138,7 @@ export default {
     ...mapGetters({
       task: "task/getSelectedTask",
       subtask: "subtask/getSelectedSubTask",
+      user2: "user/getUser2",
     }),
 
     files() {
@@ -271,26 +288,38 @@ export default {
         .catch((e) => console.error(e));
     },
 
-    deleteFile(file) {
-      let del = window.confirm("Are you sure want to delete?");
+    deleteFileTrigger(file){
+      this.fileToDelete = file
+      this.fileDeleteConfirm = true
+    },
 
-      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-      if (del) {
+    closeConfirm($event){
+      this.fileDeleteConfirm = false
+      this.fileToDelete = null
+    },
+
+    deleteFile() {
+
+      if((this.fileToDelete.userId == this.user2.Id ) || this.user2.Role == 'ADMIN') {
+        this.loading = true
+      // if (del) {
         this.$axios
-          .delete("file/" + file.key, {
+          .delete("file/" + this.fileToDelete.key, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
               taskid: this.task.id,
               text: "File deleted from task",
               isHidden: true,
-              userid: file.owner,
+              userid: this.fileToDelete.owner,
             },
           })
           .then((f) => {
             if (f.data.statusCode == 200) {
               // this.alertDialog = true;
               // this.alertMsg = f.data.message;
-              this.popupMessages.push({ text: "File(s) deleted successfully", variant: "primary-24"})
+              this.fileDeleteConfirm = false
+              this.loading = false
+              this.popupMessages.push({ text: "File deleted successfully", variant: "primary-24"})
               _.delay(() => {
                 this.getFiles().then((res) => {
                   this.fileKey += 1;
@@ -299,7 +328,7 @@ export default {
             }
           })
           .catch((e) => console.error(e));
-      }
+      // }
       } else {
         this.popupMessages.push({text: "You do not have permission to delete this file", variant: "primary-24"})
         // console.log("You don't have enough permission to delete this file")
