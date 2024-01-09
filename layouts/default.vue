@@ -31,7 +31,6 @@
           </bib-header>
         </template>
         <template #switcher>
-          
           <bib-app-switcher
             @toggle-theme="toggleTheme"
             :isLightTheme="isLight"

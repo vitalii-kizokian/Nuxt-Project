@@ -231,7 +231,7 @@ export default {
       }*/
 
       let oldValue = item.dueDate
-      let newDueDate = dayjs(d).isValid() ? new Date(d).toISOString() : null;
+      let newDueDate = dayjs(d).isValid() ? new Date(d) : null;
       // this.form.dueDate = d;
 
       console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})

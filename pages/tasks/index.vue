@@ -221,7 +221,7 @@ export default {
       departments: "department/getAllDepartments",
       groupby: "task/getGroupBy",
       currentTask: 'task/getSelectedTask',
-
+      user2: "user/getUser2",
     }),
     // taskcount(){
     //   return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
@@ -239,7 +239,7 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       // console.info("watch tasks")
-      if (this.group == 'department' || this.group == '') {
+      if (this.group == 'department' || this.group == 'default') {
         this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
       } else {
         this.localData = data
@@ -318,6 +318,8 @@ export default {
   beforeDestroy(){ 
     this.$nuxt.$off("update-key");
     this.$nuxt.$off("refresh-table");
+    this.localData = []
+    this.initialData = []
   },
   mounted() {
 
@@ -325,9 +327,10 @@ export default {
       if (this.tasks.length<=0) {
         this.updateKey();
       }
-      if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+      // console.log(this.user2.Role)
+      if (this.user2?.Role != "ADMIN") {
         this.$router.push('/error/403')    
-      } 
+      }
 
       for(let field of this.taskFields) {
         if(field.header_icon) {
