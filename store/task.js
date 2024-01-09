@@ -314,16 +314,21 @@ export const actions = {
       })
       
       let team = tm.data.data.members;
-      // console.log(payload)
-
+      
       let data = team.map((el) => {
         if (payload.userId == el.user.id) {
           el.isOwner = true
         } else {
           el.isOwner = false
         }
-        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email };
+
+        let userTeam = ctx.rootState.user.teamMembers;
+        let av = userTeam.find((u) => el.user.id == u.Id )
+      
+        // console.log(payload.userId, el.user.id ,el.isOwner)
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email, avatar: av.Photo};
       });
+
       ctx.commit('fetchTeamMember', data)
       return data
     } catch (e) {
