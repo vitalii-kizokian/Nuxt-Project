@@ -59,7 +59,7 @@ export const mutations = {
   fetchCompanies(state, payload) {
     state.companies = payload;
   },
-  flatTasks(state, payload) {
+  /*flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.companyTasks));
     if(arr[0].tasks){
       let _arr = [];
@@ -69,8 +69,7 @@ export const mutations = {
     arr = _arr;
     }
     state.companyTasks = arr;
-    
-  },
+  },*/
   fetchCompanyMembers(state, payload) {
     state.companyMembers = payload;
   },

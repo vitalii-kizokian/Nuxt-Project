@@ -37,7 +37,6 @@
           </bib-header>
         </template>
         <template #switcher>
-          
           <bib-app-switcher
             @toggle-theme="toggleTheme"
             :isLightTheme="isLight"
@@ -144,7 +143,7 @@ export default {
       appItems: 
       [
         {
-          img: "layers-solid",
+          img: "layers",
           color: "primary",
           active: false,
           text: "Templates",
