@@ -1,6 +1,6 @@
 <template>
   <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside" id="message-wrapper">
-    <div class="d-flex align-center pb-025">
+    <div class="d-flex align-center ">
       <figure class="width-2 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
         <bib-avatar size="1.5rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
       </figure>
@@ -15,7 +15,7 @@
     </div>
 
     <!-- message reactions -->
-    <div v-if="reactionsExist" class="reactions-section my-025" :id="'msg-reaction-section'+msg.id">
+    <div v-if="reactionsExist" class="reactions-section my-025 pl-2" :id="'msg-reaction-section'+msg.id">
       <div class="reactions" :id="'msg-reactions'+msg.id">
         <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction shape-pill" :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)" :id="'msg-'+index">
           {{ react.reaction }} <span class="count" :id="'msg-count-'+index">{{react.count}}</span>
@@ -799,7 +799,7 @@ export default {
   .reaction {
     font-size: $base-size;
     border: 1px solid $gray4;
-    padding: 2px 4px;
+    padding: 2px 6px;
     cursor: pointer;
 
     &.sent {
@@ -808,7 +808,7 @@ export default {
     }
 
     .count {
-      font-size: 14px;
+      font-size: $font-size-sm;
       color: $gray6;
     }
   }
