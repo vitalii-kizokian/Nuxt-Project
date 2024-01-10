@@ -84,7 +84,7 @@
           <people-sort-collapse
             v-show="!collapseNavigation"
             :themeColor="isLight"
-            label=""
+            label="People"
             label-weight="400"
             variant="light"
             open
