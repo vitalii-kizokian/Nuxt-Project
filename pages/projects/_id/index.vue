@@ -147,6 +147,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { encryptFunction, decryptFunction } from '~/utils/crypto.js'
 
 export default {
   name: 'ProjectId',
@@ -269,12 +270,31 @@ export default {
 
   },
 
+  async beforeRouteEnter(to, from, next) {
+    // console.log("beforeRouteEnter")
+    const { id } = to.params;
+    if (!isNaN(id)) {
+      const encryptedId = encryptFunction(id);
+      // Update the URL in the address bar without reloading the page
+      next(vm => { vm.$router.replace({path: `/projects/${encryptedId}`}) });
+    } else {
+      next();
+    }
+  },
+
   async asyncData({$axios, app, params, store}) {
+    // console.log("asyncData", params.id)
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
+    let decryptedId
+    if ( !isNaN(params.id) ) {
+      decryptedId = params.id
+    } else {
+      decryptedId = decryptFunction(params.id)
+    }
     try {
 
-      const proj = await $axios.$get(`/project/${params.id}`, {
+      const proj = await $axios.$get(`/project/${decryptedId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }

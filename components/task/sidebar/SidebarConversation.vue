@@ -50,7 +50,7 @@
               </div>
               <div v-if="activeTab == bibTabs[1].value" key="history">
                 <div v-for="item in history" :key="item.id">
-                  <task-history v-if="item.text && !item.isHidden" :history="item"  ></task-history>
+                  <task-history v-if="item.text && !item.isHidden && !item.taskCommentId" :history="item" ></task-history>
                 </div>
               </div>
             </transition>

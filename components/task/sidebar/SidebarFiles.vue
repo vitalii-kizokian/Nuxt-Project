@@ -26,6 +26,7 @@
     <bib-modal-wrapper v-if="fileDeleteConfirm" title="Delete file" @close="closeConfirm($event)">
       <template slot="content">
         <p>File will be deleted permanently and won't be recoverable</p>
+        <p>{{$i18n.t('deleteFile')}}</p>
         <loading :loading="loading"></loading>
       </template>
       <template slot="footer">
