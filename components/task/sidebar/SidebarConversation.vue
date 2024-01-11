@@ -26,7 +26,7 @@
 
           <!-- <bib-tabs :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs" class="mb-05"></bib-tabs> -->
           <div class="mytabs align-center gap-1 mb-05">
-            <button v-for="t in bibTabs" class="cursor-pointer px-0 py-05" :class="{'active': t.value == activeTab}" @click.stop="handleChange_Tabs(t.value)"><bib-icon v-if="t.value == activeTab" icon="collapse-fullscreen" scale="0.8"></bib-icon> {{t.title}}</button>
+            <button v-for="t in bibTabs" class="cursor-pointer px-0 py-05" :class="{'active': t.value == activeTab}" @click.stop="handleChange_Tabs(t.value)"><bib-icon v-if="t.value == activeTab" icon="collapse-fullscreen" :scale="0.8"></bib-icon> {{t.title}}</button>
           </div>
           
           <div style="min-height: 3rem;">

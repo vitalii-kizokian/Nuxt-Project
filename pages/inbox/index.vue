@@ -16,8 +16,8 @@
                 <!--  @project-click="fetchProject" -->
               </template>
             </div>
-            <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
-              <div class="w-100 height-1" ></div>
+            <div v-show="currentPage < pageCount-1" class="align-center justify-center py-05">
+              <div ref="infinitescrolltrigger" class="w-25 animated-background" style="height: 5px;" ></div>
             </div>
           <!-- </template> -->
           <!-- <template v-if="activeTab == 'flagged' || activeTab == 'archived'">
@@ -274,10 +274,12 @@ export default {
           this.pageCount = h.data.totalPage
           this.currentPage++
           this.inbox.push(...h.data.data)
+          if (this.pageCount > 1) {
+            this.scrollTrigger();
+          }
         }
       })
 
-    this.scrollTrigger();
   },
   methods: {
     handleChange_Tabs(tab) {
