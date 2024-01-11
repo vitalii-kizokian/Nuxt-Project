@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-flex align-center flex-wrap my-025 task-history position-relative" id="task-history-wrapper">
+  <div class="d-flex align-center flex-wrap my-025 task-history position-relative" id="task-history-wrapper">
     <!-- <figure class="user-avatar">
       <bib-avatar :src="user.Photo" size="2rem" ></bib-avatar>
     </figure> -->

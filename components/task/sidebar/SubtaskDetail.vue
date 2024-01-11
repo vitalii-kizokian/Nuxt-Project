@@ -39,12 +39,12 @@
         </div>
       </div>
       <!-- go to parent  -->
-      <div class=" px-105 " id="std-fields-wrap">
-        <div>
-          <span v-show="project?.title" id="sd-goToParent" class="cursor-pointer subtask-info " @click="gotoProject">{{project?.title}}</span>
+      <div class="px-105" id="std-parent">
+        <div v-show="project?.title" >
+          <span id="sd-goToProject" class="cursor-pointer subtask-info " @click="gotoProject">{{project?.title}}</span>
         </div>
-        <div class="d-flex align-center">
-          <span  id="sd-goToParent" class="cursor-pointer subtask-parent-task " @click="gotoParent">{{form?.task?.title}}</span><bib-icon icon="arrowhead-right"  variant="gray"></bib-icon>
+        <div class="d-inline-flex align-center pb-025">
+          <span id="sd-goToParent" class="cursor-pointer subtask-parent-task subtask-info text-truncate" @click="gotoParent">{{form?.task?.title}}</span> <bib-icon icon="arrowhead-right" scale="0.9" variant="gray"></bib-icon>
         </div>
       </div>
       <!-- title input -->
@@ -347,9 +347,8 @@ export default {
         }
     },
     overdue() {
-      // return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub3' : 'gray4';
-      // console.log(dayjs(this.dueDate).diff(dayjs()))
-      return dayjs(this.ddate).diff(dayjs()) <= 0 ? true : false
+      let diff = dayjs().diff(this.ddate, 'd')
+      return (diff >= 1) ? true : false
     },
   },
   
@@ -697,6 +696,7 @@ export default {
       this.$store.dispatch("subtask/setSelectedSubtask", "")
     },
     gotoProject(){
+      this.closeSidebarDetail()
       this.$router.push("/projects/" + this.project.id);
     },
     gotoParent(){
@@ -866,16 +866,12 @@ export default {
   font-size: $font-size-sm;
 }
 .subtask-parent-task {
-  font-size: 0.9rem;
   max-width: 500px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-#sd-goToParent:hover {
+#std-parent .subtask-info:hover {
   text-decoration: underline;
-  text-decoration-color:blue;
-  color:blue 
+  text-decoration-color: $primary-24;
+  color: $primary-24 
 }
 .editable-input { border-color: var(--bib-light)}
 .multiline {

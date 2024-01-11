@@ -171,13 +171,9 @@ export default {
     }
 }
 </script>
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .inbox-history {
-    /*&:hover {
-        .action {
-            opacity:1;
-        }
-    }*/
+    .history { word-break: break-all;}
 }
 
 .reaction {
