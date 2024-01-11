@@ -21,24 +21,35 @@
               }
                 "
         ></bib-icon>
-        <people-sort-button  dropdown="" label="People"  :themeColor="themeColor" >
-                  <template v-slot:menu >
-                      <ul class="move-people-dropdown">
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                          </li>
-                      </ul>
-                  </template>
-              </people-sort-button>
+        <div
+            v-if="label"
+            class="detail-collapse__header__title"
+            :class="{'label-dark':themeColor,'label-light:':!themeColor}"
+            @click="
+              () => {
+                if (!fixed) openDetails();
+              }
+                "
+          >
+        {{ label }}
+        
+        </div>
+        
+        <div class="people-sort">
+          <template>
+                  <bib-popup pop="horizontal-dots" icon-variant="gray">
+                      <template v-slot:menu>
+                          <div class="list">
+                            <span class="list__item" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
+                            <span class="list__item" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
+                            <span class="list__item" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
+                            <span class="list__item" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
+                          </div>
+                      </template>
+                  </bib-popup>
+              </template>
+        </div>
+        
         <div class="d-flex align-center gap-0" v-if="buttons">
           <template v-for="(icon, key) of buttons">
             <div
@@ -291,6 +302,9 @@ import { mapGetters } from "vuex";
       color: black;
         border-radius: 4px;
     }  
+  }
+  .people-sort {
+    margin-left:auto ;
   }
   .detail-collapse {
     &__header {
