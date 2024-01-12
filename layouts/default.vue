@@ -132,6 +132,8 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { encodeToHex } from '~/utils/encrypt.js'
+
 export default {
   data() {
     return {
@@ -533,7 +535,8 @@ export default {
     },
 
     goToProject($event, item) {
-      this.$router.push("/projects/" + item.id);
+      let encodedId = encodeToHex(item.id)
+      this.$router.push("/projects/" + encodedId);
     },
 
     goToUsertask($event, item) {

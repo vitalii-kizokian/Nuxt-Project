@@ -147,6 +147,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { decodeFromHex } from '~/utils/encrypt.js'
 
 export default {
   name: 'ProjectId',
@@ -272,9 +273,10 @@ export default {
   async asyncData({$axios, app, params, store}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
+    console.log(params.id, decodeFromHex(params.id))
     try {
 
-      const proj = await $axios.$get(`/project/${params.id}`, {
+      const proj = await $axios.$get(`/project/${decodeFromHex(params.id)}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
