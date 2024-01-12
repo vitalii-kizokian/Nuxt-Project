@@ -63,6 +63,7 @@ import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
 import { mapGetters, mapActions } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+// import { encryptFunction } from '~/utils/crypto.js'
 
 export default {
   name: "Favorites",
@@ -443,7 +444,10 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
       if (!fwd) {
         return false
       }
-      this.$router.push('/projects/' + project.id)
+      const encryptedId = this.$encodeToHex(project.id);
+      // console.log(encryptedId)
+      this.$router.push('/projects/' + encryptedId)
+      // this.$router.push('/projects/' + project.id)
     },
 
     changeView($event) {

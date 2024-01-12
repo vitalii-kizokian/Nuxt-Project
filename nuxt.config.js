@@ -31,10 +31,10 @@ export default {
     "~/plugins/priorityFormat.client.js",
     "~/plugins/datepicker.client.js",
     "~/plugins/logout.js",
+    "~/plugins/crypto.js",
     "~/utils/userInfo.client.js",
     "~/utils/utils.client.js",
     "~/utils/color.client.js",
-    "~/utils/crypto.js",
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
@@ -89,7 +89,7 @@ export default {
   },
   /*router: {
     // base: '/dashboard',
-    // middleware: ["encryptUrl"],
+    middleware: ["encryptUrl"],
     // trailingSlash: false
   },*/
   serverMiddleware: ["~/middleware/redirects"],
