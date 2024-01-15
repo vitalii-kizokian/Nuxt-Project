@@ -513,7 +513,7 @@ export default {
     highlightFavProj(){
       for (let i = 0; i < this.favProjectsNav.length; i++) {
         // let decryptOut = this.$decodeFromHex(this.$route.params.id)
-        console.log(this.$route.params.id )
+        // console.log(this.$route.params.id )
         if (this.$route.params.id == this.favProjectsNav[i].id) {
           this.favProjectsNav[i].selected = true;
         } else {

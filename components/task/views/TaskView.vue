@@ -13,7 +13,7 @@
     <template v-if="taskcount > 0 || groupby == 'default' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"  :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
 
     </div>
 
@@ -209,7 +209,8 @@ export default {
       sectionConfirmModal: false,
       sectionToDelete: {},
       retainTasks: null,
-      taskDeleteConfirm: false
+      taskDeleteConfirm: false,
+      projectId: null,
     };
   },
   computed: {
@@ -239,17 +240,6 @@ export default {
         this.templateKey += 1;
       },
     },
-    // sections(newVal) {
-    //   this.localdata = _.cloneDeep(newVal);
-    //   console.log("$$$$",this.localdata)
-    //    /*let sorted = this.localdata.map((s) => {
-    //     let t = s.tasks.sort((a, b) => a.order - b.order);
-    //     s.tasks = t;
-    //     return s;
-    //   });
-    //   this.localdata = sorted;*/
-    //   this.templateKey += 1;
-    // },
 
     gridType() {
       this.templateKey++;
@@ -289,6 +279,9 @@ export default {
     this.$nuxt.$on("refresh-table", () => {
         this.updateKey();
     });
+  },
+  mounted (){
+    this.projectId = this.$decodeFromHex(this.$route.params?.id) || this.project?.id
   },
   beforeDestroy(){
     this.$nuxt.$off("refresh-table");
@@ -493,7 +486,7 @@ export default {
     taskSort($event) {
       this.$store
         .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
+          projectId: this.projectId,
           filter: this.filterViews,
           sName:this.groupby
         })
@@ -826,7 +819,6 @@ export default {
               this.templateKey += 1;
         })
 
-      
     },
     
     async SingleProjectGroup($event) {
@@ -864,7 +856,7 @@ export default {
       this.taskContextMenu = false;
       this.$store
         .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
+          projectId: this.projectId,
           filter: this.filterViews,
           sName:this.groupby
         })
@@ -917,11 +909,9 @@ export default {
       proj.userId = this.loggedUser.Id
 
       if(this.groupby=="default") {
-        proj.sectionId= section.id ? section.id : "_section"+this.$route.params.id
+        proj.sectionId= section.id ? section.id : "_section"+this.projectId
       } 
 
-      
-      // proj.todoId=this.groupby ? "_section"+this.$route.params.id : section.id
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority
         proj.priorityId = section.tasks[0]?.priorityId
@@ -947,8 +937,8 @@ export default {
       // console.log(proj, section)
       this.$store.dispatch("task/createTask", {
           ...proj,
-          projectId: Number(this.$route.params.id),
-          sectionId: this.groupby=="default" ? section.id : "_section"+this.$route.params.id,
+          projectId: Number(this.projectId),
+          sectionId: this.groupby=="default" ? section.id : "_section"+this.projectId,
           mode: "project",
           text: `created task ${proj.title}`,
         })
@@ -1002,11 +992,10 @@ export default {
         el.order = index+1
         return el
       })
-      tempSections.unshift({title: $event, projectId: this.project?.currentProject?.id || this.$route.params.id, order: 0 })
+      tempSections.unshift({title: $event, projectId: this.project?.currentProject?.id || this.projectId, order: 0 })
       // console.log($event, tempSections, this.project.currentProject, this.$route.params.id)
-      // return
       const res = await this.$store.dispatch("section/createSection", {
-        projectId: this.project?.currentProject?.id || this.$route.params.id,
+        projectId: this.project?.currentProject?.id || this.projectId,
         title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
@@ -1015,7 +1004,7 @@ export default {
       if (res.statusCode == 200) {
         this.$store
           .dispatch("section/fetchProjectSections", {
-            projectId: this.$route.params.id,
+            projectId: this.projectId,
             filter: "all",
           })
           .then(() => {
@@ -1031,7 +1020,7 @@ export default {
 
     async renameSection(payload) {
       const sec = await this.$store.dispatch("section/renameSection", {
-        projectId: Number(this.$route.params.id),
+        projectId: Number(this.projectId),
         id: this.sectionId || payload.id,
         data: {
           title: this.sectionTitle || payload.title,
@@ -1047,45 +1036,6 @@ export default {
       this.filterData=$event
       this.$store.commit('task/setFilterView', {filter:$event})
       this.updateKey()
-      // this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
-      // this.loading = true;
-      // if ($event == "complete") {
-      //   this.$store
-      //     .dispatch("section/fetchProjectSections", {
-      //       projectId: this.$route.params.id,
-      //       filter: "complete",
-      //       sName:this.groupby
-      //     })
-      //     .then(() => {
-      //       this.taskByOrder();
-      //     })
-      //     .catch((e) => console.log(e));
-      // }
-      // if ($event == "incomplete") {
-      //   this.$store
-      //     .dispatch("section/fetchProjectSections", {
-      //       projectId: this.$route.params.id,
-      //       filter: "incomplete",
-      //       sName:this.groupby
-      //     })
-      //     .then(() => {
-      //       this.taskByOrder();
-      //     })
-      //     .catch((e) => console.log(e));
-      // }
-      // if ($event == "all") {
-      //   this.$store
-      //     .dispatch("section/fetchProjectSections", {
-      //       projectId: this.$route.params.id,
-      //       filter: "all",
-      //       sName:this.groupby
-      //     })
-      //     .then(() => {
-      //       this.taskByOrder();
-      //     })
-      //     .catch((e) => console.log(e));
-      // }
-      // this.loading = false;
     },
 
     checkActive() {
@@ -1171,14 +1121,7 @@ export default {
           data = { [field]: null }
         } else {
           data = { [field]: value }
-          // if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-          //   data = { [field]: value }
-          // } else {
-          //   data = { [field]: null }
-          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //   // this.updateKey()
-          //   return false
-          // }
+          
         }
         
       }
@@ -1187,14 +1130,7 @@ export default {
           data = { [field]: null }
         } else {
           data = { [field]: value }
-          // if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          //   data = { [field]: value }
-          // } else {
-          //   data = { [field]: null }
-          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //   // this.updateKey()
-          //   return false
-          // }
+          
         }
      
       }
@@ -1234,22 +1170,6 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-
-     /*updateDate(value) {
-      if(this.datepickerArgs.field==="dueDate") {
-          if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10)) {
-                this.changeDate(value)
-            } else{
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
-        } else {
-          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10)) {
-                this.changeDate(value)
-            } else {
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
-        }
-    },*/
     changeDate({id, field, label, value}){
       // let newDate = dayjs(value).format("D MMM YYYY");
       this.$store
@@ -1345,7 +1265,7 @@ export default {
       );
 
       if (sectionDnD.statusCode == 200) {
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
+        this.$store.dispatch("section/fetchProjectSections", { projectId: this.projectId })
           .then(() => {
             // this.$nuxt.$emit("update-key");
           });
@@ -1400,7 +1320,7 @@ export default {
     searchTasks(text) {
       this.$store
         .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
+          projectId: this.projectId,
           filter: this.filterViews,
           sName:this.groupby
         })

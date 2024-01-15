@@ -7,7 +7,7 @@
             <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
           </span>
           <span class=" flex-grow-1" id="task-title-input">
-            <input id="newtaskInput" ref="newtaskInput" class="editable-input" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false"  placeholder="Enter title...">
+            <input id="newtaskInput" ref="newtaskInput" class="editable-input" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false" placeholder="Enter title...">
           </span>
         </div>
       </div>
@@ -58,17 +58,16 @@ export default {
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
       tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-      tx[i].addEventListener("input", OnInput, false);
+      tx[i].addEventListener("input", onInput, false);
     }
 
-    function OnInput() {
+    function onInput() {
       this.style.height = 0;
       this.style.height = (this.scrollHeight) + "px";
     }
   },
   methods: {
     showNewTask() {
-
       this.newTask = true
       this.$nextTick(() => {
         this.$refs.newtaskInput.focus()
@@ -107,12 +106,6 @@ export default {
           let recentlyTodo = this.initialData.find((el) => el.title == "Recently Assigned")
           proj.todoId = recentlyTodo.id
         }
-        /*if(this.myTaskGroupBy == 'default'){
-          proj.todoId = section.id
-        }
-        else {
-          proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:null
-        }*/
         
       } 
       if(this.sectionType == "department") {
@@ -142,8 +135,8 @@ export default {
         proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.$route.path.includes("/projects/")){
-        proj.projectId = Number(this.$route.params.id)   
-        proj.sectionId = group ? "_section"+this.$route.params.id : section.id
+        proj.projectId = Number(this.$decodeFromHex(this.$route.params.id))   
+        proj.sectionId = group != "default" ? "_section"+this.$decodeFromHex(this.$route.params.id) : section.id
         proj["mode"] = "project"
         proj.userId = null
         proj.user = null
@@ -165,7 +158,8 @@ export default {
         dataNeeded = true
       }
 
-      // console.log("task",proj, "section->",section)
+      console.log("task->", proj)
+      console.log("section->", section)
 
       this.$store.dispatch("task/createTask", {
         ...proj,
