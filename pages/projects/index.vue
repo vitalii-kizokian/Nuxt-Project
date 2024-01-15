@@ -218,6 +218,7 @@ export default {
       const encryptedId = this.$encodeToHex(project.id);
       // console.log(encryptedId)
       this.$router.push('/projects/' + encryptedId)
+      // this.$router.push('/projects/' + project.id)
     },
 
     contextOpen(item){

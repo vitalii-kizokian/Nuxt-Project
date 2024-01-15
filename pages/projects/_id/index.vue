@@ -274,7 +274,7 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     let decryptedId = app.$decodeFromHex(params.id)
-    
+
     try {
       const proj = await $axios.$get(`/project/${decryptedId}`, {
         headers: {

@@ -424,6 +424,8 @@ export default {
         user: this.owner,
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`
+      }).then(() => {
+        this.$store.dispatch("project/fetchTeamMember", { projectId: this.activeProject?.id })
       })
     }, 800),
     
