@@ -63,7 +63,6 @@
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { encodeToHex } from '~/utils/encrypt.js'
 
 export default {
   name: "Projects",
@@ -215,8 +214,8 @@ export default {
       if (!fwd) {
         return false
       }
-      let encodedId = encodeToHex(project.id)
-      this.$router.push('/projects/' + encodedId)
+
+      this.$router.push('/projects/' + project.id)
     },
 
     contextOpen(item){

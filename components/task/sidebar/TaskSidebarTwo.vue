@@ -481,6 +481,9 @@ export default {
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
+          this.$store.dispatch('task/fetchTeamMember', { ...task.data }).then(() => {
+            this.reloadTeam += 1;
+          })
 
         }).catch(e => {
           console.warn(e)
