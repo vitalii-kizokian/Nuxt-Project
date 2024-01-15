@@ -126,13 +126,13 @@ export default {
   mounted() {
     this.loading = true
     // console.log(this.project)
-    this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params?.id || this.project?.id})
+    this.$store.dispatch('project/fetchTeamMember', { projectId: this.$decodeFromHex(this.$route.params?.id) || this.project?.id})
     // console.log("sdsd",this.projectMembers)
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params?.id || this.project?.id }).then(() => {
+      this.$store.dispatch('project/fetchTeamMember', { projectId: this.$decodeFromHex(this.$route.params?.id) || this.project?.id }).then(() => {
         this.key += $event
       })
     })
@@ -200,7 +200,7 @@ export default {
       this.newTeam = this.newTeam.filter((item)=>item.id!==member.id);
       // let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       // if (confirmDelete) {
-        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params?.id || this.project?.id, member: member })
+        await this.$store.dispatch("project/deleteMember", { projectId: this.$decodeFromHex(this.$route.params?.id) || this.project?.id, member: member })
           .then((res) => {
             this.key += 1
           })

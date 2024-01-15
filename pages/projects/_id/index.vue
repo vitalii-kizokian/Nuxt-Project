@@ -22,7 +22,7 @@
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" @click="modalOpen('files', 'Files')" v-tooltip="'Files'">
             <bib-icon icon="file" variant="gray5" class="m-auto"></bib-icon>
           </div>
-          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Add to Favorite'">
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
             <bib-spinner v-if="favLoading" :scale="2" ></bib-spinner>
             <bib-icon v-else class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
           </div>
@@ -145,8 +145,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+// import { encryptFunction, decryptFunction } from '~/utils/crypto.js'
 
 export default {
   name: 'ProjectId',
@@ -229,7 +230,6 @@ export default {
         filterViews :'task/getFilterView', 
         grid:"project/getGridType",
         taskcount:"section/getTaskCount"
-
     }),
 
     projectName: {
@@ -270,19 +270,19 @@ export default {
   },
 
   async asyncData({$axios, app, params, store}) {
+    // console.log("asyncData", params.id)
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
-    try {
+    let decryptedId = app.$decodeFromHex(params.id)
 
-      const proj = await $axios.$get(`/project/${params.id}`, {
+    try {
+      const proj = await $axios.$get(`/project/${decryptedId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
       });
-      store.dispatch('project/setProject', proj)
-      
+      store.dispatch('project/setProject', {...proj, encodedId: decryptedId})
       return { project: proj.data, projectTitle: proj.data?.title }
-      
     } catch(err) {
       return { project: null, projectTitle: null }
     }
@@ -372,6 +372,11 @@ export default {
 
   methods: {
 
+    ...mapActions({
+      removeFavorite: "project/removeFromFavorite",
+      addFavorite: "project/addToFavorite",
+    }),
+
     modalOpen(content, title) {
       this.projectModal = true
       this.projectModalTitle = title
@@ -382,14 +387,14 @@ export default {
     setFavorite() {
       this.favLoading = true
       if (this.isFavorite.status) {
-        this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
-          .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "primary-24" })
-          })
+        // this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
+        this.removeFavorite({ id: this.$decodeFromHex(this.$route.params.id) })
+          .then(msg => this.popupMessages.push({ text: msg, variant: "primary-24" }))
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
-        this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
+        // this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
+        this.addFavorite({ id: this.$decodeFromHex(this.$route.params.id) })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "primary-24" })
           })
@@ -397,7 +402,6 @@ export default {
           .then(() => this.favLoading = false)
       }
     },
-
     
     deleteProject() {
       this.loading = true

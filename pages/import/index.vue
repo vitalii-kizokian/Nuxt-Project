@@ -33,42 +33,45 @@
                 
               </template> -->
                 <template slot="content">
-                    <template v-if="!importfinish && !importError && !dupProject">
-                        <h4>Import will be done in steps</h4>
-                        <div v-for="item in steps" class="align-center gap-05">
-                            <div class="width-105 height-105 align-center justify-center">
-                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="primary-24" ></bib-spinner>
-                                <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
-                                <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
-                                <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
+                    <div class="overflow-y-auto" style="max-height: 50vh">
+                        
+                        <template v-if="!importfinish && !importError && !dupProject">
+                            <h4>Import will be done in steps</h4>
+                            <div v-for="item in steps" class="align-center gap-05">
+                                <div class="width-105 height-105 align-center justify-center">
+                                    <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="primary-24" ></bib-spinner>
+                                    <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
+                                    <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
+                                    <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
+                                </div>
+                                <div :class="'text-'+item.variant" >{{item.status}} {{item.label}} </div>
                             </div>
-                            <div :class="'text-'+item.variant" >{{item.status}} {{item.label}} </div>
+                            <div v-show="missingMembers.length > 0" class=" mt-1" >
+                                <h4>Missing member(s) from import</h4>
+                                <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
+                            </div>
+                            <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class=" mt-1" >
+                                <h4>Available member(s) To import</h4>
+                                <p v-for="(am, index) in availableMembers"> {{index+1}}. {{am.email}}</p>
+                            </div>
+                        </template>
+
+                        <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
+                          <bib-icon icon="close" variant="danger"></bib-icon>
+                            {{importError}}
                         </div>
-                        <div v-show="missingMembers.length > 0" class="of-scroll-y mt-1" style="max-height: 400px">
-                            <h4>Missing member(s) from import</h4>
-                            <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
+
+
+                        <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
+
+                          <bib-icon icon="urgent" variant="primary-24"></bib-icon>
+                            {{dupProject}}
                         </div>
-                        <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class="of-scroll-y mt-1" style="max-height: 400px">
-                            <h4>Available member(s) To import</h4>
-                            <p v-for="(am, index) in availableMembers"> {{index+1}}. {{am.email}}</p>
+
+                        <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
+                          <bib-icon icon="tick" variant="primary-24"></bib-icon>
+                          {{importCompleteMsg}}
                         </div>
-                    </template>
-
-                    <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
-                      <bib-icon icon="close" variant="danger"></bib-icon>
-                        {{importError}}
-                    </div>
-
-
-                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-
-                      <bib-icon icon="urgent" variant="primary-24"></bib-icon>
-                        {{dupProject}}
-                    </div>
-
-                    <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-                      <bib-icon icon="tick" variant="primary-24"></bib-icon>
-                      {{importCompleteMsg}}
                     </div>
                 </template>
                 <template slot="footer">

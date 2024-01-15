@@ -155,7 +155,7 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
-      thisProject: "project/getSingleProject",
+      currProject: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
 
@@ -237,15 +237,15 @@ export default {
 
   mounted() {
     if (process.client) {
-      // console.log('mounted')
+      // console.log('mounted', this.currProject)
       this.loading = true
-      this.fetchSingleProject(this.$route.params.id)
+      this.fetchSingleProject(this.$decodeFromHex(this.$route.params.id))
       .then((res) => {
         // console.log(res)
         if (res.statusCode == 200) {
           this.project = res.data;
         }
-        this.fetchProjectSections({projectId: this.$route.params.id})
+        this.fetchProjectSections({projectId: this.currProject.id})
         this.loading = false
       }).catch(err => {
         console.warn(err);
@@ -424,6 +424,8 @@ export default {
         user: this.owner,
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`
+      }).then(() => {
+        this.$store.dispatch("project/fetchTeamMember", { projectId: this.activeProject?.id })
       })
     }, 800),
     
