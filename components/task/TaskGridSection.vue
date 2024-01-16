@@ -169,49 +169,17 @@ export default {
     }
   },
 
-  mounted() {
-
-    
-    // if(this.grid=="grid"){
-    //   const divHeight = this.$refs.gridTable.clientHeight;
-    //   this.itemCount= parseInt((divHeight - 40) / 125)+2;
-    // }
-    
+  /*mounted() { 
     
     if(this.sectionType == "singleProject") {
-      // this.loading = true
-      // this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })
-      //   .then((sections) => {
-      //     this.localdata = JSON.parse(JSON.stringify(sections))
-      //     this.loading = false
-
-      //     // this.$nuxt.$on("close-sidebar", (msg) => {
-      //     // this.$emit("update-key")
-      //     // });
-      //   })
-      //   .catch(e => {
-      //     console.log(e)
-      //     this.loading = false
-      //   })
+      
     } 
     
     if(this.sectionType == "department") {
-      // let data=JSON.parse(JSON.stringify(this.sections));
-      // console.log("sections",data)
-    // console.log(this.sections);
-      // this.localdata = data.map(obj => {
-      //     if(obj.tasks?.length>2){
-      //       obj.tasks = obj.tasks.slice(0, 2);
-      //       return obj;
-      //     }
-      //     else {
-      //       return obj;
-      //     }
-      //   })
+      
     }
     
- 
-  },
+  },*/
 
   methods: {
     handleScroll(event,sectionId) {

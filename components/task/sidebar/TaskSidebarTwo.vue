@@ -175,6 +175,7 @@ export default {
       // titleHt: "2rem",
       subtaskDesc: null,
       taskConfirmModal: false,
+      projectId: null,
     };
   },
 
@@ -276,6 +277,14 @@ export default {
         this.$refs.topScroll.click()
       });
     },*/
+    $route(to, from){
+      // console.log("from->",from.path, "to->", to.path, to.params)
+      if (to.path.includes("/projects/") && to.params.id) {
+        this.projectId = this.$decodeFromHex(this.$route.params.id)
+      } else {
+        this.projectId = null
+      }
+    },
     showSubtaskDetail(newValue){
       if(!newValue){
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
@@ -300,6 +309,11 @@ export default {
       if (newValue) {
         this.getTags()
         // this.$store.dispatch("company/fetchCompanyTags")
+        if (this.$route.path.includes("/projects/") && this.$route.params.id) {
+          this.projectId = this.$decodeFromHex(this.$route.params.id)
+        } else {
+          this.projectId = null
+        }
       }
     },
 
@@ -410,7 +424,7 @@ export default {
         }
 
         if ((taskform.projectId || this.$route.params.id) && (!taskform.sectionId || taskform.sectionId == "")) {
-          taskform.sectionId = "_section" + (this.$route.params.id || taskform.projectId)
+          taskform.sectionId = "_section" + (this.projectId || taskform.projectId)
         } else {
           taskform.sectionId = ""
         }
@@ -441,8 +455,8 @@ export default {
         // console.log(taskform)
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
-          "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.$route.params.id || taskform.projectId),
+          "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.projectId : taskform.sectionId),
+          "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.projectId || taskform.projectId),
           "title": this.form.title,
           "description": taskform.description,
           "startDate": taskform.startDate,
@@ -481,6 +495,9 @@ export default {
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
+          this.$store.dispatch('task/fetchTeamMember', { ...task.data }).then(() => {
+            this.reloadTeam += 1;
+          })
 
         }).catch(e => {
           console.warn(e)
@@ -532,7 +549,7 @@ export default {
 
           }
           if(param.includes("/projects/")){
-            const res = await this.$axios.$get('/section/project/' + this.$route.params.id, {
+            const res = await this.$axios.$get('/section/project/' + this.projectId, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
             });
             for (let i=0;i < res.data.length ; i++ ) {

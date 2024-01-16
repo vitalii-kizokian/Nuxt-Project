@@ -132,6 +132,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
@@ -511,6 +512,8 @@ export default {
 
     highlightFavProj(){
       for (let i = 0; i < this.favProjectsNav.length; i++) {
+        // let decryptOut = this.$decodeFromHex(this.$route.params.id)
+        // console.log(this.$route.params.id )
         if (this.$route.params.id == this.favProjectsNav[i].id) {
           this.favProjectsNav[i].selected = true;
         } else {
@@ -533,7 +536,9 @@ export default {
     },
 
     goToProject($event, item) {
-      this.$router.push("/projects/" + item.id);
+      const encryptedId = this.$encodeToHex(item.id);
+      this.$router.push('/projects/' + encryptedId)
+      // this.$router.push("/projects/" + item.id);
     },
 
     goToUsertask($event, item) {

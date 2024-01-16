@@ -4,7 +4,7 @@
       <main v-if="combinedInbox" class="position-relative">
         <page-title title="Inbox" ></page-title>
         <div class="task-actions border-bottom-light py-025 px-025">
-          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="toggleSidebar"></bib-button>
+          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="openSidebarMytasks"></bib-button>
         </div>
         <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
         <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
@@ -65,7 +65,7 @@
       <div v-else class="flex-grow-1 ">
         <page-title title="Inbox" ></page-title>
         <div class="task-actions border-bottom-light py-025 px-025">
-          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="toggleSidebar"></bib-button>
+          <bib-button label="New Task" icon="add" variant="primary-24" @click.native.stop="openSidebarMytasks"></bib-button>
         </div>
         <no-data class="mt-3"></no-data>
       </div>
@@ -355,8 +355,10 @@ export default {
         })
     },
 
-    toggleSidebar() {
-      this.$nuxt.$emit("open-sidebar", {userId: this.user.sub});
+    openSidebarMytasks() {
+      // this.$nuxt.$emit("open-sidebar", {userId: this.user.sub});
+      localStorage.setItem("newTask", true)
+      this.$router.push("/mytasks")
     },
 
     /*refreshTask(task) {

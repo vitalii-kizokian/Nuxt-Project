@@ -31,14 +31,10 @@ export default {
     "~/plugins/priorityFormat.client.js",
     "~/plugins/datepicker.client.js",
     "~/plugins/logout.js",
-    // "~/plugins/chatLink.client.js",
-    // "~/plugins/userInfo.js",
+    "~/plugins/crypto.js",
     "~/utils/userInfo.client.js",
     "~/utils/utils.client.js",
     "~/utils/color.client.js",
-    // "~/../bib-shared/js/colors.js",
-    // "~/../bib-shared/js/plugins.js",
-    // "~/../bib-shared/plugins/datepicker.js",
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
@@ -92,8 +88,8 @@ export default {
     ],
   },
   /*router: {
-  //   // base: '/dashboard',
-    middleware: ["redirects"],
+    // base: '/dashboard',
+    middleware: ["encryptUrl"],
     // trailingSlash: false
   },*/
   serverMiddleware: ["~/middleware/redirects"],
@@ -114,7 +110,7 @@ export default {
   alias: {
     config: resolve(__dirname, "./config"),
     services: resolve(__dirname, "./services"),
-    dummy: resolve(__dirname, "./dummy"),
+    // dummy: resolve(__dirname, "./dummy"),
   },
   loading: {
     color: "#2ba026",
