@@ -121,6 +121,7 @@ export default {
     ...mapGetters({
       inboxState: 'inbox/getInbox',
       user: "user/getUser",
+      // user2: "user/getUser2",
     }),
     combinedInbox() {
 
@@ -245,7 +246,6 @@ export default {
     if(process.client) {
       
       let members= [];
-
       this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
@@ -357,7 +357,8 @@ export default {
 
     openSidebarMytasks() {
       // this.$nuxt.$emit("open-sidebar", {userId: this.user.sub});
-      localStorage.setItem("newTask", true)
+      this.$store.dispatch("task/setSingleTask", {})
+      sessionStorage.setItem("newTask", true)
       this.$router.push("/mytasks")
     },
 
