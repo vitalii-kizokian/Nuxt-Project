@@ -1,4 +1,4 @@
-export default ({ store, app, context }, inject) => {
+export default ({ store, app }, inject) => {
   inject('isFavTask', (idx) => {
     const favtasks = store.state.task.favTasks
     let fav = favtasks.some(t => t.id == idx)
@@ -327,5 +327,10 @@ export default ({ store, app, context }, inject) => {
       }
     });
     return out
+  })
+  inject("oldLog", (name) => {
+    let logs = store.state.task.taskHistory
+    // console.log(app)
+    return logs.find((l) => l.text.includes(name) && app.$toDate(l.createdAt) == app.$toDate(new Date().toISOString() ) && l.userId == app.$auth.user.sub )
   })
 }

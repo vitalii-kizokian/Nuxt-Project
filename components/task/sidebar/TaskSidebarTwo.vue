@@ -593,13 +593,14 @@ export default {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }*/
 
-      // console.log(updatedvalue)
+      // console.log(taskData.oldlog)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: htext || taskData.historyText || taskData.value,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {

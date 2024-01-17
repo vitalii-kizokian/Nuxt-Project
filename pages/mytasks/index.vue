@@ -68,6 +68,14 @@
           
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+        <!-- date-picker for board view -->
+        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker> -->
+        <!-- status picker for board view -->
+        <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
+        <!-- priority picker for board view -->
+        <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
+        <!-- department-picker for list view -->
+        <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
 
         <bib-modal-wrapper v-if="todoConfirmModal" title="Delete section" @close="todoConfirmModal = false">
           <template slot="content">
@@ -118,9 +126,9 @@ import _ from 'lodash'
 import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-// import { combineTransactionSteps } from '@tiptap/core';
+import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "MyTasks",
@@ -225,9 +233,9 @@ export default {
     taskcount(newValue){
       return _.cloneDeep(newValue)
     },
-    filterViews(newVal) {
-        return _.cloneDeep(newVal)
-    },
+      filterViews(newVal) {
+          return _.cloneDeep(newVal)
+      },
     todos(newVal) {
       let localTodos = _.cloneDeep(newVal)
       localTodos.forEach(function(todo) {
@@ -318,7 +326,6 @@ export default {
         }
 
       }, 300);
-
       this.$store.commit('todo/setGroupBy',"default")
   },
 
@@ -340,7 +347,6 @@ export default {
       headers: {
         Authorization: `Bearer ${token}`,
         Filter: filter,
-        groupby: "",
       },
     });
 
@@ -353,41 +359,69 @@ export default {
   methods: {
 
     handleNewTask (payload,param){
-      if (this.localdata.length>0) {
-        let gridData=[...this.localdata]
-        if(param=="/mytasks"){  
-          if(this.groupby=="default") {
-            if(payload.todoId) {
-              let exist_item= gridData. find((item)=>item.id==payload.todoId)
-              if(exist_item) {
-                let index = gridData. findIndex((item) => item.id==payload.todoId);
-                gridData[ index].tasks.push(payload);
-                this.localdata=gridData
-              }
-            } else {
-              let exist_item= gridData.find((item)=>item.title=="Recently Assigned")
-              if(exist_item) {
-                let index = gridData.findIndex((item) => item.title == "Recently Assigned");
-                gridData[index].tasks.push(payload);
-                this.localdata=gridData
+        if (this.localdata.length>0) {
+          let gridData=[...this.localdata]
+              if(param=="/mytasks"){  
+                  if(this.groupby=="default") 
+                      {
+                            if(payload.todoId) {
+                              let exist_item= gridData. find((item)=>item.id==payload.todoId)
+                              if(exist_item) {
+                                let index = gridData. findIndex((item) => item.id==payload.todoId);
+                                gridData[ index].tasks.push(payload);
+                                this.localdata=gridData
+                              }
+                            }
+                            else {
+                              let exist_item= gridData.find((item)=>item.title=="Recently Assigned")
+                              if(exist_item) {
+                                let index = gridData.findIndex((item) => item.title == "Recently Assigned");
+                                gridData[index].tasks.push(payload);
+                                this.localdata=gridData
 
-              }
-            }
+                              }
+                            }
 
-            this.$store.commit("todo/setAddTaskCount")
-      
-          } else {
-            // this.changeIntoGroupBy(payload, this.myTaskGroupBy)
-            this.$store.commit("todo/setAddTaskCount")
-          }
+                          // else
+                          // {
+                          //   this.$nuxt.$emit("refresh-table");
+                            
+                          // }
+                          this.$store.commit("todo/setAddTaskCount")
+                  
+                      }
+                      else 
+                      {
+                          this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                          this.$store.commit("todo/setAddTaskCount")
+                      }
+              }
+            //  if (param)
         }
-          
+        else 
+        {
+          this.updateKey();
+          // this.$store.commit("todo/setAddTaskCount")
+        }
+
+    },
+    changeIntoGroupBy (payload,groupBy) {
+      if (this.localData?.[0]?.tasks?.length>0) {
+        //To groupBy, change the localData
+        this.localData = this.localData.reduce((acc, ele) => {
+          return [...acc, ...ele.tasks];
+        }, []);
+        //insert the newTask
+        if (!this.localData.some(item => item.id === payload.id)) {
+          this.localData.push(payload);
+        }
+        //change the localData into groupBy
+        this.localData=this.$groupBy( this.localData,groupBy)
+      
       } else {
         this.updateKey();
-        // this.$store.commit("todo/setAddTaskCount")
-      }
+      }  
     },
-
     //group by
     myTaskGroup($event) {
       if($event == 'default') {
@@ -517,7 +551,24 @@ export default {
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
-    
+    /*showStatusPicker(payload){
+      this.closeAllPickers()
+      this.statusPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    showDeptPicker(payload){
+      this.closeAllPickers()
+      this.deptPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },*/
     closeAllPickers(){
       this.taskContextMenu = false
       this.userPickerOpen = false
@@ -817,12 +868,31 @@ export default {
         text: "",
       };
     },
+    // createNewTask(item,section){
+    //   console.log(item)
+    //   let taskdata = item
+    //   taskdata.todoId = this.groupby ? null : section.id
+    //   taskdata.user = [{
+    //     id: this.loggedUser.Id,
+    //     email: this.loggedUser.Email,
+    //     firstName: this.loggedUser.FirstName,
+    //     lastName: this.loggedUser.LastName
+    //   }]
+    //   taskdata.userId=this.loggedUser.Id
+    //   // console.log(taskdata)
+    //   this.$store.dispatch("task/createTask", taskdata)
+    //   .then(t => {
+    //     console.log("$$$$",t)
+    //     this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
+    //   })
+    //   .catch(e => console.warn(e))
+    // },
 
     updateKey($event) {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "primary-24" })
       }
-      this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews, groupBy: this.groupby}).then((res) => {
+      this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
           this.templateKey += 1

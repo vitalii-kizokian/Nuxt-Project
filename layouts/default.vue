@@ -628,6 +628,7 @@ html {
   }
 }
 .app-wrapper {
+  &__switcher { z-index: 10;}
   &__navigation {
     position: relative;
 
