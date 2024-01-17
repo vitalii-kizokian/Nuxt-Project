@@ -664,11 +664,15 @@ export default {
        }   
        if(this.$route.fullPath.includes("usertasks")){
        this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
+       console.log("this.localData",this.localData)
+       console.log("this.usertaskGroupBy",this.usertaskGroupBy)
        return;
 
        }   
        if(this.$route.fullPath=="/projects"){
        this.localData=this.$groupBy( this.localData,this.projectGroupBy)
+       console.log("this.localData",this.localData)
+       console.log("this.projectGroupBy",this.projectGroupBy)
        return;
        } 
        if(this.$route.fullPath.includes("/projects/")&&this.singleProjectGroupBy!="default"){
@@ -679,6 +683,8 @@ export default {
        }   
        if(this.$route.fullPath=="/mytasks"&&this.myTaskGroupBy!="default"){
        this.localData=this.$groupBy( this.localData,this.myTaskGroupBy)
+       console.log("this.localData",this.localData)
+       console.log("this.projectGroupBy",this.myTaskGroupBy)
        return;
 
        }  
