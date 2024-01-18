@@ -1,6 +1,10 @@
+import Vue from 'vue';
 import dayjs from 'dayjs';
 var relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
+
+// Install dayjs globally
+Vue.prototype.$dayjs = dayjs;
 
 export default ({ app }, inject) => {
   inject('toDate', time => dayjs(time).format('YYYY-MM-DD'));

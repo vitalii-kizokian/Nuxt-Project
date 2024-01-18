@@ -86,7 +86,7 @@
 import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 export default {
   name: "SidebarFieldsTwo",
   props: {
@@ -122,6 +122,7 @@ export default {
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      logs: "task/getTaskHistory",
       sections: "section/getProjectSections",
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
@@ -157,7 +158,7 @@ export default {
       return sec;
     },
     overdue() {
-      let diff = dayjs().diff(this.ddate, 'd')
+      let diff = this.$dayjs().diff(this.ddate, 'd')
       return (diff >= 1) ? true : false
     },
   },
@@ -331,14 +332,11 @@ export default {
       this.form.dueDate = newValue;
 
       // console.table({"newvalue": newValue, "newduedate":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
+      
+      let oldlog = this.$oldLog("Due date")
 
       if (newValue == "") {
-        this.$emit("update-field", {
-          name: "Due date",
-          field: "dueDate",
-          value: null,
-          historyText: "removed Due date"
-        })
+        this.$emit("update-field", { name: "Due date", field: "dueDate", value: null, historyText: "removed Due date", oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
         return
       } 
 
@@ -358,20 +356,10 @@ export default {
           this.ddate = this.$formatDate(oldValue)
           // return
         } else {
-          this.$emit("update-field", {
-            name: "Due date",
-            field: "dueDate",
-            value: newDueDate,
-            historyText: `changed Due date to ${this.$formatDate(newValue)}`
-          })
+          this.$emit("update-field", { name: "Due date", field: "dueDate", value: newDueDate, historyText: `changed Due date to ${this.$formatDate(newValue)}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
         }
       } else {
-        this.$emit("update-field", {
-          name: "Due date",
-          field: "dueDate",
-          value: newDueDate,
-          historyText: `changed Due date to ${this.$formatDate(newValue)}`
-        })
+        this.$emit("update-field", { name: "Due date", field: "dueDate", value: newDueDate, historyText: `changed Due date to ${this.$formatDate(newValue)}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
       }
       
     },
@@ -414,11 +402,14 @@ export default {
     },
     updateField(name, field, value, historyText){
       // console.log(...arguments)
-      this.$emit("update-field", {name: name, field: field, value: value, historyText: `changed ${name} to ${historyText || value}`})
+      
+      let oldlog = this.$oldLog(name)
+
+      this.$emit("update-field", {name, field, value, historyText: `changed ${name} to ${historyText || value}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
     },
     validate(name, field, value) {
       let dec = Number.parseFloat(value).toFixed(2)
-      console.log("dec",dec)
+      // console.log("dec",dec)
       this.debounceUpdateField(name, field, dec)
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
@@ -426,11 +417,11 @@ export default {
          if(value.text){
           let hText = value.text.replace( /(<([^>]+)>)/ig, '');
           hText = _.truncate(hText, {'length': 30})
-          console.log(hText)
-          this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`})
+          // console.log(hText)
+          this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`, oldlog: null })
          }
          else {
-          this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });          
+          this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}`, oldlog: null });          
          }
       }
       // console.log(...arguments)

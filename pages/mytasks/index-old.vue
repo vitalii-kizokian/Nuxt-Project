@@ -126,7 +126,7 @@ import _ from 'lodash'
 import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { combineTransactionSteps } from '@tiptap/core';
 

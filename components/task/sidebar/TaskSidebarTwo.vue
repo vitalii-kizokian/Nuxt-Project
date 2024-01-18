@@ -593,13 +593,14 @@ export default {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }*/
 
-      // console.log(updatedvalue)
+      // console.log(taskData.oldlog)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: htext || taskData.historyText || taskData.value,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
@@ -663,10 +664,10 @@ export default {
 
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
-
+          // console.log(res)
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "primary-24"})
-            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form }).then(()=>this.reloadTeam += 1)
           } else {
             console.warn(res)
           }

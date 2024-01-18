@@ -28,7 +28,7 @@
             </div>
             
             <!-- modal -->
-            <bib-modal-wrapper v-if="importmodal" size="xl" title="Import result" @close="closeModal">
+            <bib-modal-wrapper v-if="importmodal" size="xl" title="Import Project" @close="closeModal">
               <!-- <template slot="header">
                 
               </template> -->
@@ -50,14 +50,14 @@
                                 <h4>Missing member(s) from import</h4>
                                 <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
                             </div>
-                            <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class=" mt-1" >
+                            <!-- <div v-show="availableMembers.length > 0 && steps[1].progress != 'progress' || steps[1].progress != 'done'" class=" mt-1" >
                                 <h4>Available member(s) To import</h4>
                                 <p v-for="(am, index) in availableMembers"> {{index+1}}. {{am.email}}</p>
-                            </div>
+                            </div> -->
                         </template>
 
                         <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
-                          <bib-icon icon="close" variant="danger"></bib-icon>
+                          <bib-icon icon="close-circle-solid" variant="danger"></bib-icon>
                             {{importError}}
                         </div>
 
@@ -224,10 +224,17 @@ export default {
                     this.duplicateProjId = users.data.projectId
                     this.dupProject = "This project already exists. Continue will overwrite the project data."
                     return
-                } else {
-                    this.importError = users.data.message
-                    return false
                 }
+                if (users.data.importError == "multiple-projects") {
+                    // this.duplicateProjId = users.data.projectId
+                    // this.dupProject = "This project already exists. Continue will overwrite the project data."
+                    this.importError = users.data.message
+                    return
+                }
+                
+                this.importError = users.data.message
+                return false
+                
             }
              
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
