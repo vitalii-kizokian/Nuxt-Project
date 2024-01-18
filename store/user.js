@@ -196,16 +196,83 @@ export const mutations = {
       }
     });
     if (payload.sort === "Most_Tasks_Todo") {
-      arr.sort((a, b) => b.taskCount - a.taskCount);
+      arr.sort((a, b) => {
+        if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
+          if (a.FirstName && b.FirstName) {
+            return a.FirstName.localeCompare(b.FirstName);
+          } else if (!a.FirstName && b.FirstName) {
+            return -1;
+          } else if (a.FirstName && !b.FirstName) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (b.taskCount === a.taskCount) {
+          return b.completeTask - a.completeTask;
+        } else {
+          return b.taskCount - a.taskCount;
+        }
+      });
     }
     if (payload.sort === "Least_Tasks_Todo") {
-      arr.sort((a, b) => a.taskCount - b.taskCount);
+      // arr.sort((a, b) => a.taskCount - b.taskCount);
+      arr.sort((a, b) => {
+        if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
+          if (a.FirstName && b.FirstName) {
+            return b.FirstName.localeCompare(a.FirstName);
+          } else if (!a.FirstName && b.FirstName) {
+            return -1;
+          } else if (a.FirstName && !b.FirstName) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (b.taskCount === a.taskCount) {
+          return a.completeTask - b.completeTask;
+        } else {
+          return a.taskCount - b.taskCount;
+        }
+      });
     }
     if (payload.sort === "Most_Task_Completed") {
-      arr.sort((a, b) => b.completeTask - a.completeTask);
+      // arr.sort((a, b) => b.completeTask - a.completeTask);
+      arr.sort((a, b) => {
+        if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
+          if (a.FirstName && b.FirstName) {
+            return a.FirstName.localeCompare(b.FirstName);
+          } else if (!a.FirstName && b.FirstName) {
+            return -1;
+          } else if (a.FirstName && !b.FirstName) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (b.completeTask === a.completeTask) {
+          return b.taskCount - a.taskCount;
+        } else {
+          return b.completeTask - a.completeTask;
+        }
+      });
     }
     if (payload.sort === "Least_Task_Completed") {
-      arr.sort((a, b) => a.completeTask - b.completeTask);
+      arr.sort((a, b) => {
+        if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
+          if (a.FirstName && b.FirstName) {
+            return b.FirstName.localeCompare(a.FirstName);
+          } else if (!a.FirstName && b.FirstName) {
+            return -1;
+          } else if (a.FirstName && !b.FirstName) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (b.completeTask === a.completeTask) {
+          return a.taskCount - b.taskCount;
+        } else {
+          return a.completeTask - b.completeTask;
+        }
+      });
+      // arr.sort((a, b) => a.completeTask - b.completeTask);
     }
     state.appMembers = arr;
   },

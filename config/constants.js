@@ -1178,4 +1178,5 @@ export const TaskTeamFields = [{
 ]
 
 //fields to check for existing log by same user on same date
-export const FIELDS_LOG = ["dueDate", "statusId", "difficultyId", "departmentId", "priorityId"] 
+export const FIELDS_LOG = ["dueDate", "statusId", "difficultyId", "departmentId", "priorityId"]
+

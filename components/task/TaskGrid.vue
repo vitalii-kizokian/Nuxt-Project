@@ -208,32 +208,37 @@ export default {
       // console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
       // console.log(d, newDueDate, oldValue)
 
-      if (d == null) {
-        this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null })
-        return
-      } 
+      this.$store.dispatch("task/fetchHistory", item).then(() => {
+        let oldlog = this.$oldLog("Due date")
 
-      if (this.form.startDate && this.form.startDate != null) {
+        if (d == null) {
+          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+          return
+        } 
 
-        let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
-        selectedDateUTC.setUTCHours(0, 0, 0, 0);
+        if (this.form.startDate && this.form.startDate != null) {
 
-        let startDueDate = new Date(this.form.startDate);
-        let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
-        startDateUTC.setUTCHours(0, 0, 0, 0);
+          let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+          selectedDateUTC.setUTCHours(0, 0, 0, 0);
 
-        // console.log(this.form.startDate )
-        if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
-          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-          // this.form.dueDate = oldValue
-          this.ddate = this.$formatDate(oldValue)
-          // return
+          let startDueDate = new Date(this.form.startDate);
+          let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+          startDateUTC.setUTCHours(0, 0, 0, 0);
+
+          // console.log(this.form.startDate )
+          if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
+            this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+            // this.form.dueDate = oldValue
+            this.ddate = this.$formatDate(oldValue)
+            // return
+          } else {
+            this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+          }
         } else {
-          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate })
+          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
         }
-      } else {
-        this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate })
-      }
+      })
+      
     },
 
     openSidebar(task, scroll) {
