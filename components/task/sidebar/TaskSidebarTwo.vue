@@ -588,18 +588,13 @@ export default {
       let updata = { [taskData.field]: updatedvalue }
       let projectId = null
       let htext = null
-
-      /*if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
-      }*/
-
-      // console.log(taskData.oldlog)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: htext || taskData.historyText || taskData.value,
+        toBeLogged: taskData.toBeLogged,
         oldLog: taskData.oldlog || null
       })
         .then((u) => {

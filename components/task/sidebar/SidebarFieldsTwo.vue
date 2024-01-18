@@ -83,7 +83,7 @@
   </client-only>
 </template>
 <script>
-import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
+import { STATUS, PRIORITY, DIFFICULTY, FIELDS_LOG } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
 // import dayjs from "dayjs";
@@ -336,7 +336,14 @@ export default {
       let oldlog = this.$oldLog("Due date")
 
       if (newValue == "") {
-        this.$emit("update-field", { name: "Due date", field: "dueDate", value: null, historyText: "removed Due date", oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+        this.$emit("update-field", {
+          name: "Due date",
+          field: "dueDate",
+          value: null,
+          historyText: "removed Due date",
+          toBeLogged: true,
+          oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+        })
         return
       } 
 
@@ -356,10 +363,23 @@ export default {
           this.ddate = this.$formatDate(oldValue)
           // return
         } else {
-          this.$emit("update-field", { name: "Due date", field: "dueDate", value: newDueDate, historyText: `changed Due date to ${this.$formatDate(newValue)}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+          this.$emit("update-field", {
+            name: "Due date",
+            field: "dueDate",
+            value: newDueDate,
+            historyText: `changed Due date to ${this.$formatDate(newValue)}`,
+            toBeLogged: true,
+            oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
         }
       } else {
-        this.$emit("update-field", { name: "Due date", field: "dueDate", value: newDueDate, historyText: `changed Due date to ${this.$formatDate(newValue)}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+        this.$emit("update-field", {
+          name: "Due date",
+          field: "dueDate",
+          value: newDueDate,
+          historyText: `changed Due date to ${this.$formatDate(newValue)}`,
+          toBeLogged: true,
+          oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+        })
       }
       
     },
@@ -402,10 +422,22 @@ export default {
     },
     updateField(name, field, value, historyText){
       // console.log(...arguments)
-      
+      let toBeLogged
+      if (FIELDS_LOG.includes(field)) {
+        toBeLogged = true
+      } else {
+        toBeLogged = false
+      }
       let oldlog = this.$oldLog(name)
 
-      this.$emit("update-field", {name, field, value, historyText: `changed ${name} to ${historyText || value}`, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+      this.$emit("update-field", {
+        name,
+        field,
+        value,
+        historyText: `changed ${name} to ${historyText || value}`,
+        toBeLogged,
+        oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+      })
     },
     validate(name, field, value) {
       let dec = Number.parseFloat(value).toFixed(2)

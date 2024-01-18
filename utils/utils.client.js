@@ -331,6 +331,7 @@ export default ({ store, app }, inject) => {
   inject("oldLog", (name) => {
     let logs = store.state.task.taskHistory
     // console.log(app)
-    return logs.find((l) => l.text.includes(name) && app.$toDate(l.createdAt) == app.$toDate(new Date().toISOString() ) && l.userId == app.$auth.user.sub )
+    let smallname = name.toLowerCase()
+    return logs.find((l) => l.text.toLowerCase().includes(smallname) && app.$toDate(l.createdAt) == app.$toDate(new Date().toISOString() ) && l.userId == app.$auth.user.sub )
   })
 }

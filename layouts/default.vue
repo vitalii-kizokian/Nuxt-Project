@@ -676,7 +676,7 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 6;  
+  z-index: 11;  
 }
 .line-light{
   border-bottom: 1px solid rgba(29,29,32,.08);

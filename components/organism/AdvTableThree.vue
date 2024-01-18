@@ -897,6 +897,7 @@ export default {
       this.unselectAll()
         // .then(r => {
           $event.currentTarget.classList.add("active")
+          this.activeItem = item
         // })
       this.$emit("row-click", item)
     },
@@ -905,6 +906,7 @@ export default {
       this.unselectAll().then(r => {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')
+        this.activeItem = item
       })
       // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
       
@@ -946,6 +948,7 @@ export default {
       }
       this.localNewrow.show = false;
       this.akey+=1
+      this.activeItem = {}
       this.$emit("toggle-newsection", 'hide') //send any string to hide
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -1058,19 +1061,17 @@ export default {
             if(task.id==item.id){
               const status_label=status.label=="--"?"":status.label
                return { ...task, statusId: status.value, status:{id:status.value,text:status_label}};
-            }
-            else {
-                return task
+            } else {
+              return task
             } 
           })
           return { ...items, tasks: updateTasks };
         })
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
-              this.changeGroupByFunc()
-            }
-        }
-        else {
+            this.changeGroupByFunc()
+          }
+        } else {
           this.changeGroupByFunc()
         }
  
