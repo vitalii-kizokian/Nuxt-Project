@@ -131,9 +131,8 @@
 </template>
 
 <script>
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { DEPARTMENT, STATUS, PRIORITY, FIELDS_LOG } from '~/config/constants.js'
 import { mapGetters } from "vuex"
-import dayjs from 'dayjs'
 import _ from 'lodash'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { stripHTMLandTrim } from '~/utils/helpers.js'
@@ -355,15 +354,35 @@ export default {
                     }
                     this.loading = false
 
-                    let data = teams.map((el) => {
-                      if (res.data.userId == el.user.id) {
-                        el.isOwner = true
-                      } else {
-                        el.isOwner = false
+                    // let data = teams.map((el) => {
+                    //   if (res.data.userId == el.user.id) {
+                    //     el.isOwner = true
+                    //   } else {
+                    //     el.isOwner = false
+                    //   }
+                    //   return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+                    // });
+
+                    teams.forEach((el) => {
+                      el.isOwner = res.data.userId === el.user.id;
+
+                      const teamMembersUser = this.teamMembers.find(member => member.id === el.user.id);
+
+                      if (teamMembersUser) {
+                        el.user.Photo = teamMembersUser.avatar;
                       }
-                      return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
                     });
-                    this.$store.commit('task/fetchTeamMember',data)
+
+                    let data = teams.map(el => ({
+                      id: el.user.id,
+                      name: el.user.firstName + " " + el.user.lastName,
+                      isOwner: el.isOwner,
+                      avatar: el.user.Photo  
+                    }));
+
+                    this.$store.commit('task/setTeamMember', data)
+                    this.reloadComments+=1
+                    this.reloadHistory += 1
                   })
               }
         } else {
@@ -532,17 +551,25 @@ export default {
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
+      let toBeLogged = false
 
-      // console.log(taskData)
       if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
+        updatedvalue = this.$formatDate(taskData.value)
       }
+
+      if (FIELDS_LOG.includes(taskData.field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: taskData.historyText || taskData.value,
+        toBeLogged,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
            this.$store.dispatch("task/setSingleTask", u)
@@ -589,7 +616,7 @@ export default {
 
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "primary-24"})
-            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
           } else {
             console.warn(res)
           }
@@ -604,7 +631,7 @@ export default {
       // if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
           .then((res) => {
-            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
           })
           .catch(e => console.warn(e))
       // }

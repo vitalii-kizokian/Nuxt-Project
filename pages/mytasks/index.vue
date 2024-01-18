@@ -124,11 +124,10 @@
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
-import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
+import { USER_TASKS, TASK_CONTEXT_MENU, FIELDS_LOG } from "../../config/constants";
 import { mapGetters } from 'vuex';
 // import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "MyTasks",
@@ -746,14 +745,23 @@ export default {
       }
         
     },
-    updateDuedate({id, field, label, value}){
+    updateDuedate({id, field, label, value, oldlog}){
       // console.log(...arguments)
+      let toBeLogged = false;
+      
+      if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
 
       this.$store.dispatch("task/updateTask", {
         id,
         data: { [field]: value},
         user: null,
-        text: `changed ${label} to ${this.$formatDate(value)}`
+        text: `changed ${label} to ${this.$formatDate(value)}`,
+        toBeLogged,
+        oldLog: oldlog || null
       })
         .then(t => {
           this.updateKey()
