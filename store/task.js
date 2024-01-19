@@ -204,9 +204,11 @@ export const actions = {
 
   // create Task
   async createTask(ctx, payload) {
+    // console.log("pay",payload)
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
+
     if (res.statusCode == 200) {
       ctx.commit('createTask', res.data)
       ctx.commit("setSingleTask", res.data)

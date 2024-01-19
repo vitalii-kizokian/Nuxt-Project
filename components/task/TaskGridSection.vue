@@ -1,6 +1,6 @@
 <template>
   <div id="tgs-scroll" class="h-100 overflow-x-auto position-relative bg-light" style="min-height: 30rem;" ref="gridTable">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" :disabled="group != 'default'" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" :class="{'non-draggable': section.title == 'Unassigned'}" style="padding-bottom: 0px !important;">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
@@ -182,7 +182,6 @@ export default {
   },*/
 
   methods: {
-    
     handleScroll(event,sectionId) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {

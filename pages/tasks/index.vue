@@ -23,7 +23,7 @@
         
           <div v-if="gridType == 'grid'" id="tgs-scroll" class="h-100 overflow-auto position-relative" :style="{ 'width': contentWidth }">
             
-            <task-grid-section
+            <!-- <task-grid-section
               :sections="localData"
               :activeTask="activeTask"
               :templateKey="key"
@@ -37,7 +37,52 @@
               sectionType="department"
               :group="group"
             >
-            </task-grid-section>
+            </task-grid-section> -->
+            <draggable v-model="localData" :disabled="groupby != 'default'" class="d-flex grid-content " @end="sectionDragEnd" handle=".section-drag-handle">
+              <!-- <div v-if="newSection" class="task-grid-section">
+                <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                  <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
+                </div>
+              </div> -->
+              <div class="task-grid-section" v-for="(section, index) in localData" :key="index + viewName + '-' + key" style="padding-bottom: 0px !important;">
+                <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
+                  <task-grid-section-title :section="section" ></task-grid-section-title>
+                  <div class="d-flex align-center section-options" :id="'tg-section-options-'+section.id">
+                    <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+section.id" v-on:click.stop="showBlankTask(section.id)">
+                      <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
+                    </div>
+                    <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
+                      <template v-slot:menu>
+                        <div :id="'tgs-list'+section.id" class="list">
+                          <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showBlankTask(section.id)">
+                            <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
+                              <bib-icon icon="add"></bib-icon>
+                              <span class="ml-05" :id="'tgs-list-add'+section.id">Add task</span>
+                            </div>
+                          </span>
+                          <hr>
+                          <!-- <span v-if="section.isDeletable" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="deleteTodoConfirm(section)" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                            <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
+                            <span :id="'tgs-list-del'+section.id" class="ml-05">Delete section</span>
+                          </span> -->
+                        </div>
+                      </template>
+                    </bib-popup>
+                  </div>
+                </div>
+                <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
+                  <draggable :list="section.tasks" :disabled="groupby != 'default'" :group="{name: 'tasks'}" :move="moveTask" @end="taskDragEnd"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == section.id}" :data-section="section.id">
+                    <template v-for="(task, index) in section.tasks">
+                      <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @user-picker="showUserPicker" ></task-grid>
+                    </template>
+                   <task-grid-blank sectionType="department" :section="section" :initialData="initialData" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+                  </draggable>
+                </div>
+              </div>
+              <div class="task-grid-section " id="task-grid-section-blank-2"></div>
+              <div class="task-grid-section " id="task-grid-section-blank-3" style="border-left-color: transparent;"></div>
+              <!-- <div class="task-grid-section " id="task-grid-section-blank-4"></div> -->
+            </draggable>
 
           </div>
         </template>
