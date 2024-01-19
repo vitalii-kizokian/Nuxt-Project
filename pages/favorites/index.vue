@@ -60,7 +60,7 @@
 
 <script>
 import _ from 'lodash'
-import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
+import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU, FIELDS_LOG } from '../../config/constants'
 import { mapGetters, mapActions } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 // import { encryptFunction } from '~/utils/crypto.js'
@@ -1383,91 +1383,93 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
       // payload consists of task, label, field, value, historyText
       let user
       let data = { [field]: value }
+      let oldlog
+      let toBeLogged = false
 
-      if (field == "userId" && value != '') {
-        user = this.teamMembers.filter(t => t.id == value)
-      } else {
-        user = null
-      }
+      this.$store.dispatch("task/fetchHistory", item).then(h => {
+          // console.log(h)
+        oldlog = this.$oldLog(label)
 
-      let projectId = null
-      if (item.project?.length > 0) {
-        projectId = item.project[0].projectId
-      }
-
-      let taskId
-      if (item?.id) {
-        taskId = item.id
-      } else {
-        taskId = item.id
-      }
-
-      if(field == "dueDate" && item.startDate){
-        // console.log(field, value)
-        if(value=="Invalid Date"){
-          data = { [field]: null }
+        if (field == "userId" && value != '') {
+          user = this.teamMembers.filter(t => t.id == value)
+        } else {
+          user = null
         }
-        else {
-          data = { [field]: value }
-        //   if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-        //   data = { [field]: value }
-        // } else{
-        //   data = { [field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
-        }
-  
-      }
-      if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
-        if(value=="Invalid Date"){
-          data = { [field]: null }
-        }
-        else {
-          data = { [field]: value }
-        //   if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-        //   data = { [field]: value }
-        // } else {
-        //   data = { [field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
-        }
-       
-      }
 
-      if (item.task) {
-    if(payload.field=="statusId") {
-      if(payload.statusId=="5") {
-            data= { [field]: value, ['isDone']:true }
-      }
-      else {
-        data= { [field]: value, ['isDone']:false }
-      }
-    }
-        this.$store.dispatch("subtask/updateSubtask", {
-          id: taskId,
-          data: data,
-          user:user ? [user] : null,
-          text: `updated ${label} to ${historyText || value}`
-        })
-        .then(() => {
-          // this.updateKey()
-        })
-      } else {
-        this.$store.dispatch("task/updateTask", {
-          id: taskId,
-          projectId,
-          data: data,
-          user:user ? [user] : null,
-          text: `changed ${label} to ${historyText || value}`
-        }).then(t => {
-          // this.updateKey()
-        }).catch(e => console.warn(e))
-      }
+        let projectId = null
+        if (item.project?.length > 0) {
+          projectId = item.project[0].projectId
+        }
+
+        let taskId
+        if (item?.id) {
+          taskId = item.id
+        } else {
+          taskId = item.id
+        }
+
+        if(field == "dueDate" && item.startDate){
+          // console.log(field, value)
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          }
+          else {
+            data = { [field]: value }
+          }
+    
+        }
+        if(field == "startDate" && item.dueDate){
+          // console.log(field, value)
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          }
+          else {
+            data = { [field]: value }
+          }
+         
+        }
+
+        if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+        console.log(data, toBeLogged, oldlog)
+
+        if (item.task) {
+          if(payload.field=="statusId") {
+            if(payload.statusId=="5") {
+              data = { [field]: value, ['isDone']:true }
+            } else {
+              data = { [field]: value, ['isDone']:false }
+            }
+          }
+          this.$store.dispatch("subtask/updateSubtask", {
+            id: taskId,
+            data: data,
+            user:user ? [user] : null,
+            text: `updated ${label} to ${historyText || value}`,
+            toBeLogged,
+            oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+          })
+          .then(() => {
+            // this.updateKey()
+          })
+        } else {
+          this.$store.dispatch("task/updateTask", {
+            id: taskId,
+            projectId,
+            data: data,
+            user:user ? [user] : null,
+            text: `changed ${label} to ${historyText || value}`,
+            toBeLogged,
+            oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+          }).then(t => {
+            // this.updateKey()
+          }).catch(e => console.warn(e))
+        }
+      })
+
     },
 
     // task context menu methods ----------------------------------------

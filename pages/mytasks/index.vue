@@ -118,7 +118,6 @@ import _ from 'lodash'
 import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU, FIELDS_LOG } from "../../config/constants";
 import { mapGetters } from 'vuex';
-// import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -604,7 +603,7 @@ export default {
       let data = { [field]: value }
       let oldlog
       let toBeLogged = false
-        console.log(payload)
+        // console.log(payload)
         this.$store.dispatch("task/fetchHistory", item).then(h => {
           // console.log(h)
           oldlog = this.$oldLog(label)

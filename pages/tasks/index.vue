@@ -136,8 +136,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { COMPANY_TASK_FIELDS, TASK_CONTEXT_MENU } from "../../config/constants";
-import dayjs from "dayjs";
+import { COMPANY_TASK_FIELDS, TASK_CONTEXT_MENU, FIELDS_LOG } from "../../config/constants";
+// import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 import _ from "lodash";
 
@@ -246,7 +246,7 @@ export default {
       }
     },
     gridType() {
-      this.$store.commit('task/gridType',{gridType:this.gridType})
+      this.$store.commit('task/gridType', {gridType: this.gridType})
       localStorage.setItem('grid', this.gridType)
       this.updateKey()
       // this.key++;
@@ -486,73 +486,77 @@ export default {
     },
 
     updateTask(payload) {
+      // console.log(payload)
+      const {item, label, field, value, historyText} = payload
       let user, projectId;
-      let data = { [payload.field]: payload.value }
+      let data = { [field]: value }
+      let oldlog
+      let toBeLogged = false
 
-      if (payload.field == "userId" && payload.value != "") {
-        user = this.teamMembers.find((t) => t.id == payload.value);
-      } else {
-        user = null;
-      }
- 
-      if (payload.item.project &&payload.item.project[0]&& payload.item.project?.length > 0) {
-        projectId = payload.item.project?.[0].project?.id || payload.item.project?.[0].project?.id;
-      } else {
-        projectId = null;
-      }
+      this.$store.dispatch("task/fetchHistory", item).then(h => {
 
-      if (payload.field == "statusId" && payload.value == 0) {
-        data = { [payload.field]: null};
-      }
+        oldlog = this.$oldLog(label)
 
-      if (payload.field == "priorityId" && payload.value == 0) {
-        data = { [payload.field]: null};
-      }
-    
-      if(payload.field == "dueDate" && payload.item.startDate){
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          data = { [payload.field]: payload.value }
-        //   if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
-        //   data = { [payload.field]: payload.value }
-        // } else{
-        //   data = { [payload.field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
+        if (field == "userId" && value != "") {
+          user = this.teamMembers.find((t) => t.id == value);
+        } else {
+          user = null;
         }
-  
-      }
-      if(payload.field == "startDate" && payload.item.dueDate){
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          data = { [payload.field]: payload.value }
-          //   if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-          //   data = { [payload.field]: payload.value }
-          // } else {
-          //   data = { [payload.field]: null }
-          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //   // this.updateKey()
-          //   return false
-          // }
+   
+        if (item.project && item.project[0] && item.project?.length > 0) {
+          projectId = item.project?.[0].project?.id || item.project?.[0].project?.id;
+        } else {
+          projectId = null;
         }
-      }
+
+        if (field == "statusId" && value == 0) {
+          data = { [field]: null};
+        }
+
+        if (field == "priorityId" && value == 0) {
+          data = { [field]: null};
+        }
       
-      this.$store
-        .dispatch("task/updateTask", {
-          id: payload.item.id,
-          projectId,
-          data: data,
-          user: user ? [user] : null,
-          text: payload.historyText,
+        if(field == "dueDate" && item.startDate){
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          }else {
+            data = { [field]: value }
+          }
+    
+        }
+        if(field == "startDate" && item.dueDate){
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          }else {
+            data = { [field]: value }
+          }
+        }
+
+        if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+
+        // console.log(toBeLogged, oldlog)
+        
+        this.$store
+          .dispatch("task/updateTask", {
+            id: item.id,
+            projectId,
+            data: data,
+            user: user ? [user] : null,
+            text: historyText,
+            toBeLogged,
+            oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+          })
+          .then((t) => {
+            // this.updateKey()
+          })
+          .catch((e) => console.warn(e));
         })
-        .then((t) => {
-          // this.updateKey()
-        })
-        .catch((e) => console.warn(e));
+
     },
 
     updateAssignee(label, field, value, historyText) {
@@ -615,7 +619,7 @@ export default {
     },
 
     changeDate({id, field, label, value}){
-      // let newDate = dayjs(value).format("D MMM YYYY");
+      
       this.$store
         .dispatch("task/updateTask", {
           id,

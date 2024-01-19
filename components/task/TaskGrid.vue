@@ -38,7 +38,7 @@
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </div>
         <div class="date-input position-relative flex-shrink-0 flex-grow-0">
-          <bib-datetime-picker class="left-datetime-picker" v-model="ddate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" :min-date="task.startDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
+          <bib-datetime-picker class="left-datetime-picker" v-model="ddate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
         </div>
         <!-- <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar-solid" :variant="checkPastDue(task.dueDate) ? 'danger-sub3' : 'gray4'" class="events-none"></bib-icon>
@@ -110,6 +110,7 @@ export default {
       // formattedDuedate: null,
       editTitle: false,
       taskDeleteConfirm: false,
+      
     };
   },
   /*watch: {
@@ -203,40 +204,41 @@ export default {
 
       let oldValue = item.dueDate
       let newDueDate = dayjs(d).isValid() ? new Date(d) : null;
-      // this.form.dueDate = d;
 
       // console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
-      // console.log(d, newDueDate, oldValue)
 
       this.$store.dispatch("task/fetchHistory", item).then(() => {
         let oldlog = this.$oldLog("Due date")
 
-        if (d == null) {
-          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
-          return
-        } 
+          if (d == null) {
+            this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+            return
+          } 
 
-        if (this.form.startDate && this.form.startDate != null) {
+          if (this.form.startDate && this.form.startDate != null) {
 
-          let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
-          selectedDateUTC.setUTCHours(0, 0, 0, 0);
+            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
 
-          let startDueDate = new Date(this.form.startDate);
-          let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
-          startDateUTC.setUTCHours(0, 0, 0, 0);
+            let startDueDate = new Date(this.form.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
 
-          // console.log(this.form.startDate )
-          if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
-            this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-            // this.form.dueDate = oldValue
-            this.ddate = this.$formatDate(oldValue)
-            // return
+            // console.log(this.form.startDate )
+            if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
+              this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+              // this.form.dueDate = oldValue
+              this.ddate = this.$formatDate(oldValue)
+              return
+            } else {
+              this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+              return
+            }
           } else {
             this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
           }
-        } else {
-          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
-        }
+          console.log(d, newDueDate, oldValue)
+        
       })
       
     },
