@@ -136,8 +136,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { COMPANY_TASK_FIELDS, TASK_CONTEXT_MENU } from "../../config/constants";
-import dayjs from "dayjs";
+import { COMPANY_TASK_FIELDS, TASK_CONTEXT_MENU, FIELDS_LOG } from "../../config/constants";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 import _ from "lodash";
 
@@ -614,14 +613,23 @@ export default {
       }
     },
 
-    changeDate({id, field, label, value}){
+    changeDate({id, field, label, value, oldlog}){
       // let newDate = dayjs(value).format("D MMM YYYY");
+      let toBeLogged = false;
+      if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+
       this.$store
         .dispatch("task/updateTask", {
           id,
           data: { [field]: value },
           user: null,
           text: `changed ${label} to ${this.$formatDate(value)}`,
+          toBeLogged,
+          oldLog: oldlog || null
         })
         .then((t) => {
             this.updateKey();
