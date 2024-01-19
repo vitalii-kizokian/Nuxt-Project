@@ -94,10 +94,9 @@
 </template>
 
 <script>
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { DEPARTMENT, STATUS, PRIORITY, FIELDS_LOG } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-import dayjs from 'dayjs'
 export default {
 
   name: 'InboxTask',
@@ -229,7 +228,6 @@ export default {
     },
 
     addTeamMember(userData){
-      console.log(userData)
 
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
@@ -247,7 +245,6 @@ export default {
     },
 
     async deleteMember(member) {
-      console.log(member)
       await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
         .then((res) => {
           this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
@@ -274,6 +271,8 @@ export default {
     }, 1000),
 
     updateTask(taskData, historyText, projectId) {
+
+      let toBeLogged = false;
 
       let updatedvalue = taskData.value
       if (taskData.name == 'Assignee') {
@@ -316,7 +315,7 @@ export default {
       }
 
       if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM, YYYY')
+        updatedvalue = this.$formatDate(taskData.value)
       }
 
       let user;
@@ -326,12 +325,20 @@ export default {
         user = null
       }
 
+      if (FIELDS_LOG.includes(taskData.field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: { [taskData.field]: taskData.value },
         user,
         projectId: this.form.projectId ? this.form.projectId : null,
         text: `changed ${taskData.name} to ${updatedvalue}`,
+        toBeLogged,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")

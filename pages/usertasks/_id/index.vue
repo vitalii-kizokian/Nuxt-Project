@@ -93,6 +93,7 @@ import _ from "lodash";
 import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
+  FIELDS_LOG
 } from "../../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
@@ -550,77 +551,68 @@ export default {
     },
     updateTask(payload) {
       // console.log(payload)
+      const {item, label, field, value, historyText} = payload
+      let user, projectId;let oldlog
+      let toBeLogged = false
+        
+      this.$store.dispatch("task/fetchHistory", item).then(h => {
+        // console.log(h)
+        oldlog = this.$oldLog(label)
 
-      let user, projectId;
-      if (payload.field == "userId" && payload.value != "") {
-        user = [this.teamMembers.find((t) => t.id == payload.value)];
-      } else {
-        user = null;
-      }
-  
-      if (payload.item.project.length > 0) {
-        projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
-      } else {
-        projectId = null;
-      }
-      let data = { [payload.field]: payload.value }
-      // let before = this.beforeLocal.filter((item)=>item.id === payload.item.id)
+        if (field == "userId" && value != "") {
+          user = [this.teamMembers.find((t) => t.id == value)];
+        } else {
+          user = null;
+        }
     
-      if(payload.field == "dueDate" && payload.item.startDate){
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          data = { [payload.field]: payload.value }
-        //   if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
-        //   // console.log('dueDate > startDate')
-        //   data = { [payload.field]: payload.value }
-        // } else {
-        //   data = { [payload.field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey();
-        //   return false
-        // }
+        if (item.project.length > 0) {
+          projectId = item.project[0].projectId || item.project[0].project.id;
+        } else {
+          projectId = null;
         }
-        // console.log(payload.value, 'startDate', payload.item.startDate)
-        // if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10)){
-   
-      }
-
-      if(payload.field == "startDate" && payload.item.dueDate) {
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          data = { [payload.field]: payload.value }
-        //   if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()) {
-        //   // console.log('startDate < dueDate')
-        //   data = { [payload.field]: payload.value }
-        // } else {
-        //   data = { [payload.field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey();
-        //   return false
-        // }
-        }
-        // console.log(payload.value, 'dueDate', payload.item.dueDate)
-  
-      }
-
-      // console.log(data)
+        let data = { [field]: value }
+        // let before = this.beforeLocal.filter((item)=>item.id === item.id)
       
-      this.$store
-      .dispatch("task/updateTask", {
-        id: payload.item.id,
-        projectId,
-        data: data,
-        user,
-        text: payload.historyText,
-      })
-      .then(async (t) => {
-        // console.log("tt",t)
-          // this.updateKey();
+        if(field == "dueDate" && item.startDate){
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          } else {
+            data = { [field]: value }
+          }   
+        }
+
+        if(field == "startDate" && item.dueDate) {
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          }else {
+            data = { [field]: value }
+          }
     
+        }
+
+        if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+
+        console.log(data, toBeLogged, oldlog)
+        
+        this.$store
+        .dispatch("task/updateTask", {
+          id: item.id,
+          projectId,
+          data: data,
+          user,
+          text: historyText,
+          toBeLogged,
+          oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+        })
+        .then(async (t) => {
+          // this.updateKey();    
+        })
+        .catch((e) => console.warn(e));
       })
-      .catch((e) => console.warn(e));
      
     },
 

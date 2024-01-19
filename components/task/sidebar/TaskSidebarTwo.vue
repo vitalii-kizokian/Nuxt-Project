@@ -588,18 +588,14 @@ export default {
       let updata = { [taskData.field]: updatedvalue }
       let projectId = null
       let htext = null
-
-      /*if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
-      }*/
-
-      // console.log(updatedvalue)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: htext || taskData.historyText || taskData.value,
+        toBeLogged: taskData.toBeLogged,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
@@ -663,10 +659,10 @@ export default {
 
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
-
+          // console.log(res)
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "primary-24"})
-            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form }).then(()=>this.reloadTeam += 1)
           } else {
             console.warn(res)
           }
@@ -685,15 +681,7 @@ export default {
           })
           .catch(e => console.warn(e))
       // }
-      /*if (this.mode == "subtask") {
-        await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
-          .then((res) => {
-            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
-            this.key += 1
-          })
-          .catch(e => console.log(e))
-        this.loading = false
-      }*/
+      
     },
 
     async updateProject(taskData) {

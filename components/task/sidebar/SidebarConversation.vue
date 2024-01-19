@@ -135,8 +135,6 @@ export default {
     await this.$nuxt.$on("refresh-history", () => {
       this.fetchHistory()
     })
-
-    
   },
   methods: {
     handleChange_Tabs(tab) {
@@ -178,11 +176,13 @@ export default {
     fetchHistory() {
       this.$store.dispatch("task/fetchHistory", this.task)
         .then(h => {
-          this.history = h
+          setTimeout(() => {
+            // console.log('history',h)
+            this.history = h
+          }, 200)
         })
         .catch(e => {
           console.error(e)
-
         })
     },
 
@@ -204,13 +204,5 @@ export default {
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
-/*::v-deep {
-  .tabs { border: 0 none !important; height: 2rem !important; gap: 1rem;
-    button { padding-inline: 0 !important; font-size: $font-size-sm !important; margin-bottom: -1px;
-      &.active { border: 0 none !important; font-weight: 500; }
-      &:not(.active) { color: $gray5 !important;}
-    }
-  }
-}*/
 
 </style>

@@ -203,11 +203,11 @@ import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 import { pastDue } from "~/utils/helpers.js";
-import { combineTransactionSteps } from '@tiptap/core'
+// import { combineTransactionSteps } from '@tiptap/core'
 
 export default {
 
-  name: 'AdvTableThree',
+  name: 'AdvTableTwo',
   components: {
     draggable,
   },
@@ -215,12 +215,12 @@ export default {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
     filter:{ type: String, default: 'all' },
-    dataType: { type: String, default: 'nested' },
+    // dataType: { type: String, default: 'nested' },
     // sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
-    editSection:{type:String, default:"default"},
+    editSection: {type:String, default:"default"},
     tasksKey: {
       type: String,
       default() {
@@ -281,10 +281,10 @@ export default {
       dataDisplayed: false, 
       available_tasks: [],
       showedCount: 0,
-      loading:false,
-      filterViews:"",
+      loading: false,
+      filterViews: "",
       isRendered: false,
-      sectionClass:'section-content',
+      sectionClass: 'section-content',
       testIsLoadingData: false,
       colIds: [],
       colSizes: [],
@@ -897,7 +897,6 @@ export default {
       this.unselectAll()
         // .then(r => {
           $event.currentTarget.classList.add("active")
-          this.activeItem = item
         // })
       this.$emit("row-click", item)
     },
@@ -906,7 +905,6 @@ export default {
       this.unselectAll().then(r => {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')
-        this.activeItem = item
       })
       // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
       
@@ -948,7 +946,6 @@ export default {
       }
       this.localNewrow.show = false;
       this.akey+=1
-      this.activeItem = {}
       this.$emit("toggle-newsection", 'hide') //send any string to hide
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -1061,17 +1058,19 @@ export default {
             if(task.id==item.id){
               const status_label=status.label=="--"?"":status.label
                return { ...task, statusId: status.value, status:{id:status.value,text:status_label}};
-            } else {
-              return task
+            }
+            else {
+                return task
             } 
           })
           return { ...items, tasks: updateTasks };
         })
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
-            this.changeGroupByFunc()
-          }
-        } else {
+              this.changeGroupByFunc()
+            }
+        }
+        else {
           this.changeGroupByFunc()
         }
  
