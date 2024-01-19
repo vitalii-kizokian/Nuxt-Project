@@ -185,7 +185,7 @@ export const mutations = {
         return {
           ...member,
           completeTask: found.complete,
-          taskCount: found.taskCount-found.complete,
+          taskCount: found.taskCount,
         };
       } else {
         return {
@@ -199,7 +199,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return a.FirstName.toUpperCase().localeCompare(b.FirstName.toUpperCase());
+            return a.FirstName.localeCompare(b.FirstName);
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -219,7 +219,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return b.FirstName.toUpperCase().localeCompare(a.FirstName.toUpperCase());
+            return b.FirstName.localeCompare(a.FirstName);
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -239,7 +239,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return a.FirstName.toUpperCase().localeCompare(b.FirstName.toUpperCase());
+            return a.FirstName.localeCompare(b.FirstName);
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -258,7 +258,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return b.FirstName.toUpperCase().localeCompare(a.FirstName.toUpperCase());
+            return b.FirstName.localeCompare(a.FirstName);
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {

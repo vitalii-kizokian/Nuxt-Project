@@ -66,7 +66,7 @@
         <!-- :class="{'error': error == 'invalid'}" -->
         <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
         <!-- <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea> -->
-        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute"  v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})"  @keyup.enter="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="debounceUpdate({name:'Title', field:'title', value:form.title})" @keyup.enter="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
         <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
@@ -183,7 +183,6 @@ export default {
     ...mapGetters({
       user: "user/getUser2",
       teamMembers: "user/getTeamMembers",
-      alltasks: "company/getCompanyTasks",
       tasks: "task/tasksForListView",
       team: 'task/getTaskMembers',
       sidebarOpen: 'task/getSidebarVisible',
@@ -399,10 +398,6 @@ export default {
       // this.$nuxt.$emit("close-expand")
     },
     closeSidebar(event) {
-      // const titleValue = this.$refs.taskTitleInput.value;
-      // if(titleValue!=="") {
-      //   this.debounceUpdate({name:'Title', field:'title', value:titleValue})
-      // }
       let main = document.getElementById("main-content").className
       if(main.indexOf('open-sidebar') > 0){
         const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
@@ -440,30 +435,12 @@ export default {
         }
 
         // on tasks page
-        if (this.$route.path === '/tasks') {
-          taskform["mode"] = "department";
-          taskform["sectionId"] = null;
-          let taskPageUnassignedTask = null;
-
-          if (this.unassignedTasks === null) {
-            let data=[...this.alltasks]
-            if(data){
-              let t = await data.find(ld => ld.title === "Unassigned");
-              taskPageUnassignedTask = await t ? { tasks: t.tasks } : null;
-              taskform["data"] =  { id: null, ...taskPageUnassignedTask }? { id: null, ...taskPageUnassignedTask }:null
-            }
-            else {
-              taskform["data"]=null
-            }
-            
-           
-          }
-          else {
-            taskform["data"] =  { id: null, ...this.unassignedTasks }? { id: null, ...this.unassignedTasks }:null
-          }
-
-          taskform["userId"] = null;
-          taskform["user"] = null;
+        if (this.$route.path == '/tasks') {
+          taskform["mode"] = "department"
+          taskform["sectionId"] = null
+          // taskform["data"] = this.unassignedTasks
+          taskform["userId"] = null
+          taskform["user"] = null
         }
         // on project task page
         if (this.$route.path.includes("/projects/")) {
@@ -475,10 +452,12 @@ export default {
           taskform["mode"] = null
         }
 
+        // console.log(taskform)
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.projectId : taskform.sectionId),
           "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.projectId || taskform.projectId),
-          "title": taskform.title,
+          "title": this.form.title,
           "description": taskform.description,
           "startDate": taskform.startDate,
           "dueDate": taskform.dueDate,
@@ -489,10 +468,10 @@ export default {
           user,
           "text": `task "${this.form.title}" created`,
           "mode": taskform.mode,
-          "data": this.$route.path === '/tasks'? taskform.data: null
+          "data": this.unassignedTasks ? { id: null, ...this.unassignedTasks } : null
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
-         
+
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
@@ -796,7 +775,8 @@ export default {
         // this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
         this.form.userId = this.sideBarUser?.id || this.sideBarUser || "";
-        this.form.title=payload.value?payload.value:"";
+        
+        // console.log(this.form)
         this.createTask(this.form)
         this.$store.dispatch("user/setSideBarUser",[])
         
