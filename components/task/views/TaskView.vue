@@ -1146,7 +1146,7 @@ export default {
           toBeLogged = false
         }
 
-        console.log(toBeLogged, oldlog, data)
+        // console.log(toBeLogged, oldlog, data)
 
         this.$store
           .dispatch("task/updateTask", {
@@ -1191,7 +1191,7 @@ export default {
         } else {
           toBeLogged = false
         }
-      console.log(toBeLogged, oldlog)
+      // console.log(toBeLogged, oldlog)
 
       this.$store
         .dispatch("task/updateTask", {

@@ -835,25 +835,6 @@ export default {
         text: "",
       };
     },
-    // createNewTask(item,section){
-    //   console.log(item)
-    //   let taskdata = item
-    //   taskdata.todoId = this.groupby ? null : section.id
-    //   taskdata.user = [{
-    //     id: this.loggedUser.Id,
-    //     email: this.loggedUser.Email,
-    //     firstName: this.loggedUser.FirstName,
-    //     lastName: this.loggedUser.LastName
-    //   }]
-    //   taskdata.userId=this.loggedUser.Id
-    //   // console.log(taskdata)
-    //   this.$store.dispatch("task/createTask", taskdata)
-    //   .then(t => {
-    //     console.log("$$$$",t)
-    //     this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
-    //   })
-    //   .catch(e => console.warn(e))
-    // },
 
     updateKey($event) {
       if ($event) {

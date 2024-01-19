@@ -79,13 +79,13 @@
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { pastDue } from "~/utils/helpers.js";
 
-var utc = require('dayjs/plugin/utc')
-dayjs.extend(utc)
+/*var utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)*/
 
 export default {
   name: "TaskGrid",
@@ -133,8 +133,6 @@ export default {
     //   }
     // },
     overdue() {
-      // console.log(dayjs(this.dueDate).diff(dayjs()))
-      // return dayjs(this.dueDate).diff(dayjs()) <= 0 ? true : false
       let check = pastDue(this.task.dueDate)
       return check
     },
@@ -146,9 +144,6 @@ export default {
   mounted(){
     // this.dueDate = new Date(this.task.dueDate).toISOString()
     this.ddate = this.task.dueDate ? this.$formatDate(this.task.dueDate) : null
-    // this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
-    // this.formattedDuedate = this.task.dueDate ? dayjs(this.task.dueDate).format(this.format) : null
-    // this.formattedDuedate = this.task.dueDate ? this.$formatDate(this.task.dueDate) : null
     this.dueDate = this.$formatDate(this.task?.dueDate)
   },
   /*updated() {
@@ -203,7 +198,7 @@ export default {
     updateDate(d, item, field, label) {
 
       let oldValue = item.dueDate
-      let newDueDate = dayjs(d).isValid() ? new Date(d) : null;
+      let newDueDate = this.$dayjs(d).isValid() ? new Date(d) : null;
 
       // console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
 
@@ -237,7 +232,6 @@ export default {
           } else {
             this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
           }
-          console.log(d, newDueDate, oldValue)
         
       })
       
@@ -259,7 +253,7 @@ export default {
       let historyText;
 
       if (label == "Due date" || label == "Start date") {
-        historyText = dayjs(taskData.value).format('DD MMM, YYYY')
+        historyText = this.$formatDate(taskData.value)
       }
 
       if (_.trim(value) == "") {
@@ -340,29 +334,7 @@ export default {
           console.log(e)
         })
     },
-    // confirmDelete(state){
-    //   this.confirmModal = false
-    //   this.confirmMsg = ""
-    //   if (state) {
-    //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
-    //     .then(t => {
-    //       if (t.statusCode == 200) {
-    //         this.popupMessages.push({ text: t.message, variant: "success" })
-    //         this.$emit("update-key", t.message)
-    //         this.taskToDelete = {}
-    //       } else {
-    //         this.popupMessages.push({ text: t.message, variant: "orange" })
-    //         console.warn(t.message);
-    //       }
-    //     })
-    //     .catch(e => {
-    //       console.warn(e)
-    //     })
-    //   } else {
-    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
-    //     this.taskToDelete = {}
-    //   }
-    // },
+    
     deleteTask(task) {
       if (this.taskToDelete) {
         this.$store.dispatch("task/deleteTask", this.taskToDelete)

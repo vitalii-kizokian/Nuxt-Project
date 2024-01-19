@@ -681,15 +681,7 @@ export default {
           })
           .catch(e => console.warn(e))
       // }
-      /*if (this.mode == "subtask") {
-        await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
-          .then((res) => {
-            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
-            this.key += 1
-          })
-          .catch(e => console.log(e))
-        this.loading = false
-      }*/
+      
     },
 
     async updateProject(taskData) {
