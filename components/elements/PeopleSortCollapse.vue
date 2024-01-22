@@ -235,7 +235,6 @@ import { mapGetters } from "vuex";
         arr = arr.reduce((acc, ele) => {
           return [...acc, ...ele.tasks];
         }, []);
-        console.log("1111",arr);
         this.sortUser= Object.values(
           arr.reduce((acc, curr) => {
                       if (acc[curr.userId]) {
@@ -253,7 +252,6 @@ import { mapGetters } from "vuex";
                       return acc;
                     }, {})
                   );
-        console.log("111",this.sortUser)
         this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     });
        
