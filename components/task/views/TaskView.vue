@@ -17,7 +17,7 @@
 
     </div>
 
-    <div v-show="gridType == 'grid'" class="calc-height " >
+    <div v-if="gridType == 'grid'" class="calc-height " >
       <task-grid-section
         :sections="localdata"
         :activeTask="activeTask"
@@ -133,10 +133,9 @@
 </template>
 
 <script>
-import { TASK_FIELDS, TASK_CONTEXT_MENU } from "config/constants";
+import { TASK_FIELDS, TASK_CONTEXT_MENU, FIELDS_LOG } from "config/constants";
 import { mapGetters } from "vuex";
 import _ from "lodash";
-import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 
 export default {
@@ -271,12 +270,12 @@ export default {
       // emitted from <task-grid>
       this.showDatePicker(payload);
     });*/
-    // this.$nuxt.$on("change-duedate", payload => {
-    //   // emitted from <task-grid>
-    //   if (this.$route.path.includes("/projects/")) {
-    //     this.changeDate(payload)
-    //   }
-    // })
+    this.$nuxt.$on("change-duedate", payload => {
+      // emitted from <task-grid>
+      if (this.$route.path.includes("/projects/")) {
+        this.changeDate(payload)
+      }
+    })
     this.$nuxt.$on("refresh-table", () => {
         this.updateKey();
     });
@@ -285,7 +284,10 @@ export default {
     this.projectId = this.$decodeFromHex(this.$route.params?.id) || this.project?.id
   },
   beforeDestroy(){
-    this.$nuxt.$off("refresh-table");
+    this.$nuxt.$off("update-key")
+    this.$nuxt.$off("user-picker")
+    this.$nuxt.$off("refresh-table")
+    this.$nuxt.$off("change-duedate")
     this.localdata = []
   },
 
@@ -1109,43 +1111,54 @@ export default {
       const { item, label, field, value, historyText } = payload
       
       let user;
-      if (field == "userId" && value != "") {
-        user = this.teamMembers.filter((t) => t.id == value);
-      } else {
-        user = null;
-      }
+      let oldlog
+      let toBeLogged = false
 
-      let data = { [field]: value }
-    
-      if(field == "dueDate" && item.startDate){
-        if(value=="Invalid Date"){
-          data = { [field]: null }
+      this.$store.dispatch("task/fetchHistory", item).then(h => {
+        oldlog = this.$oldLog(label)
+
+        if (field == "userId" && value != "") {
+          user = this.teamMembers.filter((t) => t.id == value);
         } else {
-          data = { [field]: value }
-          
+          user = null;
+        }
+
+        let data = { [field]: value }
+      
+        if(field == "dueDate" && item.startDate){
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          } else {
+            data = { [field]: value }
+          }
+        }
+        if(field == "startDate" && item.dueDate){
+          if(value=="Invalid Date"){
+            data = { [field]: null }
+          } else {
+            data = { [field]: value }
+            
+          }
         }
         
-      }
-      if(field == "startDate" && item.dueDate){
-        if(value=="Invalid Date"){
-          data = { [field]: null }
+        if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
         } else {
-          data = { [field]: value }
-          
+          toBeLogged = false
         }
-     
-      }
-      this.$store
-        .dispatch("task/updateTask", {
-          id: payload.id,
-          data: data,
-          user: user,
-          text: `${historyText || value}`,
-        })
-        .then((t) => {
-          // this.updateKey();
-        })
-        .catch((e) => console.warn(e));
+
+        // console.log(toBeLogged, oldlog, data)
+
+        this.$store
+          .dispatch("task/updateTask", {
+            id: payload.id,
+            data: data,
+            user: user,
+            text: `${historyText || value}`,
+            toBeLogged,
+            oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+          })
+      })
     },
 
     updateAssignee(label, field, value, historyValue) {
@@ -1171,20 +1184,32 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-    // changeDate({id, field, label, value}){
-    //   // let newDate = dayjs(value).format("D MMM YYYY");
-    //   this.$store
-    //     .dispatch("task/updateTask", {
-    //       id,
-    //       data: { [field]: value },
-    //       user: null,
-    //       text: `changed ${label} to ${this.$formatDate(value)}`,
-    //     })
-    //     .then((t) => {
-    //         this.updateKey();
-    //     })
-    //     .catch((e) => console.warn(e));
-    // },
+
+    changeDate({id, field, label, value, oldlog}){
+      
+      let toBeLogged = false;
+      if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+      // console.log(toBeLogged, oldlog)
+
+      this.$store
+        .dispatch("task/updateTask", {
+          id,
+          data: { [field]: value },
+          user: null,
+          text: `changed ${label} to ${this.$formatDate(value)}`,
+          toBeLogged,
+          oldLog: oldlog || null
+        })
+        .then((t) => {
+            // this.updateKey();
+        })
+        .catch((e) => console.warn(e));
+    },
+
 
     gridDeleteTask(item) {
        this.taskDeleteConfirm = true

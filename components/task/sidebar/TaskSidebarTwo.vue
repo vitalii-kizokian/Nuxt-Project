@@ -399,10 +399,6 @@ export default {
       // this.$nuxt.$emit("close-expand")
     },
     closeSidebar(event) {
-      // const titleValue = this.$refs.taskTitleInput.value;
-      // if(titleValue!=="") {
-      //   this.debounceUpdate({name:'Title', field:'title', value:titleValue})
-      // }
       let main = document.getElementById("main-content").className
       if(main.indexOf('open-sidebar') > 0){
         const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
@@ -475,6 +471,8 @@ export default {
           taskform["mode"] = null
         }
 
+        // console.log(taskform)
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.projectId : taskform.sectionId),
           "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.projectId || taskform.projectId),
@@ -492,7 +490,7 @@ export default {
           "data": this.$route.path === '/tasks'? taskform.data: null
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
-         
+
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
@@ -609,18 +607,14 @@ export default {
       let updata = { [taskData.field]: updatedvalue }
       let projectId = null
       let htext = null
-
-      /*if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
-      }*/
-
-      // console.log(updatedvalue)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
         text: htext || taskData.historyText || taskData.value,
+        toBeLogged: taskData.toBeLogged,
+        oldLog: taskData.oldlog || null
       })
         .then((u) => {
           if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
@@ -684,10 +678,10 @@ export default {
 
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
-
+          // console.log(res)
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "primary-24"})
-            this.$store.dispatch('task/fetchTeamMember', { ...this.form })
+            this.$store.dispatch('task/fetchTeamMember', { ...this.form }).then(()=>this.reloadTeam += 1)
           } else {
             console.warn(res)
           }
@@ -706,15 +700,7 @@ export default {
           })
           .catch(e => console.warn(e))
       // }
-      /*if (this.mode == "subtask") {
-        await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
-          .then((res) => {
-            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
-            this.key += 1
-          })
-          .catch(e => console.log(e))
-        this.loading = false
-      }*/
+      
     },
 
     async updateProject(taskData) {

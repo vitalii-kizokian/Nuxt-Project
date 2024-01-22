@@ -194,7 +194,6 @@ export default {
   },*/
 
   methods: {
-    
     handleScroll(event,sectionId) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {

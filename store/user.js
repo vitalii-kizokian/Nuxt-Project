@@ -179,8 +179,10 @@ export const mutations = {
       state.userTasks=arr
   },
   sortPeople(state, payload) {
+    console.log("111",arr)
     const arr = state.appMembers.map((member) => {
       const found = payload.data.find((item) => item.userId === member.Id);
+      console.log("found",found)
       if (found) {
         return {
           ...member,
@@ -196,10 +198,11 @@ export const mutations = {
       }
     });
     if (payload.sort === "Most_Tasks_Todo") {
+      console.log("arr",arr)
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return a.FirstName.toUpperCase().localeCompare(b.FirstName.toUpperCase());
+            return a.FirstName.charAt(0).toUpperCase().localeCompare(b.FirstName.charAt(0).toUpperCase());
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -219,7 +222,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return b.FirstName.toUpperCase().localeCompare(a.FirstName.toUpperCase());
+            return b.FirstName.charAt(0).toUpperCase().localeCompare(a.FirstName.charAt(0).toUpperCase());
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -239,7 +242,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return a.FirstName.toUpperCase().localeCompare(b.FirstName.toUpperCase());
+            return a.FirstName.charAt(0).toUpperCase().localeCompare(b.FirstName.charAt(0).toUpperCase());
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {
@@ -258,7 +261,7 @@ export const mutations = {
       arr.sort((a, b) => {
         if (b.taskCount === a.taskCount && b.completeTask === a.completeTask) {
           if (a.FirstName && b.FirstName) {
-            return b.FirstName.toUpperCase().localeCompare(a.FirstName.toUpperCase());
+            return b.FirstName.charAt(0).toUpperCase().localeCompare(a.FirstName.charAt(0).toUpperCase());
           } else if (!a.FirstName && b.FirstName) {
             return -1;
           } else if (a.FirstName && !b.FirstName) {

@@ -38,7 +38,7 @@
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </div>
         <div class="date-input position-relative flex-shrink-0 flex-grow-0">
-          <bib-datetime-picker class="left-datetime-picker" v-model="ddate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" :min-date="task.startDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
+          <bib-datetime-picker class="left-datetime-picker" v-model="ddate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
         </div>
         <!-- <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar-solid" :variant="checkPastDue(task.dueDate) ? 'danger-sub3' : 'gray4'" class="events-none"></bib-icon>
@@ -79,13 +79,13 @@
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { pastDue } from "~/utils/helpers.js";
 
-var utc = require('dayjs/plugin/utc')
-dayjs.extend(utc)
+/*var utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)*/
 
 export default {
   name: "TaskGrid",
@@ -110,6 +110,7 @@ export default {
       // formattedDuedate: null,
       editTitle: false,
       taskDeleteConfirm: false,
+      
     };
   },
   /*watch: {
@@ -132,8 +133,6 @@ export default {
     //   }
     // },
     overdue() {
-      // console.log(dayjs(this.dueDate).diff(dayjs()))
-      // return dayjs(this.dueDate).diff(dayjs()) <= 0 ? true : false
       let check = pastDue(this.task.dueDate)
       return check
     },
@@ -145,9 +144,6 @@ export default {
   mounted(){
     // this.dueDate = new Date(this.task.dueDate).toISOString()
     this.ddate = this.task.dueDate ? this.$formatDate(this.task.dueDate) : null
-    // this.formattedDuedate = this.task.dueDate ? dayjs.utc(this.task.dueDate).format(this.format) : null
-    // this.formattedDuedate = this.task.dueDate ? dayjs(this.task.dueDate).format(this.format) : null
-    // this.formattedDuedate = this.task.dueDate ? this.$formatDate(this.task.dueDate) : null
     this.dueDate = this.$formatDate(this.task?.dueDate)
   },
   /*updated() {
@@ -202,38 +198,43 @@ export default {
     updateDate(d, item, field, label) {
 
       let oldValue = item.dueDate
-      let newDueDate = dayjs(d).isValid() ? new Date(d) : null;
-      // this.form.dueDate = d;
+      let newDueDate = this.$dayjs(d).isValid() ? new Date(d) : null;
 
       // console.table({"newvalue": d, "newduedate ISO":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
-      // console.log(d, newDueDate, oldValue)
 
-      if (d == null) {
-        this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null })
-        return
-      } 
+      this.$store.dispatch("task/fetchHistory", item).then(() => {
+        let oldlog = this.$oldLog("Due date")
 
-      if (this.form.startDate && this.form.startDate != null) {
+          if (d == null) {
+            this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: null, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+            return
+          } 
 
-        let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
-        selectedDateUTC.setUTCHours(0, 0, 0, 0);
+          if (this.form.startDate && this.form.startDate != null) {
 
-        let startDueDate = new Date(this.form.startDate);
-        let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
-        startDateUTC.setUTCHours(0, 0, 0, 0);
+            let selectedDateUTC = new Date(Date.UTC(newDueDate.getUTCFullYear(), newDueDate.getUTCMonth(), newDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
 
-        // console.log(this.form.startDate )
-        if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
-          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-          // this.form.dueDate = oldValue
-          this.ddate = this.$formatDate(oldValue)
-          // return
-        } else {
-          this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate })
-        }
-      } else {
-        this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate })
-      }
+            let startDueDate = new Date(this.form.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+            // console.log(this.form.startDate )
+            if (selectedDateUTC.getTime() < startDateUTC.getTime()) {
+              this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+              // this.form.dueDate = oldValue
+              this.ddate = this.$formatDate(oldValue)
+              return
+            } else {
+              this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+              return
+            }
+          } else {
+            this.$nuxt.$emit("change-duedate", { id: item.id, label: "Due date", field: "dueDate", value: newDueDate, oldlog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null })
+          }
+        
+      })
+      
     },
 
     openSidebar(task, scroll) {
@@ -252,7 +253,7 @@ export default {
       let historyText;
 
       if (label == "Due date" || label == "Start date") {
-        historyText = dayjs(taskData.value).format('DD MMM, YYYY')
+        historyText = this.$formatDate(taskData.value)
       }
 
       if (_.trim(value) == "") {
@@ -334,29 +335,7 @@ export default {
           console.log(e)
         })
     },
-    // confirmDelete(state){
-    //   this.confirmModal = false
-    //   this.confirmMsg = ""
-    //   if (state) {
-    //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
-    //     .then(t => {
-    //       if (t.statusCode == 200) {
-    //         this.popupMessages.push({ text: t.message, variant: "success" })
-    //         this.$emit("update-key", t.message)
-    //         this.taskToDelete = {}
-    //       } else {
-    //         this.popupMessages.push({ text: t.message, variant: "orange" })
-    //         console.warn(t.message);
-    //       }
-    //     })
-    //     .catch(e => {
-    //       console.warn(e)
-    //     })
-    //   } else {
-    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
-    //     this.taskToDelete = {}
-    //   }
-    // },
+    
     deleteTask(task) {
       if (this.taskToDelete) {
         this.$store.dispatch("task/deleteTask", this.taskToDelete)

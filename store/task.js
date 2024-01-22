@@ -132,14 +132,8 @@ export const mutations = {
     state.selectedTask = currentTask;
   },
 
-  fetchTeamMember(state, payload) {
-      // if(state.selectedTask.userId){
-      //   state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
-      
-      //   }
-      //   else {
-          state.taskMembers=payload
-        // }
+  setTeamMember(state, payload) {
+    state.taskMembers = payload
   },
 
   // addMember(state, payload) {
@@ -204,9 +198,11 @@ export const actions = {
 
   // create Task
   async createTask(ctx, payload) {
+    // console.log("pay",payload)
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
+
     if (res.statusCode == 200) {
       ctx.commit('createTask', res.data)
       ctx.commit("setSingleTask", res.data)
@@ -327,10 +323,10 @@ export const actions = {
         return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email, avatar: av.Photo};
       });
 
-      ctx.commit('fetchTeamMember', data)
+      ctx.commit('setTeamMember', data)
       return data
     } catch (e) {
-      console.log('fetchTeamMember ->', e);
+      console.log('setTeamMember ->', e);
     }
   },
 
@@ -352,9 +348,10 @@ export const actions = {
     if(res.data.statusCode == 200) {
       let team = res.data.data.members;
       let data = team.map((el) => {
-        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
+        return {...el.user, name: `${el.user.firstName} ${el.user.lastName}` }
       });
-      ctx.commit('fetchTeamMember', data);
+      ctx.commit('setTeamMember', data);
+      return { statusCode: res.data.statusCode, data, message: res.data.message}
     } else {
       console.warn('add member->', err)
     }

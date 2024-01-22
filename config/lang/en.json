@@ -92,13 +92,10 @@
   "fileUpdateErrorMessage": "Folder was not updated because of a technical issue.",
   "fileDeleteOkMessage": "deleted successfully.",
   "fileDeleteErrorMessage": "File was not deleted because of a technical issue.",
-  "folderDeleteOkMessage": "deleted successfully.",
-  "folderDeleteErrorMessage": "Folder was not deleted because of a technical issue.",
+  
   "fileUploadOkMessage": "File was uploaded successfully.",
   "fileUploadErrorMessage": "File was not uploaded because of a technical issue.",
-  "folderCopyOkMessage": "Folder copied",
-  "fileCopyOkMessage": "File copied",
-  "folderPasteOkMessage": "Folder pasted",
+  
   "filePasteOkMessage": "File pasted",
   "fileDuplicateMessage": "File already exists.",
   
@@ -132,8 +129,7 @@
   "prepareDownloadFolder": "Preparing your files for download",
   "folder": "Folder",
   
-  "shareWithPeople": "Share with people and teams",
-  "shareWithPeopleSimple": "Sharing with people in your team is simple!",
+  
   "invitePeople": "Invite people or teams",
   "roles": "Role | Roles",
   "enterNameOrEmail": "Enter name, email or team name",

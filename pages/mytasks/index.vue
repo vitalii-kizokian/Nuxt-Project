@@ -65,37 +65,32 @@
       </template>
 
       <no-data v-else></no-data>
-        <!-- user-picker for board view -->
-        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
-        <!-- date-picker for board view -->
-        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker> -->
-        <!-- status picker for board view -->
-        <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
-        <!-- priority picker for board view -->
-        <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
-        <!-- department-picker for list view -->
-        <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
 
-        <bib-modal-wrapper v-if="todoConfirmModal" title="Delete section" @close="todoConfirmModal = false">
-          <template slot="content">
-              <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(2, 1fr)">
-                <p class="text-secondary">Delete Section but keep the tasks as is.</p>
-                <p class="text-secondary">Delete Section and delete the tasks </p>
-              </div>
-          </template>
-          <template slot="footer">
-              <div class="justify-around">
-                <bib-button label="Keep tasks" variant="primary-24" pill @click="deleteTodo(true)"></bib-button>
-                <bib-button label="Delete tasks" variant="danger" pill @click="deleteTodo(false)"></bib-button>
-              </div>
-          </template>
-        </bib-modal-wrapper>
+          
+      <!-- user-picker for board view -->
+      <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
 
-        <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
-          <!-- <loading :loading="loading"></loading> -->
+      <bib-modal-wrapper v-if="todoConfirmModal" title="Delete section" @close="todoConfirmModal = false">
+        <template slot="content">
+            <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(2, 1fr)">
+              <p class="text-secondary">Delete Section but keep the tasks as is.</p>
+              <p class="text-secondary">Delete Section and delete the tasks </p>
+            </div>
+        </template>
+        <template slot="footer">
+            <div class="justify-around">
+              <bib-button label="Keep tasks" variant="primary-24" pill @click="deleteTodo(true)"></bib-button>
+              <bib-button label="Delete tasks" variant="danger" pill @click="deleteTodo(false)"></bib-button>
+            </div>
+        </template>
+      </bib-modal-wrapper>
 
-        <!-- delete confirm -->
+      <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
+
+      <!-- <loading :loading="loading"></loading> -->
+
+      <!-- delete confirm -->
       <bib-modal-wrapper v-if="taskDeleteConfirm" title="Delete task" @close="() => taskDeleteConfirm = false">
         <template slot="content">
           <p>Task will be deleted permanently and wont be recoverable</p>
@@ -123,9 +118,8 @@
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
-import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
+import { USER_TASKS, TASK_CONTEXT_MENU, FIELDS_LOG } from "../../config/constants";
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -178,7 +172,7 @@ export default {
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
-      tasksKey: 'tasks',
+      // tasksKey: 'tasks',
       groupby: "default",
       dragTable: true,
       deleteBtnHover: false,
@@ -219,7 +213,7 @@ export default {
       grid:"todo/getGridType",
       taskcount: "todo/getTaskCount",
       filter: "task/getFilterView",
-
+      oldlog: "task/getTaskHistory",
     }),
  
     // taskcount(){
@@ -253,7 +247,7 @@ export default {
       const page = document.getElementById("page")
       this.$nextTick(() => {
         const panel = document.getElementById("side-panel-wrapper")
-        if (this.sidebar) {
+        if (this.sidebar && page) {
           this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {
           this.contentWidth = '100%'
@@ -276,9 +270,21 @@ export default {
         // console.log("mytask_created_on-refresh")
         this.updateKey();
       });
+
       this.$nuxt.$on("update-status-grid-task", payload => {
         this.updateStatusGridTask(payload)
     })
+
+      
+
+      if (sessionStorage.getItem("newTask")) {
+        this.toggleSidebar(false)
+        // this.$nuxt.$emit("open-sidebar", {userId: this.loggedUser.Id});
+        _.delay(function () {
+          sessionStorage.removeItem("newTask")
+        }, 5000)
+      }
+
     }
   },
 
@@ -632,70 +638,60 @@ export default {
     },
 
     updateField(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       let data = { [field]: value }
+      let oldlog
+      let toBeLogged = false
+        // console.log(payload)
+        this.$store.dispatch("task/fetchHistory", item).then(h => {
+          // console.log(h)
+          oldlog = this.$oldLog(label)
     
-      if(field == "dueDate" && item.startDate){
-        // console.log(field, value)
-        if(value=="Invalid Date"){
-          data = { [field]: null }
-        }
-        else {
-          data = { [field]: value }
-        //   if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-        //   data = { [field]: value }
-        // } else{
-        //   data = { [field]: null }
-        //   // this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
-        }
-      }
-      
-      if(field == "startDate" && item.dueDate){
-        if(value=="Invalid Date"){
-          data = { [field]: null }
-        }
-        else 
-        {
-          data = { [field]: value }
-        //     if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-        //     data = { [field]: value }
-        // } else {
-        //   data = { [field]: null }
-        //   // this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
-        }   
-      }
+          if(field == "dueDate" && item.startDate){
+            // console.log(field, value)
+            if(value=="Invalid Date"){
+              data = { [field]: null }
+            } else {
+              data = { [field]: value }
+            }
+          }
+          
+          if(field == "startDate" && item.dueDate){
+            if(value=="Invalid Date"){
+              data = { [field]: null }
+            } else {
+              data = { [field]: value }
+            }   
+          }
 
-      if(this.groupby != 'default') 
-      {
-        this.$store.dispatch("task/updateTask", {
-          id: payload.id,
-          projectId: item.project[0]?.projectId || null,
-          data: { [field]: value },
-          text: historyText
+          // let fieldsLog = ["dueDate", "statusId", "difficultyId", "departmentId", "priorityId"]
+        if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
+        // console.log(field, toBeLogged, oldlog)
+        
+          if(this.groupby != 'default') {
+            this.$store.dispatch("task/updateTask", {
+              id: payload.id,
+              projectId: item.project[0]?.projectId || null,
+              data,
+              text: historyText,
+              toBeLogged,
+              oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+            })
+          } else {
+            this.$store.dispatch("task/updateTask", {
+              id: payload.id,
+              projectId: item.project[0]?.projectId || null,
+              data,
+              text: historyText,
+              toBeLogged,
+              oldLog: oldlog ? {id: oldlog.id, userId: oldlog.userId} : null
+            })
+          }
         })
-          .then(t => {
-          })
-          .catch(e => console.warn(e))
-      }
-       else {
-        this.$store.dispatch("task/updateTask", {
-          id: payload.id,
-          projectId: item.project[0]?.projectId || null,
-          data: { [field]: value },
-          text: historyText
-        })
-          .then(t => {
-            // this.updateKey()
-          })
-          .catch(e => console.warn(e))
-      }
     },
 
     taskMarkComplete(task) {
@@ -707,28 +703,6 @@ export default {
           console.log(e)
         })
     },
-
-    // updateTask(payload) {
-    //   console.log("111",payload)
-    //   let user
-    //   if (payload.field == "userId" && payload.value != '') {
-    //     user = this.teamMembers.filter(t => t.id == payload.value)
-    //   } else {
-    //     user = null
-    //   }
-
-    //   this.$store.dispatch("task/updateTask", {
-    //     id: payload.task.id,
-    //     projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
-    //     data: { [payload.field]: payload.value },
-    //     user,
-    //     text: `changed ${payload.label} to ${payload.historyText || payload.value}`
-    //   })
-    //     .then(t => {
-    //       this.updateKey()
-    //     })
-    //     .catch(e => console.warn(e))
-    // },
 
     updateAssignee(payload){
       // console.log(payload)
@@ -769,14 +743,23 @@ export default {
       }
         
     },
-    updateDuedate({id, field, label, value}){
+    updateDuedate({id, field, label, value, oldlog}){
       // console.log(...arguments)
+      let toBeLogged = false;
+      
+      if (FIELDS_LOG.includes(field)) {
+          toBeLogged = true
+        } else {
+          toBeLogged = false
+        }
 
       this.$store.dispatch("task/updateTask", {
         id,
         data: { [field]: value},
         user: null,
-        text: `changed ${label} to ${this.$formatDate(value)}`
+        text: `changed ${label} to ${this.$formatDate(value)}`,
+        toBeLogged,
+        oldLog: oldlog || null
       })
         .then(t => {
           this.updateKey()
@@ -891,25 +874,6 @@ export default {
         text: "",
       };
     },
-    // createNewTask(item,section){
-    //   console.log(item)
-    //   let taskdata = item
-    //   taskdata.todoId = this.groupby ? null : section.id
-    //   taskdata.user = [{
-    //     id: this.loggedUser.Id,
-    //     email: this.loggedUser.Email,
-    //     firstName: this.loggedUser.FirstName,
-    //     lastName: this.loggedUser.LastName
-    //   }]
-    //   taskdata.userId=this.loggedUser.Id
-    //   // console.log(taskdata)
-    //   this.$store.dispatch("task/createTask", taskdata)
-    //   .then(t => {
-    //     console.log("$$$$",t)
-    //     this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
-    //   })
-    //   .catch(e => console.warn(e))
-    // },
 
     updateKey($event) {
       if ($event) {
@@ -1591,7 +1555,7 @@ export default {
       // in case of create task 
       if (!$event) {
         // this.$nuxt.$emit("open-sidebar", $event)
-        this.$nuxt.$emit("open-sidebar", {...$event, userId: JSON.parse(localStorage.getItem("user")).sub});
+        this.$nuxt.$emit("open-sidebar", {...$event, userId: this.loggedUser.Id});
       }
       this.flag = !this.flag;
     },

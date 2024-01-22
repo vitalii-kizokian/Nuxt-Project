@@ -326,16 +326,16 @@ export default {
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
-      this.scrollId = payload.scrollId;
+      this.scrollId = payload?.scrollId;
       //get userinfo about userTask page and Mytask page
-      if(payload.email){
+      if(payload?.email){
           this.$store.dispatch("user/setSideBarUser",payload.email)
       }
-      if(payload.userId){
+      if(payload?.userId){
           this.$store.dispatch("user/setSideBarUser",payload.userId)
       }
       
-      if (!payload.id) {
+      if (!payload?.id) {
         if (typeof payload == "number") {
           this.sectionPreselect = payload;
         }
@@ -628,6 +628,7 @@ html {
   }
 }
 .app-wrapper {
+  &__switcher { z-index: 10;}
   &__navigation {
     position: relative;
 
@@ -675,7 +676,7 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 6;  
+  z-index: 11;  
 }
 .line-light{
   border-bottom: 1px solid rgba(29,29,32,.08);
