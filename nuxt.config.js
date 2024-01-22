@@ -25,6 +25,7 @@ export default {
   plugins: [
     "~/plugins/plugins.client.js",
     "~/plugins/axios.js",
+    '~/plugins/lodash.js',
     "~/plugins/dayjs.client.js",
     "~/plugins/dateFormat.client.js",
     "~/plugins/statusFormat.client.js",

@@ -221,13 +221,13 @@ export default {
 
   watch: {
     taskcount(newValue){
-      return _.cloneDeep(newValue)
+      return this.$lodash.cloneDeep(newValue)
     },
-      filterViews(newVal) {
-          return _.cloneDeep(newVal)
-      },
+    filterViews(newVal) {
+        return this.$lodash.cloneDeep(newVal)
+    },
     todos(newVal) {
-      let localTodos = _.cloneDeep(newVal)
+      let localTodos = this.$lodash.cloneDeep(newVal)
       localTodos.forEach(function(todo) {
         todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
@@ -273,7 +273,7 @@ export default {
       if (sessionStorage.getItem("newTask")) {
         this.toggleSidebar(false)
         // this.$nuxt.$emit("open-sidebar", {userId: this.loggedUser.Id});
-        _.delay(function () {
+        this.$lodash.delay(function () {
           sessionStorage.removeItem("newTask")
         }, 5000)
       }
@@ -281,7 +281,7 @@ export default {
   },
 
   mounted() {
-    
+    // console.log(this.$lodash.debounce)
     /*this.$store.dispatch("todo/fetchTodos", {filter: "all"}).then(res => {
       this.localdata = res.data
     }).catch(e => console.warn(e))*/
@@ -944,7 +944,7 @@ export default {
     },
 
     taskDragEnd: _.debounce(async function(payload) {
-      let dragData=_.cloneDeep(payload)
+      let dragData = this.$lodash.cloneDeep(payload)
       this.highlight = null
       dragData.tasks.forEach((e, i) => {
         e.tOrder = i

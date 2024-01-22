@@ -255,7 +255,6 @@ export default {
     
     debounceUpdate: _.debounce(function(payload) {
       if (this.form.id) {
-        
         if (this.form.priorityId == "") {
           this.form.priority = null
           this.form.priorityId = null
@@ -266,79 +265,24 @@ export default {
         }
         this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
         this.reloadComments += 1
-
       }
     }, 1000),
 
-    updateTask(taskData, historyText, projectId) {
+    updateTask(taskData) {
 
-      let toBeLogged = false;
+      const { name, field, value, historyText, toBeLogged, oldlog } = taskData
+      let data = {[field]: value}
 
-      let updatedvalue = taskData.value
-      if (taskData.name == 'Assignee') {
-        let userFound = this.teamMembers.find(t => t.id == taskData.value)
-        updatedvalue = userFound.label
-      }
-      if (taskData.name == 'Project') {
-        let userFound = this.projects.find(t => t.id == taskData.value)
-        updatedvalue = userFound.title
-      }
-      if (taskData.name == 'Status') {
-        this.statusValues.find(s => {
-          if (s.value == taskData.value) {
-            updatedvalue = s.label
-          }
-        })
-      }
-      if (taskData.name == 'Priority') {
-        this.priorityValues.find(p => {
-          if (p.value == taskData.value) {
-            updatedvalue = p.label
-          }
-        })
-      }
-
-      if (taskData.name == 'Department') {
-        this.departments.find(d => {
-          if (d.value == taskData.value) {
-            updatedvalue = d.label
-          }
-        })
-      }
-
-      if( taskData.name == 'Section') {
-        this.sections.find(sec => {
-          if(sec.id == taskData.value) {
-            updatedvalue = sec.title
-          }
-        })
-      }
-
-      if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = this.$formatDate(taskData.value)
-      }
-
-      let user;
-      if (taskData.field == 'userId' && taskData.value != "") {
-        user = this.teamMembers.filter(u => u.id == taskData.value)
-      } else {
-        user = null
-      }
-
-      if (FIELDS_LOG.includes(taskData.field)) {
-          toBeLogged = true
-        } else {
-          toBeLogged = false
-        }
+      // console.log(taskData)
 
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
-        data: { [taskData.field]: taskData.value },
-        user,
+        data,
+        // user,
         projectId: this.form.projectId ? this.form.projectId : null,
-        text: `changed ${taskData.name} to ${updatedvalue}`,
+        text: `${historyText || value}`,
         toBeLogged,
-        oldLog: taskData.oldlog || null
+        oldLog: oldlog || null,
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")

@@ -112,7 +112,7 @@ export default {
 
     }
   },
-  mounted() {
+  mounted() {    
     if (this.projects.length<=0) {
       this.updateKey();
     }
