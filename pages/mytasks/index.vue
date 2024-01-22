@@ -65,9 +65,11 @@
       </template>
 
       <no-data v-else></no-data>
+
           
       <!-- user-picker for board view -->
       <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+
 
       <bib-modal-wrapper v-if="todoConfirmModal" title="Delete section" @close="todoConfirmModal = false">
         <template slot="content">
@@ -268,6 +270,11 @@ export default {
         // console.log("mytask_created_on-refresh")
         this.updateKey();
       });
+
+      this.$nuxt.$on("update-status-grid-task", payload => {
+        this.updateStatusGridTask(payload)
+    })
+
       
 
       if (sessionStorage.getItem("newTask")) {
@@ -277,6 +284,7 @@ export default {
           sessionStorage.removeItem("newTask")
         }, 5000)
       }
+
     }
   },
 
@@ -324,6 +332,8 @@ export default {
     this.$nuxt.$off("refresh-table");
     this.$nuxt.$off("update-key");
     this.$nuxt.$off("gridNewTask", this.handleNewTask);
+    this.$nuxt.$off("update-status-grid-task");
+    
     sessionStorage.clear();
     this.initialData = []
   },
@@ -336,7 +346,7 @@ export default {
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,
-        Filter: filter,
+        Filter:filter
       },
     });
 
@@ -394,24 +404,27 @@ export default {
           // this.$store.commit("todo/setAddTaskCount")
         }
 
-    },
+},
     changeIntoGroupBy (payload,groupBy) {
-      if (this.localData?.[0]?.tasks?.length>0) {
-        //To groupBy, change the localData
-        this.localData = this.localData.reduce((acc, ele) => {
-          return [...acc, ...ele.tasks];
-        }, []);
-        //insert the newTask
-        if (!this.localData.some(item => item.id === payload.id)) {
-          this.localData.push(payload);
-        }
-        //change the localData into groupBy
-        this.localData=this.$groupBy( this.localData,groupBy)
-      
-      } else {
-        this.updateKey();
-      }  
-    },
+            if (this.localData?.[0]?.tasks?.length>0)
+            {
+              //To groupBy, change the localData
+              this.localData = this.localData.reduce((acc, ele) => {
+                return [...acc, ...ele.tasks];
+              }, []);
+              //insert the newTask
+              if (!this.localData.some(item => item.id === payload.id)) {
+                this.localData.push(payload);
+              }
+              //change the localData into groupBy
+              this.localData=this.$groupBy( this.localData,groupBy)
+            
+            } 
+            else 
+            {
+              this.updateKey();
+            }  
+        },
     //group by
     myTaskGroup($event) {
       if($event == 'default') {
@@ -421,8 +434,7 @@ export default {
         this.groupby = $event
         this.dragTable = false;
       }
-
-      this.$store.commit('todo/setGroupBy', this.groupby)
+      this.$store.commit('todo/setGroupBy',this.groupby)
       // this.$store.commit('todo/groupMyTasks',{sName:this.groupby,team:this.teamMembers })
       this.updateKey()
       },
@@ -468,7 +480,34 @@ export default {
         });
       }
     },
-
+    updateStatusGridTask(payload) {
+            if (payload.statusId == 5) {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks = items.tasks.map((task) => {
+                  if (task.id == payload.id) {
+                    return { ...task, statusId: 2, status: { id: 2, text: 'In-Progress' } };
+                  } else {
+                    return task;
+                  }
+                });
+                return { ...items, tasks: updateTasks };
+              });
+            
+            } else {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks=items.tasks.map((task)=>{
+                  if(task.id==payload.id){
+                    return { ...task, statusId: 5 ,status:{id:5,text:'Done'}};
+                  }
+                  else {
+                      return task
+                  } 
+                })
+                return { ...items, tasks: updateTasks };
+              })
+      
+            }
+    },
     closePopups() {
       this.taskContextMenu = false
       this.userPickerOpen = false

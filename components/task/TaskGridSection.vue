@@ -1,6 +1,6 @@
 <template>
   <div id="tgs-scroll" class="h-100 overflow-x-auto position-relative bg-light" style="min-height: 30rem;" ref="gridTable">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" :disabled="group != 'default'" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" :class="{'non-draggable': section.title == 'Unassigned'}" style="padding-bottom: 0px !important;">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
@@ -168,7 +168,19 @@ export default {
       }
     }
   },
+  created() {
 
+    this.$nuxt.$on("change-duedate", payload => {
+      // emitted from <task-grid>
+      if (this.$route.path.includes("/projects/")) {
+        this.changeDate(payload)
+      }
+    })
+    this.$nuxt.$on("update-status-grid-task", payload => {
+        this.updateStatusGridTask(payload)
+    })
+
+  },
   /*mounted() { 
     
     if(this.sectionType == "singleProject") {
@@ -248,6 +260,48 @@ export default {
         return { icon: "bookmark-solid", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
+    updateStatusGridTask(payload) {
+            if (payload.statusId == 5) {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks = items.tasks.map((task) => {
+                  if (task.id == payload.id) {
+                    return { ...task, statusId: 2, status: { id: 2, text: 'In-Progress' } };
+                  } else {
+                    return task;
+                  }
+                });
+                return { ...items, tasks: updateTasks };
+              });
+            
+            } else {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks=items.tasks.map((task)=>{
+                  if(task.id==payload.id){
+                    return { ...task, statusId: 5 ,status:{id:5,text:'Done'}};
+                  }
+                  else {
+                      return task
+                  } 
+                })
+                return { ...items, tasks: updateTasks };
+              })
+      
+            }
+    },
+    changeDate({id, field, label, value}){
+      // let newDate = dayjs(value).format("D MMM YYYY");
+      this.$store
+        .dispatch("task/updateTask", {
+          id,
+          data: { [field]: value },
+          user: null,
+          text: `changed ${label} to ${this.$formatDate(value)}`,
+        })
+        .then((t) => {
+            // this.updateKey();
+        })
+        .catch((e) => console.warn(e));
+    },
     showBlankTask(sectionId) {
       // this.$emit("create-task", sectionId) //event will be captured by parent only
       // this.$nuxt.$emit("create-task", sectionId) //event will be available to all
@@ -267,7 +321,6 @@ export default {
     taskDragEnd(e) {
       this.highlight = false
       let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      // console.log(sectionData)
       this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section, title: sectionData[0].title  })
     },
 
@@ -328,6 +381,9 @@ export default {
           this.$emit("update-key")
         }
       }).catch(e => console.warn(e))
+    },
+      beforeDestroy(){ 
+    this.$nuxt.$off("update-status-grid-task");
     },
   },
 };

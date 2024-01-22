@@ -1067,6 +1067,13 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
+        //check on dev
+        //don't delete this code
+        console.log(" this.localData", this.localData)
+        console.log(" this.singleProjectGroupBy", this.singleProjectGroupBy)
+        console.log(" this.myTaskGroupBy", this.myTaskGroupBy)
+        console.log(" this.$route.fullPath",this.$route.fullPath)
+
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
             this.changeGroupByFunc()

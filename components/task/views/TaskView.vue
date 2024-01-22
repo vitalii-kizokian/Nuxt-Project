@@ -11,7 +11,7 @@
       @add-section="toggleNewsection"
     ></task-actions>
     <template v-if="taskcount > 0 || groupby == 'default' ">
-    <div v-if="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
+    <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
 
@@ -141,6 +141,7 @@ import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 export default {
   props: {
     gridType: String, // project ID page
+    sections: { type: Array, required: true, default: () => [] },
   },
   data() {
     return {
@@ -219,7 +220,7 @@ export default {
       task: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
       project: "project/getSingleProject",
-      sections: "section/getProjectSections",
+      // sections: "section/getProjectSections",
       sidebar: "task/getSidebarVisible",
       filterViews :'task/getFilterView',
       taskcount:"section/getTaskCount",
@@ -863,7 +864,7 @@ export default {
           sName:this.groupby
         })
         .then(() => {
-          this.taskByOrder();
+          // this.taskByOrder();
         });
     },
 
@@ -1183,6 +1184,7 @@ export default {
         .catch((e) => console.warn(e));
     },
 
+
     changeDate({id, field, label, value, oldlog}){
       
       let toBeLogged = false;
@@ -1203,10 +1205,11 @@ export default {
           oldLog: oldlog || null
         })
         .then((t) => {
-            this.updateKey();
+            // this.updateKey();
         })
         .catch((e) => console.warn(e));
     },
+
 
     gridDeleteTask(item) {
        this.taskDeleteConfirm = true

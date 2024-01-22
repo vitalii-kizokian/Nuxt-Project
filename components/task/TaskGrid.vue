@@ -294,7 +294,7 @@ export default {
           text: `changed ${label} to ${historyText ?? value}`
         })
         .then(res => {
-          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("update-key")
           // this.loading = false
           // this.$store.dispatch("task/setSingleTask", res.data)
 
@@ -328,7 +328,8 @@ export default {
     markComplete(task) {
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update-status-grid-task",task)
+          // this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
