@@ -584,16 +584,14 @@ export default {
           }
     },
     updateTask(taskData) {
-      let updatedvalue = taskData.value
-      let updata = { [taskData.field]: updatedvalue }
+      let data = { [taskData.field]: taskData.value }
       let projectId = null
-      let htext = null
-      
+
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
-        data: updata,
+        data,
         projectId: projectId ? projectId : null,
-        text: htext || taskData.historyText || taskData.value,
+        text: taskData.historyText || taskData.value,
         toBeLogged: taskData.toBeLogged,
         oldLog: taskData.oldlog || null
       })
@@ -621,7 +619,6 @@ export default {
           this.reloadComments+=1
           //  this.$store.dispatch("task/setSingleTask", u)
           
-          // console.info(u)
         })
         .catch(e => {
           console.log(e)
@@ -755,7 +752,12 @@ export default {
           this.form.status = null
           this.form.statusId = null
         }
-        this.updateTask({ name: payload.name, field: payload.field, value: payload.value, historyText: `changed ${payload.name} to ${payload.value}` })
+        this.updateTask({
+          name: payload.name,
+          field: payload.field,
+          value: payload.value,
+          historyText: `changed ${payload.name} to ${payload.value}`
+        })
         this.reloadComments += 1
 
       } else {

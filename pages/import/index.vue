@@ -61,9 +61,7 @@
                             {{importError}}
                         </div>
 
-
-                        <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-
+                        <div v-show="dupProject && !importCompleteMsg && !importError" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
                           <bib-icon icon="urgent" variant="primary-24"></bib-icon>
                             {{dupProject}}
                         </div>
