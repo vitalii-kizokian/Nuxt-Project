@@ -255,6 +255,7 @@ export default {
     
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
+   
       this.$store.commit('project/gridType',{gridType:this.gridType})
       localStorage.setItem('singlegrid', this.gridType)
     });
@@ -368,6 +369,8 @@ export default {
     // console.info("before destroy hook");
     this.project = {}
     this.$store.dispatch('project/setSingleProject', {})
+    this.$nuxt.$off("change-grid-type");
+
   },
 
   methods: {

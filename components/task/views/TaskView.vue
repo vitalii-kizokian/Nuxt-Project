@@ -142,6 +142,7 @@ import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 export default {
   props: {
     gridType: String, // project ID page
+    sections: { type: Array, required: true, default: () => [] },
   },
   data() {
     return {
@@ -220,7 +221,7 @@ export default {
       task: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
       project: "project/getSingleProject",
-      sections: "section/getProjectSections",
+      // sections: "section/getProjectSections",
       sidebar: "task/getSidebarVisible",
       filterViews :'task/getFilterView',
       taskcount:"section/getTaskCount",
@@ -270,12 +271,12 @@ export default {
       // emitted from <task-grid>
       this.showDatePicker(payload);
     });*/
-    this.$nuxt.$on("change-duedate", payload => {
-      // emitted from <task-grid>
-      if (this.$route.path.includes("/projects/")) {
-        this.changeDate(payload)
-      }
-    })
+    // this.$nuxt.$on("change-duedate", payload => {
+    //   // emitted from <task-grid>
+    //   if (this.$route.path.includes("/projects/")) {
+    //     this.changeDate(payload)
+    //   }
+    // })
     this.$nuxt.$on("refresh-table", () => {
         this.updateKey();
     });
@@ -861,7 +862,7 @@ export default {
           sName:this.groupby
         })
         .then(() => {
-          this.taskByOrder();
+          // this.taskByOrder();
         });
     },
 
@@ -1170,20 +1171,20 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-    changeDate({id, field, label, value}){
-      // let newDate = dayjs(value).format("D MMM YYYY");
-      this.$store
-        .dispatch("task/updateTask", {
-          id,
-          data: { [field]: value },
-          user: null,
-          text: `changed ${label} to ${this.$formatDate(value)}`,
-        })
-        .then((t) => {
-            this.updateKey();
-        })
-        .catch((e) => console.warn(e));
-    },
+    // changeDate({id, field, label, value}){
+    //   // let newDate = dayjs(value).format("D MMM YYYY");
+    //   this.$store
+    //     .dispatch("task/updateTask", {
+    //       id,
+    //       data: { [field]: value },
+    //       user: null,
+    //       text: `changed ${label} to ${this.$formatDate(value)}`,
+    //     })
+    //     .then((t) => {
+    //         this.updateKey();
+    //     })
+    //     .catch((e) => console.warn(e));
+    // },
 
     gridDeleteTask(item) {
        this.taskDeleteConfirm = true

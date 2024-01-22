@@ -65,7 +65,6 @@
       </template>
 
       <no-data v-else></no-data>
-          
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
         <!-- date-picker for board view -->
@@ -128,7 +127,6 @@ import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "MyTasks",
@@ -278,6 +276,9 @@ export default {
         // console.log("mytask_created_on-refresh")
         this.updateKey();
       });
+      this.$nuxt.$on("update-status-grid-task", payload => {
+        this.updateStatusGridTask(payload)
+    })
     }
   },
 
@@ -325,6 +326,8 @@ export default {
     this.$nuxt.$off("refresh-table");
     this.$nuxt.$off("update-key");
     this.$nuxt.$off("gridNewTask", this.handleNewTask);
+    this.$nuxt.$off("update-status-grid-task");
+    
     sessionStorage.clear();
     this.initialData = []
   },
@@ -471,7 +474,34 @@ export default {
         });
       }
     },
-
+    updateStatusGridTask(payload) {
+            if (payload.statusId == 5) {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks = items.tasks.map((task) => {
+                  if (task.id == payload.id) {
+                    return { ...task, statusId: 2, status: { id: 2, text: 'In-Progress' } };
+                  } else {
+                    return task;
+                  }
+                });
+                return { ...items, tasks: updateTasks };
+              });
+            
+            } else {
+              this.localdata=  this.localdata.map((items) => {
+                const updateTasks=items.tasks.map((task)=>{
+                  if(task.id==payload.id){
+                    return { ...task, statusId: 5 ,status:{id:5,text:'Done'}};
+                  }
+                  else {
+                      return task
+                  } 
+                })
+                return { ...items, tasks: updateTasks };
+              })
+      
+            }
+    },
     closePopups() {
       this.taskContextMenu = false
       this.userPickerOpen = false
