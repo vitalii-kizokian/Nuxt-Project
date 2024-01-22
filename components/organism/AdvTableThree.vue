@@ -658,6 +658,7 @@ export default {
     this.localData = this.localData.reduce((acc, ele) => {
             return [...acc, ...ele.tasks];
           }, []);
+          console.log("this.localData",this.localData)
       if(this.$route.fullPath=="/tasks"){
        this.localData=this.$groupBy( this.localData,this.taskGroupBy)
        return;
@@ -678,7 +679,9 @@ export default {
 
        }   
        if(this.$route.fullPath=="/mytasks"&&this.myTaskGroupBy!="default"){
+        console.log("status")
        this.localData=this.$groupBy( this.localData,this.myTaskGroupBy)
+       console.log("  this.localData", this.localData)
        return;
 
        }  
