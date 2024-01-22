@@ -31,7 +31,7 @@
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
           <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="p-025 pr-05 align-center gap-025 font-md cursor-pointer bg-hover-light" @click.stop="selected(user)">
-            <bib-avatar :src="user.avatar" size="1rem"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
+            <bib-avatar :src="user.avatar" size="1rem" class="flex-shrink-0"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
           </li>
         </ul>
       </div>

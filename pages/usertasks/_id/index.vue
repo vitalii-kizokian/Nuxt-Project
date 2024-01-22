@@ -89,12 +89,12 @@
 
 <script>
 import { mapGetters } from "vuex";
-import _ from "lodash";
+// import _ from "lodash";
 import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
   FIELDS_LOG
-} from "../../../config/constants";
+} from "~/config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -178,20 +178,20 @@ export default {
  
   watch: {
     filterViews(newValue){
-      return _.cloneDeep(newValue)
+      return this.$lodash.cloneDeep(newValue)
     },
     
     userTasks(newVal) {
-      this.localData = _.cloneDeep(newVal);
+      this.localData = this.$lodash.cloneDeep(newVal);
     },
     groupBy(newValue){
-      return _.cloneDeep(newValue)
+      return this.$lodash.cloneDeep(newValue)
     },
     // groupBy:{
     //   immediate:true,
     //       handler(newValue){
     //         console.log("newValue",newValue)
-    //         return _.cloneDeep(newValue)
+    //         return this.$lodash.cloneDeep(newValue)
     //       }
     // },
     gridType() {
@@ -269,13 +269,12 @@ export default {
         this.localData = this.userTasks
 
         if(this.groupBy=="default"){
-          console.log("We are in IF and default")
+          // console.log("We are in IF and default")
           this.groupVisible=false
           this.lazyComponent=true
         }
         else {
-          console.log("We are in IF and not default")
-
+          // console.log("We are in IF and not default")
           this.groupVisible=true
           setTimeout(() => {
             this.lazyComponent=false
@@ -283,7 +282,7 @@ export default {
         }
 
       } else {
-        console.log("WE are in Else")
+        // console.log("WE are in Else")
       let teamMembers= [];
 
       this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
@@ -300,7 +299,6 @@ export default {
             }
           });
           
-
           this.updateKey()
           setTimeout(() => {
           this.lazyComponent=true
