@@ -642,8 +642,10 @@ export default {
           });
           return { ...items, tasks: updatedTasks };
         });
+        console.log("11",this.localData)
         if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
+        console.log("11",this.myTaskGroupBy)
               this.changeGroupByFunc()
             }
         }
