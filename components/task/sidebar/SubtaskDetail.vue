@@ -44,7 +44,7 @@
           <span id="sd-goToProject" class="cursor-pointer subtask-info " @click="gotoProject">{{project?.title}}</span>
         </div>
         <div class="d-inline-flex align-center pb-025">
-          <span id="sd-goToParent" class="cursor-pointer subtask-parent-task subtask-info text-truncate" @click="gotoParent">{{form?.task?.title}}</span> <bib-icon icon="arrowhead-right" scale="0.9" variant="gray"></bib-icon>
+          <span id="sd-goToParent" class="cursor-pointer subtask-parent-task subtask-info text-truncate" @click="gotoParent">{{form?.task?.title}}</span> <bib-icon icon="arrowhead-right" :scale="0.9" variant="gray"></bib-icon>
         </div>
       </div>
       <!-- title input -->

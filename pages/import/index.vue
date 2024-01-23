@@ -56,17 +56,17 @@
                             </div> -->
                         </template>
 
-                        <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
+                        <div v-show="importError " class="shape-rounded align-center gap-05 border-danger text-danger p-05">
                           <bib-icon icon="close-circle-solid" variant="danger"></bib-icon>
                             {{importError}}
                         </div>
 
-                        <div v-show="dupProject && !importCompleteMsg && !importError" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
+                        <div v-show="dupProject && !importfinish && !importError" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
                           <bib-icon icon="urgent" variant="primary-24"></bib-icon>
                             {{dupProject}}
                         </div>
 
-                        <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
+                        <div v-show="importfinish && !importError" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
                           <bib-icon icon="tick" variant="primary-24"></bib-icon>
                           {{importCompleteMsg}}
                         </div>
@@ -172,6 +172,7 @@ export default {
             this.availableMembers = []
             this.importfinish = false
             this.importError = false
+            this.dupProject = false
             this.steps = [
                     {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                     {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
