@@ -499,7 +499,7 @@ export default {
       return check
     },
     
-    delete_UpdateLocalData(payload,param) {
+    delete_UpdateLocalData(payload) {
       if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
         this.$nuxt.$emit("refresh-table");
       }
@@ -509,27 +509,26 @@ export default {
             return {...items,tasks:updatedTasks}
           });
       }
-      if(param=="/mytasks"){
+      if(this.$route.path.includes("/mytasks")){
           this.$store.commit("todo/setDeleteTaskCount")
         }
-        if(param=="/tasks"){
+        if(this.$route.path.includes("/tasks")){
           this.$store.commit("company/setDeleteTaskCount")
         }
-        if(param.includes("usertasks")){
+        if(this.$route.path.includes("/usertasks")){
           this.$store.commit("user/setDeleteTaskCount")
         }
-        if(param=="/projects"){
+        if(this.$route.name.includes("projects___en")){
           this.$store.commit("project/setDeleteTaskCount")
         }
-        if(param.includes("/projects/")){
+        if(this.$route.name.includes("projects-id")){
           this.$store.commit("section/setDeleteTaskCount")
         }
     },
-    handleNewTask (payload,param){
-
+    handleNewTask (payload){
     if (this.localData.length>0) {
-    
-        if(param=="/mytasks"){
+  
+        if(this.$route.path.includes("/mytasks")){
             if(this.myTaskGroupBy=="default") 
                 {
                       if(payload.todoId) {
@@ -561,19 +560,19 @@ export default {
                     this.$store.commit("todo/setAddTaskCount")
                 }
         }
-       if(param=="/tasks"){
+       if(this.$route.path.includes("/tasks")){
        this.changeIntoGroupBy(payload,this.taskGroupBy)
        this.$store.commit("company/setAddTaskCount")
        }   
-       if(param.includes("usertasks")){
+       if(this.$route.path.includes("/usertasks")){
        this.changeIntoGroupBy(payload,this.usertaskGroupBy)
        this.$store.commit("user/setAddTaskCount")
        }   
-       if(param=="/projects"){
+       if(this.$route.name.includes("projects___en")){
        this.changeIntoGroupBy(payload,this.projectGroupBy)
        this.$store.commit("project/setAddTaskCount")
        }   
-       if(param.includes("/projects/")){
+       if(this.$route.name.includes("projects-id")){
         if(this.singleProjectGroupBy=="default") 
                 {
 
@@ -642,10 +641,8 @@ export default {
           });
           return { ...items, tasks: updatedTasks };
         });
-        console.log("11",this.localData)
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.path.includes("/mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
-        console.log("11",this.myTaskGroupBy)
               this.changeGroupByFunc()
             }
         }
@@ -660,32 +657,27 @@ export default {
     this.localData = this.localData.reduce((acc, ele) => {
             return [...acc, ...ele.tasks];
           }, []);
-          console.log("this.localData",this.localData)
-      if(this.$route.fullPath=="/tasks"){
+      if(this.$route.path.includes("/tasks")){
        this.localData=this.$groupBy( this.localData,this.taskGroupBy)
        return;
        }   
-       if(this.$route.fullPath.includes("usertasks")){
+       if(this.$route.path.includes("/usertasks")){
        this.localData=this.$groupBy( this.localData,this.usertaskGroupBy)
        return;
 
        }   
-       if(this.$route.fullPath=="/projects"){
+       if(this.$route.name.includes("projects___en")){
        this.localData=this.$groupBy( this.localData,this.projectGroupBy)
        return;
        } 
-       if(this.$route.fullPath.includes("/projects/")&&this.singleProjectGroupBy!="default"){
+       if(this.$route.name.includes("projects-id")&&this.singleProjectGroupBy!="default"){
        this.localData=this.$groupBy( this.localData,this.singleProjectGroupBy)
-    
        return;
 
        }   
-       if(this.$route.fullPath=="/mytasks"&&this.myTaskGroupBy!="default"){
-        console.log("status")
+       if(this.$route.path.includes("/mytasks")&&this.myTaskGroupBy!="default"){
        this.localData=this.$groupBy( this.localData,this.myTaskGroupBy)
-       console.log("  this.localData", this.localData)
        return;
-
        }  
   },
     modifyDateFormat(value){
@@ -1026,7 +1018,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1048,7 +1040,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1072,14 +1064,8 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        //check on dev
-        //don't delete this code
-        console.log(" this.localData", this.localData)
-        console.log(" this.singleProjectGroupBy", this.singleProjectGroupBy)
-        console.log(" this.myTaskGroupBy", this.myTaskGroupBy)
-        console.log(" this.$route.fullPath",this.$route.fullPath)
 
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
             this.changeGroupByFunc()
           }
@@ -1103,7 +1089,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1126,7 +1112,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1151,7 +1137,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1174,7 +1160,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
               this.changeGroupByFunc()
             }
@@ -1223,7 +1209,7 @@ export default {
               return { ...items, tasks: updateTasks };
             })
             this.modifyDateFormat(this.localData)
-            if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+            if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
               if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
                   this.changeGroupByFunc()
                 }
@@ -1262,7 +1248,7 @@ export default {
         })
         this.modifyDateFormat(this.localData)
 
-        if(this.$route.fullPath=="/mytasks"||this.$route.fullPath.includes("/projects/")){
+        if(this.$route.name.includes("mytasks")||this.$route.name.includes("projects-id")){
           if(this.singleProjectGroupBy!="default"||this.myTaskGroupBy!="default") {
             this.changeGroupByFunc()
           }

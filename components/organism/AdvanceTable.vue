@@ -363,10 +363,10 @@ export default {
         } else {
           this.$nuxt.$emit("refresh-table");
         }
-      if(param=="/projects"){
+      if(this.$route.name.includes("projects___en")){
        this.$store.commit("project/setAddTaskCount")
        }   
-      if(param.includes("usertasks")){
+      if(this.$route.path.includes("/usertasks")){
       this.$store.commit("user/setAddTaskCount")
       }   
   },
@@ -378,19 +378,19 @@ export default {
       else {
         this.localData = this.localData.filter(obj => obj.id !== payload.id)
       }
-      if(param=="/mytasks"){
+      if(this.$route.path.includes("/mytasks")){
           this.$store.commit("todo/setDeleteTaskCount")
         }
-        if(param=="/tasks"){
+        if(this.$route.path.includes("/tasks")){
           this.$store.commit("company/setDeleteTaskCount")
         }
-        if(param.includes("usertasks")){
+        if(this.$route.path.includes("/usertasks")){
           this.$store.commit("user/setDeleteTaskCount")
         }
-        if(param=="/projects"){
+        if(this.$route.name.includes("projects___en")){
           this.$store.commit("project/setDeleteTaskCount")
         }
-        if(param.includes("/projects/")){
+        if(this.$route.name.includes("projects-id")){
           this.$store.commit("section/setDeleteTaskCount")
         }
     },

@@ -283,7 +283,6 @@ export default ({ store, app }, inject) => {
           return _tasks
         }
         if (group == "status") {
-          console.log("groupby function")
           arr.sort((a,b)=>{
             if (a.statusId === null && b.statusId !== null) {
               return 1;
@@ -304,7 +303,6 @@ export default ({ store, app }, inject) => {
             acc[status].push(task);
             return acc;
           }, {});
-          console.log("groupby function",groupStatus)
           let groupIndex = 0;
           for (const key in groupStatus) {
             _tasks.push({
