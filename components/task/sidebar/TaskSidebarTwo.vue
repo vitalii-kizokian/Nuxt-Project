@@ -434,9 +434,8 @@ export default {
           taskform.projectId = null
           taskform.sectionId = null
         }
-
         // on tasks page
-        if (this.$route.path === '/tasks') {
+        if (this.$route.path.includes("/tasks")) {
           taskform["mode"] = "department";
           taskform["sectionId"] = null;
           let taskPageUnassignedTask = null;
@@ -462,7 +461,7 @@ export default {
           taskform["user"] = null;
         }
         // on project task page
-        if (this.$route.path.includes("/projects/")) {
+        if (this.$route.name.includes("projects-id")) {
           taskform["mode"] = "project"
           taskform["userId"] = null
           taskform["user"] = null
@@ -489,21 +488,20 @@ export default {
           "mode": taskform.mode,
           "data": this.$route.path === '/tasks'? taskform.data: null
         }).then((task) => {
-          // this.$nuxt.$emit("refresh-table");
-
-          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+      
+          if(this.$route.path.includes("/mytasks") && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return; 
           }
-          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+          if(this.$route.path.includes("/tasks") && this.tasksGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return;
           }
-          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+          if(this.$route.name.includes("projects-id") && this.singleProjectGrid=="grid"){
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
@@ -512,7 +510,7 @@ export default {
 
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
-          this.getTableCount(this.$route.path,task.data)
+          this.getTableCount()
           this.$store.dispatch("task/setSingleTask", task.data)
           this.$store.dispatch('task/fetchTeamMember', { ...task.data }).then(() => {
             this.reloadTeam += 1;
@@ -524,8 +522,8 @@ export default {
         })
       }
     },
-    async getTableCount(param,data) {
-      if(param=="/mytasks"){
+    async getTableCount() { 
+      if(this.$route.path.includes("/mytasks")){
             const res =  await this.$axios.$get('/todo/all', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
               });
@@ -543,7 +541,7 @@ export default {
                 }
               }
           }
-          if(param=="/tasks"){
+          if(this.$route.path.includes("/tasks")){
             const res = await this.$axios.$get(`company/tasks/all`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
               });
@@ -553,7 +551,7 @@ export default {
 
            
           }
-          if(param=="/projects"){
+          if(this.$route.name.includes("projects___en")){
              const res = await this.$axios.$get(`/project/company/all`, {
                 headers: {
                   'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -567,7 +565,7 @@ export default {
             
 
           }
-          if(param.includes("/projects/")){
+          if(this.$route.name.includes("projects-id")){
             const res = await this.$axios.$get('/section/project/' + this.projectId, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
             });
@@ -588,7 +586,7 @@ export default {
             //   this.$nuxt.$emit("refresh-table");
             // }
           }
-          if(param.includes("/usertasks/")){
+          if(this.$route.path.includes("/usertasks")){
             const res = await this.$axios.get("user/user-tasks", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -615,20 +613,21 @@ export default {
         oldLog: taskData.oldlog || null
       })
         .then((u) => {
-          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+          if(this.$route.path.includes("/mytasks") && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return; 
           }
-          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+          if(this.$route.path.includes("/tasks") && this.tasksGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return;
           }
-          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
-            this.$nuxt.$emit("update-key")
+          if(this.$route.name.includes("projects-id") && this.singleProjectGrid=="grid"){
+            // this.$nuxt.$emit("update-key")
+            this.$nuxt.$emit("update_table",u)
             this.reloadHistory += 1
             this.reloadComments+=1
             return;
@@ -727,19 +726,20 @@ export default {
           this.reloadComments+=1
           return;
           }  
-          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+         
+          if(this.$route.path.includes("/mytasks") && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return; 
           }
-          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+          if(this.$route.path.includes("/tasks") && this.tasksGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
             return;
           }
-          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+          if(this.$route.name.includes("projects-id") && this.singleProjectGrid=="grid"){
             this.$nuxt.$emit("update-key")
             this.reloadHistory += 1
             this.reloadComments+=1
@@ -822,21 +822,21 @@ export default {
       this.loading = true
       this.$store.dispatch('task/updateTaskStatus', this.currentTask)
         .then((d) => {
-          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+          if(this.$route.path.includes("/mytasks") && this.mytaskGrid=="grid") {
             this.$nuxt.$emit("update-key")
            this.$store.dispatch("task/setSingleTask", d)
             this.reloadHistory += 1
             this.reloadComments+=1
             return; 
           }
-          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+          if(this.$route.path.includes("/tasks") && this.tasksGrid=="grid") {
             this.$nuxt.$emit("update-key")
             this.$store.dispatch("task/setSingleTask", d)
             this.reloadHistory += 1
             this.reloadComments+=1
             return;
           }
-          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+          if(this.$route.name.includes("projects-id") && this.singleProjectGrid=="grid"){
             this.$nuxt.$emit("update-key")
             this.$store.dispatch("task/setSingleTask", d)
             this.reloadHistory += 1
