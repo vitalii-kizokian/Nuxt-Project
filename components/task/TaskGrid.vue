@@ -31,11 +31,14 @@
         <priority-badge v-if="task.priorityId" :priority="task.priority"></priority-badge>
       </div>
       <div class="task-bottom align-center justify-between gap-025" :id="'tg-bottom'+ task.id">
-        <div v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
+        <!-- <div v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
           <user-info :userId="task.userId" maxWidth="7rem" class="events-none"></user-info>
         </div>
         <div v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
+        </div> -->
+        <div class="user-info flex-grow-0 flex-shrink-0" style="width: 9rem;">
+          <user-select mode="full" avatarSize="1.5rem" :userId="task.userId"  @change="updateAssignee"></user-select>
         </div>
         <div class="date-input position-relative flex-shrink-0 flex-grow-0">
           <bib-datetime-picker class="left-datetime-picker" v-model="ddate" :class="{'past-due': overdue}" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, task, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
@@ -113,25 +116,16 @@ export default {
       
     };
   },
-  /*watch: {
-    task(newValue){
-      this.form = _.cloneDeep(newValue)
-      this.ddate = this.$formatDate(newValue.dueDate)
+  watch: {
+    'task.dueDate': function(newValue){
+      this.ddate = this.$formatDate(newValue) || null
     }
-  },*/
+  },
   computed: {
     ...mapGetters({
       favTasks: "task/getFavTasks",
       teamMembers: "user/getTeamMembers",
     }),
-    // isFavorite() {
-    //   let fav = this.favTasks.some(t => t.task.id == this.task.id)
-    //   if (fav) {
-    //     return { variant: "orange", text: "Remove favorite", status: true }
-    //   } else {
-    //     return { variant: "gray5", text: "Add to favorites", status: false }
-    //   }
-    // },
     overdue() {
       let check = pastDue(this.task.dueDate)
       return check
@@ -177,10 +171,10 @@ export default {
       }
     },
 
-    showUserPicker(task) {
+    /*showUserPicker(task) {
       this.$nuxt.$emit("user-picker", { event, task })
       this.$emit("user-picker", { event, task })
-    },
+    },*/
     /*showDatePicker(task) {
       this.$nuxt.$emit("date-picker", { event, task })
       this.$emit("date-picker", { event, task })
@@ -193,6 +187,21 @@ export default {
     formatDate(dateObj, format) {
       // console.log(...arguments, "formatDate")
       return this.$formatDate(dateObj);
+    },
+
+    updateAssignee(userData) {
+      // console.log(userData, this.task)
+      this.$store
+        .dispatch("task/updateTask", {
+          id: this.task.id,
+          data: { 'userId': userData.id },
+          user: [userData],
+          text: `changed Assignee to ${userData.label}`,
+        })
+        .then((t) => {
+          // console.log(t)
+        })
+        .catch((e) => console.warn(e));
     },
 
     updateDate(d, item, field, label) {

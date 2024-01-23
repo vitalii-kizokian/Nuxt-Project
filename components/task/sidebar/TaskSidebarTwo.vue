@@ -626,7 +626,7 @@ export default {
             return;
           }
           if(this.$route.name.includes("projects-id") && this.singleProjectGrid=="grid"){
-            // this.$nuxt.$emit("update-key")
+            this.$nuxt.$emit("update-key")
             this.$nuxt.$emit("update_table",u)
             this.reloadHistory += 1
             this.reloadComments+=1
