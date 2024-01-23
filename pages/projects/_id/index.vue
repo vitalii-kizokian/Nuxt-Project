@@ -255,7 +255,6 @@ export default {
     
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
-   
       this.$store.commit('project/gridType',{gridType:this.gridType})
       localStorage.setItem('singlegrid', this.gridType)
     });

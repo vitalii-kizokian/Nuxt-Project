@@ -33,7 +33,6 @@
         @section-dragend="sectionDragEnd"
         @task-dragend="taskDragEnd"
         sectionType="singleProject"
-        @user-picker="showUserPicker"
         :group="groupby"
       >
       </task-grid-section>
@@ -43,12 +42,12 @@
     <no-data v-else></no-data>
 
     <!-- user-picker for board view -->
-    <user-picker
+    <!-- <user-picker
       :show="userPickerOpen"
       :coordinates="popupCoords"
       @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)"
       @close="userPickerOpen = false"
-    ></user-picker>
+    ></user-picker> -->
 
     <!-- date-picker for board view -->
     <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false" ></inline-datepicker> -->
@@ -262,10 +261,10 @@ export default {
     this.$nuxt.$on("update-key", () => {
       this.updateKey();
     });
-    this.$nuxt.$on("user-picker", (payload) => {
+    /*this.$nuxt.$on("user-picker", (payload) => {
       // emitted from <task-grid>
       this.showUserPicker(payload);
-    });
+    });*/
     /*this.$nuxt.$on("date-picker", (payload) => {
       // emitted from <task-grid>
       this.showDatePicker(payload);
@@ -285,7 +284,7 @@ export default {
   },
   beforeDestroy(){
     this.$nuxt.$off("update-key")
-    this.$nuxt.$off("user-picker")
+    // this.$nuxt.$off("user-picker")
     this.$nuxt.$off("refresh-table")
     this.$nuxt.$off("change-duedate")
     this.localdata = []

@@ -5,7 +5,7 @@
         <tippy arrow >
           <template v-slot:trigger >
             <span class="align-center gap-025">
-              <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem"></bib-avatar>
+              <bib-avatar v-if="mode == 'full'" :src="user.avatar" :size="avatarSize" class="flex-shrink-0"></bib-avatar>
               <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
             </span>
           </template>
@@ -17,7 +17,7 @@
       </div>
       <div v-else id="user-select-user-avatar" class="align-center gap-025" style="max-width: calc(100% - 16px);">
         <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
-          <bib-avatar size="2rem"></bib-avatar>
+          <bib-avatar :size="avatarSize"></bib-avatar>
         </span>
         <span class="text-gray5">--</span>
       </div>
@@ -30,7 +30,7 @@
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
           <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="p-025 pr-05 align-center gap-025 font-md cursor-pointer bg-hover-light" @click.stop="selected(user)">
-            <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="1rem"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
+            <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="1rem" class="flex-shrink-0"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
           </li>
         </ul>
       </div>
@@ -49,7 +49,7 @@ export default {
     userId: { type: String },
     mode: { type: String, default: "name"}, //name, full, 
     title: { type: String, default: "Assign to" },
-    // avatarSize: { type: String, default: "2rem" },
+    avatarSize: { type: String, default: "2rem" },
     // width: { type: String },
     minWidth: { type: String, default: "calc(100% + 10px)" },
     maxWidth: { type: String, default: "15rem" },
@@ -103,12 +103,6 @@ export default {
       })
     },
     styleObj(){
-      /*if (this.minWidth && this.maxWidth) {
-        return { 'min-width': this.minWidth; 'max-width': this.maxWidth }
-      }
-      if (this.minWidth) {
-        return { 'min-width': 'calc(100% + 10px)'; 'max-width': '15rem'}
-      }*/
       return { minWidth: this.minWidth, maxWidth: this.maxWidth }
     }
   },

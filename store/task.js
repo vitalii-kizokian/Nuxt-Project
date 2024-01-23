@@ -57,7 +57,6 @@ export const getters = {
     return state.filterView
   },
   getGridType(state){
-
     return state.gridType
   },
   getGroupBy (state) {
