@@ -34,14 +34,14 @@
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
-              <user-select-two :userId="sub.userId" ></user-select-two>
+              <user-select-two :userId="sub.userId" @change="updateAssignee($event, sub)" ></user-select-two>
             </td>
           </tr>
           <tr v-if="newSubtask" class="new" id="sbs-tr-2">
             <td id="sbs-td-3">
               <div class="d-flex gap-05 align-center" id="sbs-white-check-circle-solid">
                 <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+"  @keyup.enter="validateInput" required placeholder="Enter text...">
+                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup.enter="validateInput" required placeholder="Enter text...">
               </div>
             </td>
             <td id="sbs-td-5">
@@ -260,7 +260,6 @@ export default {
       })
     },
     createSubtask() {
-
       this.loading = true
       let subData = {
         taskId: this.currentTask.id,
@@ -340,6 +339,22 @@ export default {
       }
 
       this.updateSubtask(subtask, {field: 'statusId', value: subtask.statusId, name: 'Status'})
+    },
+
+    async updateAssignee(user, subtask){
+      // console.log(...arguments)
+
+      const sub = await this.$store.dispatch("subtask/updateSubtask", {
+        id: subtask.id,
+        data: { userId: user.id },
+        user: [user],
+        text: `changed Assignee to ${user.label}`
+      })
+      // console.log(sub)
+      if (sub.statusCode != 200) {
+        console.warn(sub.statusCode, sub.message)
+        this.popupMessages.push({text: sub.message, variant: "danger"})
+      } 
     },
 
     async updateSubtask(subtask, data){

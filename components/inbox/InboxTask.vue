@@ -59,7 +59,7 @@
     <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-05 " id="it-editable-input">
       <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)" id="it-taskTitleInput">
     </div>
-    <div class="of-scroll-y position-relative py-05" id="it-of-scroll-y">
+    <div class="of-scroll-y position-relative py-05 text-secondary" id="it-of-scroll-y">
       <div class="border-bottom-gray3 px-105 py-05" v-show="form.id">
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
