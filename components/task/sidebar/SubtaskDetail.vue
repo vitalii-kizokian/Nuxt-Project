@@ -49,7 +49,6 @@
       </div>
       <!-- title input -->
       <div class="border-bottom-gray3 position-relative px-105 py-05 mb-1" id="std-fields-wrap">
-        <!-- <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"> -->
         <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})" v-on:keydown.enter.prevent></textarea>
         <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
       </div>
@@ -241,10 +240,10 @@ export default {
     },
 
     isComplete() {
-      if (this.form.isDone) {
-        return { variant: "primary-24", text: "Completed", iconVariant: "primary-24" }
+      if (this.form.statusId == 5) {
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "primary--outline", text: "Mark Completed", iconVariant: "gray4" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
 
