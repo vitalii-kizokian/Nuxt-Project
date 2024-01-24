@@ -12,11 +12,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import { mapGetters } from "vuex"
-
-var relativeTime = require('dayjs/plugin/relativeTime')
-dayjs.extend(relativeTime)
 
 export default {
 

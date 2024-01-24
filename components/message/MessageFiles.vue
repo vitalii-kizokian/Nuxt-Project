@@ -61,7 +61,6 @@
 <script>
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
-import dayjs from 'dayjs'
 import { fileIcon } from '~/utils/file';
 
 export default {
@@ -97,7 +96,7 @@ export default {
             arr.push({key: key, value: value?.split('.')[1]})
           }
           if (key == "createdAt" || key == "updatedAt") {
-            arr.push({key: key, value: dayjs(value).format('DD MMM YYYY')})
+            arr.push({key: key, value: this.$formatDate(value)})
           }
         })
       }

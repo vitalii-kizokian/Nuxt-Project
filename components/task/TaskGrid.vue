@@ -82,13 +82,9 @@
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
-// import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { pastDue } from "~/utils/helpers.js";
-
-/*var utc = require('dayjs/plugin/utc')
-dayjs.extend(utc)*/
 
 export default {
   name: "TaskGrid",
@@ -131,7 +127,7 @@ export default {
       return check
     },
     form() {
-      return _.cloneDeep(this.task)
+      return this.$lodash.cloneDeep(this.task)
     },
 
   },
@@ -265,7 +261,7 @@ export default {
         historyText = this.$formatDate(taskData.value)
       }
 
-      if (_.trim(value) == "") {
+      if (this.$lodash.trim(value) == "") {
         $event.target.classList.add('error')
         console.warn(field + ' cannot be left blank')
       } else {

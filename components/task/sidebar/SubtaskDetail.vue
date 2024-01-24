@@ -179,7 +179,6 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY, DIFFICULTY } from '~/config/constants.js'
 import { mapGetters, mapActions } from 'vuex'
-import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
 
@@ -347,7 +346,7 @@ export default {
         }
     },
     overdue() {
-      let diff = dayjs().diff(this.ddate, 'd')
+      let diff = $dayjs().diff(this.ddate, 'd')
       return (diff >= 1) ? true : false
     },
   },
