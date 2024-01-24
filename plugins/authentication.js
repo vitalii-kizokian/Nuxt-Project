@@ -1,8 +1,6 @@
 export default async function ({ $axios, store, env, redirect, app, $auth }) {
   let $cookie = env.SSO_COOKIE_NAME;
 
-  app.$cookies.set(process.env.SSO_COOKIE_NAME, c);
-
   if (app.$cookies.get($cookie)) {
     store.commit("setToken", app.$cookies.get($cookie));
     $auth.setToken(app.$cookies.get($cookie));
