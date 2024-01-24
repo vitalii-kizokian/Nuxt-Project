@@ -86,7 +86,6 @@
 import { STATUS, PRIORITY, DIFFICULTY, FIELDS_LOG } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
-// import dayjs from "dayjs";
 export default {
   name: "SidebarFieldsTwo",
   props: {

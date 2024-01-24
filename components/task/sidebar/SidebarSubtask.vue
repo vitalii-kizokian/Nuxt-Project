@@ -92,7 +92,6 @@
 <script>
 import {  STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import _ from 'lodash'
 import { pastDue } from "~/utils/helpers.js";
 
@@ -385,7 +384,7 @@ export default {
       }
 
       if (data.name == "Due date") {
-        histvalue = dayjs(data.value).format('DD MMM YYYY')
+        histvalue = this.$formatDate(data.value)
       }
 
       if (data.name == 'User') {

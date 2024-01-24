@@ -121,7 +121,6 @@
 <script>
 import { STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters, mapActions } from 'vuex'
-import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
 
@@ -166,7 +165,7 @@ export default {
 
     form: {
       get() {
-        return _.cloneDeep(this.subtask)
+        return this.$lodash.cloneDeep(this.subtask)
       },
       set(newValue) {
       }
@@ -359,7 +358,7 @@ export default {
             histvalue = dp.label
         }
         if (data.name == "Due date" || data.name == "Start date") {
-          histvalue = dayjs(data.value).format('DD MMM YYYY')
+          histvalue = this.$formatDate(data.value)
         }
         if (data.name == 'User') {
             userobj = this.$userInfo(data.value)
@@ -398,7 +397,7 @@ export default {
     },
 
     onsubmit(data) {
-      let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      let trimComment = this.$lodash.truncate(data.text.slice(3, -4), { length: 128 })
 
       if (this.editMessage?.id) {
         this.$store.dispatch("subtask/updateSubtaskComment", { subtaskId: this.subtask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })

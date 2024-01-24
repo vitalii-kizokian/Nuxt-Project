@@ -234,7 +234,7 @@ export default {
     currentTask(newVal) {
       this.showSubtaskDetail = false
       if (Object.keys(this.currentTask).length) {
-        this.form = _.cloneDeep(this.currentTask);
+        this.form = this.$lodash.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
@@ -292,7 +292,7 @@ export default {
         // console.log("false", newValue, this.subtaskDesc)
         if (this.subtaskDesc) {
           let hText = this.subtaskDesc?.value.replace( /(<([^>]+)>)/ig, '');
-          hText = _.truncate(hText, {'length': 30})
+          hText = this.$lodash.truncate(hText, {'length': 30})
           // console.log(hText)
 
           this.$store.dispatch("subtask/updateSubtask", {
@@ -330,7 +330,7 @@ export default {
     this.showSubtaskDetail = false
     this.$store.dispatch("project/fetchProjects")
     if (Object.keys(this.currentTask).length) {
-        this.form = _.cloneDeep(this.currentTask);
+        this.form = this.$lodash.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
@@ -884,7 +884,7 @@ export default {
       this.value.files = payload.files
     },
     onsubmit(data) {
-      // let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      // let trimComment = this.$lodash.truncate(data.text.slice(3, -4), { length: 128 })
       let trimComment = stripHTMLandTrim(data.text, 128)
       // console.log(trimComment)
 

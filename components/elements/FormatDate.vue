@@ -2,7 +2,6 @@
   <span :id="'date-' + Math.random().toString().slice(-3)" class="date-info text-truncate" :class="'text-'+variant">{{output}}</span>
 </template>
 <script>
-import dayjs from 'dayjs'
 export default {
 
   name: 'FormatDate',
@@ -20,7 +19,7 @@ export default {
       if (!this.datetime) {
         return ""
       }
-      return dayjs(this.datetime).format('D MMM YYYY')
+      return this.$formatDate(this.datetime)
     }
   },
 }

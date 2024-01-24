@@ -111,7 +111,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -124,9 +123,6 @@ import {
   faStar as fasStar,
 } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
-
-var relativeTime = require('dayjs/plugin/relativeTime')
-dayjs.extend(relativeTime)
 
 export default {
   name: 'Message',
@@ -200,7 +196,7 @@ export default {
       task: "task/getSelectedTask",
     }),
     displayDate() {
-      return dayjs(this.msg.updatedAt).fromNow()
+      return this.$displayDate(this.msg.updatedAt)
     },
     
     reactionsExist() {
