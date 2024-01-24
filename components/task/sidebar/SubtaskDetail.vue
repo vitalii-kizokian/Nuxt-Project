@@ -242,10 +242,10 @@ export default {
     },
 
     isComplete() {
-      if (this.form.isDone) {
-        return { variant: "primary-24", text: "Completed", iconVariant: "primary-24" }
+      if (this.form.statusId == 5) {
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "primary--outline", text: "Mark Completed", iconVariant: "gray4" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
 
