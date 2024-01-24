@@ -28,7 +28,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import dayjs from 'dayjs'
 export default {
 
   name: 'ProjectHistory',
@@ -55,7 +54,7 @@ export default {
   },
   methods: {
     displayDate(date) {
-      let dd = dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
+      let dd = $dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
       return dd
     },
   }

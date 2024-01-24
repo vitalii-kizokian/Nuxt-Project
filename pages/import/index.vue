@@ -7,7 +7,7 @@
                 <div class=" p-1 m-auto w-50" >
                     <div class="border-gray2 shape-rounded py-1 px-05 mt-1 mb-2" style="min-width: 400px; max-width:600px;">
                         <label class="font-md mb-075 d-inline-block text-secondary">Click to import projects as .csv file from Asana</label>
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary-24" iconLeft="upload" placeholder="Select .csv file to upload"></bib-input>
+                        <bib-input type="file" ref="csvImport" :key="inputkey" @files-dropped="onFileInput" multiple="false" variant="primary-24" iconLeft="upload" placeholder="Select .csv file to upload"></bib-input>
 
                         <div v-show="files.length > 0" class=" mt-1 justify-end">
                           <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
@@ -131,7 +131,8 @@ export default {
             importError: false,
             dupProject: false,
             duplicateProjId: null,
-            importCompleteMsg: null
+            importCompleteMsg: null,
+            inputkey:0,
         }
     },
 
@@ -182,6 +183,7 @@ export default {
                     ]
             this.files = []
             this.$refs.csvImport.filesUploaded = []
+            this.inputkey += 1
         },
 
         async checkUser() {
@@ -230,8 +232,19 @@ export default {
                     this.importError = users.data.message
                     return
                 }
+
+                let fc = {};
+                for (let item of users.data.data) {
+                    if (!fc[item]) {
+                        fc[item] = 2;
+                    } else {
+                        fc[item]++;
+                    }
+                }
+                let fcstring = Object.entries(fc).map(([key, value]) => `${key}: ${value}`).join(', ');
+                // console.log(users.data.data, fcstring)
                 
-                this.importError = users.data.message
+                this.importError = users.data.message +" "+ fcstring
                 return false
                 
             }

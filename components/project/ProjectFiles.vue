@@ -140,7 +140,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
-import dayjs from 'dayjs'
 import { fileIcon } from '~/utils/file'
 
 export default {
@@ -350,7 +349,7 @@ export default {
               arr.push({ value: value, key: key })
             }
             if (key == "createdAt" || key == "updatedAt") {
-              arr.push({ key: key, value: dayjs(value).format('DD MMM YYYY')})
+              arr.push({ key: key, value: this.$formatDate(value)})
             }
         })
       }

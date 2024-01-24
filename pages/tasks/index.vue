@@ -185,13 +185,13 @@ export default {
 
   watch: {
     taskcount(newValue){
-      return _.cloneDeep(newValue)
+      return this.$lodash.cloneDeep(newValue)
     },
     filterViews(newValue){
-      return _.cloneDeep(newValue)
+      return this.$lodash.cloneDeep(newValue)
     },
     tasks(newVal) {
-      let data = _.cloneDeep(newVal);
+      let data = this.$lodash.cloneDeep(newVal);
       // console.info("watch tasks")
       if (this.group == 'department' || this.group == 'default') {
         this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
@@ -1035,7 +1035,7 @@ export default {
     sectionDragEnd: _.debounce(async function (payload) {
       this.loading = true;
 
-      let clone = _.cloneDeep(payload);
+      let clone = this.$lodash.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.deptOrder = i;
       });
@@ -1062,7 +1062,7 @@ export default {
 
     taskDragEnd: _.debounce(async function (payload) {
       this.loading = true;
-      let tasks = _.cloneDeep(payload.tasks);
+      let tasks = this.$lodash.cloneDeep(payload.tasks);
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });

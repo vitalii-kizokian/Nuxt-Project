@@ -144,7 +144,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { STATUS, PRIORITY } from '~/config/constants.js'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 
 import _ from 'lodash'
 export default {
@@ -238,8 +238,8 @@ export default {
     },
     time() {
       if (this.activeProject.dueDate) {
-        let d = dayjs(this.activeProject.dueDate)
-        return d.diff(dayjs(), 'hour')
+        let d = $dayjs(this.activeProject.dueDate)
+        return d.diff($dayjs(), 'hour')
       } else {
         return "00:00"
       }
@@ -319,11 +319,11 @@ export default {
       }
 
       if (name == "Due date") {
-        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+        updatedvalue = this.$formatDate(value)
       }
 
       if (name == "Start date") {
-        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+        updatedvalue = this.$formatDate(value)
       }
 
       if (this.activeProject.priorityId == "") {

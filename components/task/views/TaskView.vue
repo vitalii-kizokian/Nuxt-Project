@@ -69,8 +69,8 @@
     <bib-modal-wrapper v-if="sectionConfirmModal" title="Delete section" @close="sectionConfirmModal = false">
       <template slot="content">
           <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(2, 1fr)">
-            <p class="text-secondary"><!-- <span class="text-primary">Keep tasks</span> <br> -->Delete Section but keep the tasks as is.</p>
-            <p class="text-secondary"><!-- <span class="text-danger">Delete tasks</span> <br> -->Delete Section and delete the tasks </p>
+            <p class="text-secondary">Delete Section but keep the tasks as is.</p>
+            <p class="text-secondary">Delete Section and delete the tasks </p>
           </div>
       </template>
       <template slot="footer">
@@ -94,40 +94,6 @@
             </div>
         </template>
       </bib-modal-wrapper>
-
-    <!-- section rename modal -->
-    <!-- <bib-modal-wrapper
-      v-if="renameModal"
-      title="Rename section"
-      @close="renameModal = false"
-    >
-      <template slot="content">
-        <div>
-          <bib-input
-            type="text"
-            v-model.trim="sectionTitle"
-            placeholder="Enter name..."
-          ></bib-input>
-          <loading :loading="loading"></loading>
-        </div>
-      </template>
-      <template slot="footer">
-        <div class="d-flex justify-between">
-          <bib-button
-            label="Cancel"
-            variant="light"
-            pill
-            @click="renameModal = false"
-          ></bib-button>
-          <bib-button
-            label="Rename"
-            variant="success"
-            pill
-            v-on:click="renameSection"
-          ></bib-button>
-        </div>
-      </template>
-    </bib-modal-wrapper> -->
   </div>
 </template>
 
@@ -176,7 +142,6 @@ export default {
       userSort: 'asc',
       projectSort: 'asc',
       difficultySort: 'asc',
-      renameModal: false,
       alertDialog: false,
       alertMsg: "",
       sectionId: null,
@@ -229,13 +194,13 @@ export default {
 
   watch: {
     filterViews(newValue){
-         return _.cloneDeep(newValue)
+         return this.$lodash.cloneDeep(newValue)
     },
     sections: {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
-        this.localdata = _.cloneDeep(newValue);
+        this.localdata = this.$lodash.cloneDeep(newValue);
         this.templateKey += 1;
       },
     },
@@ -1272,7 +1237,7 @@ export default {
 
     sectionDragEnd: _.debounce(async function (payload) {
       // this.loading = true;
-      let clone = _.cloneDeep(payload);
+      let clone = this.$lodash.cloneDeep(payload);
       
       clone.map((el, i) => {     
           el.order = i;
@@ -1301,7 +1266,7 @@ export default {
 
     taskDragEnd: _.debounce(async function (payload) {
       // this.loading = true;
-      let tasks = _.cloneDeep(payload.tasks);
+      let tasks = this.$lodash.cloneDeep(payload.tasks);
 
       tasks.forEach((el, i) => {
         el.order = i;

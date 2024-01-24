@@ -103,7 +103,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -117,9 +116,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
 import "~/assets/tippy-theme.scss";
-
-var relativeTime = require('dayjs/plugin/relativeTime')
-dayjs.extend(relativeTime)
 
 export default {
 
