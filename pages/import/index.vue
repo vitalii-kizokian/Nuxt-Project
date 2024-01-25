@@ -79,7 +79,7 @@
                     </div>
                     <div v-show="dupProject && !importfinish && !importCompleteMsg">
                         <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
-                        <bib-button label="Continue" variant="primary-24" pill @click="reimportCSV"></bib-button>
+                        <span v-if="(duplicateProjId && $auth?.user?.subr == 'USER') || $auth?.user?.subr == 'ADMIN'"><bib-button label="Continue" variant="primary-24" pill @click="reimportCSV"></bib-button></span>
                     </div>
                     <div v-show="importfinish">
                         <bib-button label="Finish" variant="primary-24" pill @click="finishImport"></bib-button>
@@ -222,10 +222,17 @@ export default {
             } 
             if (users.data.statusCode == 201) {
                 if (users.data.importError == "duplicate-project") {
-                    this.duplicateProjId = users.data.projectId
-                    this.dupProject = "This project already exists. Continue will overwrite the project data."
-                    return
+                   if(users.data.projectId || this.$auth.user.subr == 'ADMIN') {
+                        this.duplicateProjId = users.data.projectId
+                        this.dupProject = "Project already exists. Continue will overwrite the project data."
+                        return
+                   } else {
+                        this.duplicateProjId = users.data.projectId
+                        this.dupProject = "Project already exist. Please contact administrator."
+                        return
+                   }
                 }
+
                 if (users.data.importError == "multiple-projects") {
                     // this.duplicateProjId = users.data.projectId
                     // this.dupProject = "This project already exists. Continue will overwrite the project data."

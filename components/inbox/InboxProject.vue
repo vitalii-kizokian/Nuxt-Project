@@ -238,8 +238,8 @@ export default {
     },
     time() {
       if (this.activeProject.dueDate) {
-        let d = $dayjs(this.activeProject.dueDate)
-        return d.diff($dayjs(), 'hour')
+        let d = this.$dayjs(this.activeProject.dueDate)
+        return d.diff(this.$dayjs(), 'hour')
       } else {
         return "00:00"
       }
