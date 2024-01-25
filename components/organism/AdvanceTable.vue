@@ -159,9 +159,7 @@ import { mapGetters } from 'vuex'
 import { pastDue } from "~/utils/helpers.js";
 import _ from 'lodash'
 import Split from 'split.js'
-// import ColumnResizer from 'column-resizer';
 import dayjs from 'dayjs'
-// import draggable from 'vuedraggable'
 
 export default {
 

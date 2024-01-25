@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     displayDate(date) {
-      let dd = $dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
+      let dd = this.$dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
       return dd
     },
   }
